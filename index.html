@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Les Points Sauvages | Broderies libres et impertinentes</title>
+    <meta
+      name="description"
+      content="Kits DIY passif-agressifs, broderies finies personnalisables (chats, phrases piquantes) et box mensuelle. Fait main en France. Livraison soignée."
+    />
+    <meta property="og:title" content="Les Points Sauvages | Broderies impertinentes" />
+    <meta property="og:description" content="Kits DIY sarcastiques, broderies finies et box mensuelle. Fait main en France." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+
+    <!-- ── HEADER ── -->
+    <header class="site-header">
+      <div class="container nav">
+        <span class="brand">Les Points Sauvages</span>
+        <nav aria-label="Navigation principale">
+          <ul class="nav-links" role="list">
+            <li><a href="#produits">Produits</a></li>
+            <li><a href="#abonnement">Box</a></li>
+            <li><a href="#commande" class="btn btn-outline btn-sm">Commander</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ── HERO ── -->
+      <section class="hero container" aria-labelledby="hero-title">
+        <img src="./logoLPS.png" alt="Logo Les Points Sauvages" class="logo reveal" />
+        <p class="badge reveal">✦ Fait main en France ✦</p>
+        <h1 id="hero-title" class="reveal">Broderie libre<br /><em>et impertinente</em></h1>
+        <p class="hero-text reveal">
+          Des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou vos
+          phrases préférées, et des abonnements pour les amateurs de second degré.
+          Parce que parfois, les mots ont besoin d'être brodés.
+        </p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-primary" href="#produits">Voir les créations</a>
+          <a class="btn btn-ghost" href="#abonnement">La box mensuelle</a>
+        </div>
+        <p class="trust-inline reveal">
+          <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé via PayPal
+        </p>
+      </section>
+
+      <!-- ── BANDEAU MARCHÉ ── -->
+      <div class="banner-marche" role="note">
+        <div class="container">
+          <p>
+            <strong>Rupture de stock sur le stand ?</strong>
+            Commandez directement ici — je prépare votre envoi sous 48 h.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── PRODUITS ── -->
+      <section id="produits" class="section container" aria-labelledby="produits-title">
+        <div class="section-header reveal">
+          <h2 id="produits-title">Nos créations</h2>
+          <p class="section-sub">Choisissez votre arme. Brodée avec amour (et un peu de rage).</p>
+        </div>
+
+        <div class="cards" role="list">
+
+          <!-- PETIT MOT -->
+          <article class="card reveal" role="listitem">
+            <div class="card-tag">Bestseller</div>
+            <div class="card-icon" aria-hidden="true">🪡</div>
+            <h3>Petit mot</h3>
+            <p class="meta">« Merde » · « Putain » · « Ba super »</p>
+            <p>Le classique impertinent. Petit format, grand impact. Disponible en kit à broder vous-même ou broderie finie prête à encadrer.</p>
+            <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit mot">
+              <button
+                class="btn btn-primary"
+                data-paypal="petitKit"
+                data-product="Petit mot — Kit DIY"
+                aria-label="Acheter le kit DIY Petit mot via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
+              </button>
+              <button
+                class="btn btn-outline"
+                data-paypal="petitFini"
+                data-product="Petit mot — Broderie finie"
+                aria-label="Acheter la broderie finie Petit mot via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
+              </button>
+            </div>
+            <p class="helper">
+              Choisissez votre texte préféré au moment de la commande ou dans le formulaire ci-dessous.
+            </p>
+          </article>
+
+          <!-- GRAND MOT -->
+          <article class="card reveal" role="listitem">
+            <div class="card-tag">Coup de gueule</div>
+            <div class="card-icon" aria-hidden="true">✂️</div>
+            <h3>Grand mot</h3>
+            <p class="meta">« Sauf erreur de ma part » · « Pas là pour plaire »</p>
+            <p>Pour les phrases qui tiennent en une ligne mais résument toute une philosophie de vie. Format plus grand, plus de fil, autant de satisfaction.</p>
+            <div class="format-toggle" role="group" aria-label="Choisir le format pour Grand mot">
+              <button
+                class="btn btn-primary"
+                data-paypal="grandKit"
+                data-product="Grand mot — Kit DIY"
+                aria-label="Acheter le kit DIY Grand mot via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
+              </button>
+              <button
+                class="btn btn-outline"
+                data-paypal="grandFini"
+                data-product="Grand mot — Broderie finie"
+                aria-label="Acheter la broderie finie Grand mot via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
+              </button>
+            </div>
+            <p class="helper">
+              Précisez votre phrase favorite dans le formulaire de commande personnalisée.
+            </p>
+          </article>
+
+          <!-- PETIT CHAT -->
+          <article class="card reveal" role="listitem">
+            <div class="card-tag card-tag--special">Personnalisable</div>
+            <div class="card-icon" aria-hidden="true">🐱</div>
+            <h3>Petit chat qui dort</h3>
+            <p class="meta">Prénom + couleur de fourrure + option bicolore</p>
+            <p>Immortalisez votre chat dans un tambour de broderie. Prénom, couleur, bicolore : c'est votre chat, ce sera votre broderie.</p>
+            <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit chat qui dort">
+              <button
+                class="btn btn-primary"
+                data-paypal="chatKit"
+                data-product="Petit chat — Kit DIY"
+                aria-label="Acheter le kit DIY Petit chat via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
+              </button>
+              <button
+                class="btn btn-outline"
+                data-paypal="chatFini"
+                data-product="Petit chat — Broderie finie"
+                aria-label="Acheter la broderie finie Petit chat via PayPal"
+              >
+                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
+              </button>
+            </div>
+            <p class="helper helper-accent">
+              ✦ Option bicolore disponible avec supplément — à préciser dans le formulaire.
+            </p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ── COMMANDE PERSONNALISÉE ── -->
+      <section id="commande" class="section section-alt" aria-labelledby="commande-title">
+        <div class="container">
+          <div class="section-header reveal">
+            <h2 id="commande-title">Commande personnalisée</h2>
+            <p class="section-sub">
+              Vous voulez une variante, un chat particulier, une phrase bien spéciale ?
+              Remplissez ce formulaire — je vous réponds sous 24 h avec votre lien de paiement.
+            </p>
+          </div>
+
+          <form id="custom-order-form" class="order-form reveal" novalidate>
+
+            <div class="form-row">
+              <label for="produit">
+                Quel produit ? <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="produit" name="produit" required>
+                <option value="">Choisir un produit</option>
+                <option value="Petit mot">Petit mot</option>
+                <option value="Grand mot">Grand mot</option>
+                <option value="Petit chat qui dort">Petit chat qui dort</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="format">
+                Quel format ? <span class="required" aria-hidden="true">*</span>
+              </label>
+              <select id="format" name="format" required>
+                <option value="">Choisir un format</option>
+                <option value="Kit DIY">Kit DIY (tout inclus)</option>
+                <option value="Broderie finie">Broderie finie (prête à encadrer)</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="phrase">Texte ou phrase à broder</label>
+              <input
+                id="phrase"
+                name="phrase"
+                type="text"
+                placeholder='Ex. "Pas là pour plaire"'
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-row">
+              <label for="prenom">Prénom du chat <span class="label-hint">(pour le motif chat)</span></label>
+              <input
+                id="prenom"
+                name="prenom"
+                type="text"
+                placeholder="Ex. Miso, Noisette, Crevette…"
+              />
+            </div>
+
+            <div class="form-row">
+              <label for="fourrure">Couleur(s) de fourrure <span class="label-hint">(précisez bicolore si besoin)</span></label>
+              <input
+                id="fourrure"
+                name="fourrure"
+                type="text"
+                placeholder="Ex. roux, noir et blanc (bicolore), tabby…"
+              />
+            </div>
+
+            <div class="form-row">
+              <label for="commentaire">Commentaire libre</label>
+              <textarea
+                id="commentaire"
+                name="commentaire"
+                rows="4"
+                placeholder="Dites-moi ce que vous voulez exactement. Rien n'est trop précis, rien n'est trop bizarre."
+              ></textarea>
+            </div>
+
+            <div class="form-footer">
+              <button class="btn btn-primary btn-lg" type="submit">
+                Envoyer ma demande →
+              </button>
+              <p class="form-note">
+                Votre demande ouvrira un email pré-rempli.
+                Je vous réponds sous 24 h avec le lien de paiement.
+              </p>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+      <!-- ── BOX ABONNEMENT ── -->
+      <section id="abonnement" class="section container" aria-labelledby="abo-title">
+        <div class="section-header reveal">
+          <h2 id="abo-title">Box broderie mensuelle</h2>
+          <p class="section-sub">Un nouveau motif chaque mois, les accessoires inclus, livré chez vous.<br />Pour les addict·es qui veulent toujours un projet en cours.</p>
+        </div>
+
+        <div class="cards pricing" role="list">
+
+          <article class="card pricing-card reveal" role="listitem">
+            <div class="price-label">Mensuel</div>
+            <div class="price">15 <sup>€</sup><span class="price-period">/ mois</span></div>
+            <p class="price-detail">+ frais de livraison</p>
+            <ul class="price-features" aria-label="Inclus dans la box mensuelle">
+              <li>1 kit complet par mois</li>
+              <li>Motif exclusif</li>
+              <li>Fils, tambour, aiguille</li>
+              <li>Résiliable à tout moment</li>
+            </ul>
+            <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 15 euros par mois">
+              M'abonner →
+            </button>
+          </article>
+
+          <article class="card pricing-card pricing-card--featured reveal" role="listitem" aria-label="Offre la plus populaire">
+            <div class="card-tag card-tag--featured">⭐ Le plus populaire</div>
+            <div class="price-label">3 mois</div>
+            <div class="price">40 <sup>€</sup></div>
+            <p class="price-detail">+ frais de livraison · économisez 5 €</p>
+            <ul class="price-features" aria-label="Inclus dans la box 3 mois">
+              <li>3 kits complets</li>
+              <li>Motifs exclusifs</li>
+              <li>Livraison en une fois ou étalée</li>
+              <li>Cadeau idéal</li>
+            </ul>
+            <button class="btn btn-primary btn-full" data-paypal="abo3Mois" aria-label="Prendre la box 3 mois à 40 euros">
+              Prendre 3 mois →
+            </button>
+          </article>
+
+          <article class="card pricing-card reveal" role="listitem">
+            <div class="price-label">1 an</div>
+            <div class="price">150 <sup>€</sup></div>
+            <p class="price-detail">+ frais de livraison · économisez 30 €</p>
+            <ul class="price-features" aria-label="Inclus dans la box annuelle">
+              <li>12 kits complets</li>
+              <li>Motifs exclusifs toute l'année</li>
+              <li>Priorité sur les nouveautés</li>
+              <li>Le choix des convaincus</li>
+            </ul>
+            <button class="btn btn-primary btn-full" data-paypal="aboAnnee" aria-label="Prendre la box annuelle à 150 euros">
+              Prendre 1 an →
+            </button>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ── RÉASSURANCE ── -->
+      <section class="section section-alt" aria-labelledby="reassurance-title">
+        <div class="container">
+          <h2 id="reassurance-title" class="sr-only">Pourquoi nous choisir</h2>
+          <ul class="reassurance-grid reveal" role="list">
+            <li class="reassurance-item">
+              <span class="re-icon" aria-hidden="true">🇫🇷</span>
+              <strong>Fait main en France</strong>
+              <p>Chaque kit et chaque broderie est préparé à la main, avec soin et un peu d'amour sarcastique.</p>
+            </li>
+            <li class="reassurance-item">
+              <span class="re-icon" aria-hidden="true">📦</span>
+              <strong>Livraison soignée</strong>
+              <p>Expédié sous 48 h en semaine. Emballage soigné pour que votre rage ou votre amour félin arrive intact.</p>
+            </li>
+            <li class="reassurance-item">
+              <span class="re-icon" aria-hidden="true">🔒</span>
+              <strong>Paiement sécurisé</strong>
+              <p>Règlement via PayPal — vous êtes protégé·e par l'acheteur PayPal. Aucune donnée bancaire stockée.</p>
+            </li>
+            <li class="reassurance-item">
+              <span class="re-icon" aria-hidden="true">🎨</span>
+              <strong>Personnalisable</strong>
+              <p>Vos chats, vos phrases, vos couleurs. Si vous pouvez le rêver, on peut (probablement) le broder.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ── CONTACT / INSTAGRAM ── -->
+      <section class="section container contact-section" aria-labelledby="contact-title">
+        <div class="section-header reveal">
+          <h2 id="contact-title">Suivre & contacter</h2>
+          <p class="section-sub">
+            Pour voir les dernières créations, les coulisses, et les chats de service.
+          </p>
+        </div>
+        <div class="contact-block reveal">
+          <a
+            class="insta-link"
+            href="https://www.instagram.com/les_points_sauvages/"
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="Suivre Les Points Sauvages sur Instagram (ouvre un nouvel onglet)"
+          >
+            <span class="insta-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </span>
+            @les_points_sauvages
+          </a>
+          <p class="contact-email">
+            Pour toute question :
+            <a href="mailto:contact@lespointssauvages.fr" id="contact-email-link">
+              contact@lespointssauvages.fr
+            </a>
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ── FOOTER ── -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <p class="footer-brand">Les Points Sauvages</p>
+        <p class="footer-tagline">Broderie libre & impertinente · Fait main en France</p>
+        <p class="footer-links">
+          <a href="https://www.instagram.com/les_points_sauvages/" target="_blank" rel="noreferrer noopener">Instagram</a>
+          <span aria-hidden="true"> · </span>
+          <a href="#commande">Commande personnalisée</a>
+          <span aria-hidden="true"> · </span>
+          <a href="#abonnement">Box mensuelle</a>
+        </p>
+        <p class="footer-legal">
+          <small>© <span id="year"></span> Les Points Sauvages · Paiement sécurisé via PayPal</small>
+        </p>
+      </div>
+    </footer>
+
+    <!-- PayPal cart SDK (optionnel – décommentez si vous utilisez les boutons panier PayPal) -->
+    <!-- <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="VOTRE_MERCHANT_ID_ICI"></script> -->
+
+    <script src="./script.js"></script>
+  </body>
+</html>
