@@ -38,7 +38,7 @@ const PAYPAL_LINKS = {
 /**
  * Email qui reçoit les demandes personnalisées.
  */
-const CONTACT_EMAIL = "contact@lespointssauvages.fr"; // ← Remplacer par ton email
+const CONTACT_EMAIL = "lespointssauvages@gmail.com"; // ← Remplacer par ton email
 
 /* ── PayPal buttons ─────────────────────────── */
 
@@ -181,6 +181,42 @@ function setFooterYear() {
   if (el) el.textContent = new Date().getFullYear();
 }
 
+/* ── Legal modal ─────────────────────────────── */
+
+function setupLegalModal() {
+  const modal = document.getElementById("legal-modal");
+  const openBtn = document.getElementById("open-legal-modal");
+  const closeBtn = document.getElementById("close-legal-modal");
+  if (!modal || !openBtn || !closeBtn) return;
+
+  const openModal = () => {
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    openBtn.focus();
+  };
+
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modal.classList.contains("is-open")) {
+      closeModal();
+    }
+  });
+}
+
 /* ── Init ───────────────────────────────────── */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -189,4 +225,5 @@ document.addEventListener("DOMContentLoaded", () => {
   updateContactLinks();
   setupReveal();
   setFooterYear();
+  setupLegalModal();
 });

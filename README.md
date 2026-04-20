@@ -11,7 +11,25 @@ Site vitrine statique de **Les Points Sauvages**.
 
 ## Lancer en local
 
-Ouvrez `index.html` dans votre navigateur, ou servez le dossier avec un serveur local.
+### Preview Netlify (recommande)
+
+Depuis le dossier `Netlify`:
+
+`.\preview-local.ps1`
+
+Puis ouvrez `http://localhost:8888`.
+
+### Preview simple (sans Netlify)
+
+Depuis le dossier `Netlify`:
+
+`.\preview-local.ps1 -Mode simple -Port 8080`
+
+Puis ouvrez `http://localhost:8080`.
+
+Ou utilisez directement:
+
+`npx --yes serve . -l 8080`
 
 ## Deploiement
 
