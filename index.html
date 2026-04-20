@@ -11,6 +11,8 @@
     <meta property="og:title" content="Les Points Sauvages | Broderies impertinentes" />
     <meta property="og:description" content="Kits DIY sarcastiques, broderies finies et box mensuelle. Fait main en France." />
     <meta property="og:type" content="website" />
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./logolps.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -32,7 +34,7 @@
           <ul class="nav-links" role="list">
             <li><a href="#produits">Produits</a></li>
             <li><a href="#abonnement">Box</a></li>
-            <li><a href="#commande" class="btn btn-outline btn-sm">Commander</a></li>
+            <li><a href="#produits" class="btn btn-outline btn-sm">Commander</a></li>
           </ul>
         </nav>
       </div>
@@ -42,11 +44,14 @@
 
       <!-- ── HERO ── -->
       <section class="hero container" aria-labelledby="hero-title">
-        <div class="hero-top reveal">
-          <img src="./logolps.png" alt="Logo Les Points Sauvages" class="logo" />
-          <p class="badge">✦ Fait main en France ✦</p>
+        <h1 id="hero-title" class="hero-h1 reveal">
+          <span class="hero-brand-name">Les Points Sauvages</span>
+          <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
+        </h1>
+        <p class="badge reveal">✦ Fait main en France ✦</p>
+        <div class="hero-mark reveal" aria-hidden="true">
+          <img src="./logolps.png" alt="" class="hero-logo-subtle" width="80" height="80" />
         </div>
-        <h1 id="hero-title" class="reveal">Broderie libre<br /><em>et impertinente</em></h1>
         <p class="hero-text reveal">
           Des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou vos
           phrases préférées, et des abonnements pour les amateurs de second degré.
@@ -78,25 +83,15 @@
             <p class="meta">« Merde » · « Putain » · « Ba super »</p>
             <p>Le classique impertinent. Petit format, grand impact. Disponible en kit à broder vous-même ou broderie finie prête à encadrer.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit mot">
-              <button
-                class="btn btn-primary"
-                data-paypal="petitKit"
-                data-product="Petit mot — Kit DIY"
-                aria-label="Acheter le kit DIY Petit mot via PayPal"
-              >
+              <button type="button" class="btn btn-primary" data-open-order="petit" data-order-format="kit" aria-label="Commander le kit DIY Petit mot">
                 <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
               </button>
-              <button
-                class="btn btn-outline"
-                data-paypal="petitFini"
-                data-product="Petit mot — Broderie finie"
-                aria-label="Acheter la broderie finie Petit mot via PayPal"
-              >
+              <button type="button" class="btn btn-outline" data-open-order="petit" data-order-format="fini" aria-label="Commander la broderie finie Petit mot">
                 <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
               </button>
             </div>
             <p class="helper">
-              Choisissez votre texte préféré au moment de la commande ou dans le formulaire ci-dessous.
+              Choisissez votre texte au moment de la commande (fenêtre sécurisée).
             </p>
           </article>
 
@@ -108,25 +103,15 @@
             <p class="meta">« Sauf erreur de ma part » · « Pas là pour plaire »</p>
             <p>Pour les phrases qui tiennent en une ligne mais résument toute une philosophie de vie. Format plus grand, plus de fil, autant de satisfaction.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Grand mot">
-              <button
-                class="btn btn-primary"
-                data-paypal="grandKit"
-                data-product="Grand mot — Kit DIY"
-                aria-label="Acheter le kit DIY Grand mot via PayPal"
-              >
+              <button type="button" class="btn btn-primary" data-open-order="grand" data-order-format="kit" aria-label="Commander le kit DIY Grand mot">
                 <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
               </button>
-              <button
-                class="btn btn-outline"
-                data-paypal="grandFini"
-                data-product="Grand mot — Broderie finie"
-                aria-label="Acheter la broderie finie Grand mot via PayPal"
-              >
+              <button type="button" class="btn btn-outline" data-open-order="grand" data-order-format="fini" aria-label="Commander la broderie finie Grand mot">
                 <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
               </button>
             </div>
             <p class="helper">
-              Précisez votre phrase favorite dans le formulaire de commande personnalisée.
+              Précisez votre phrase favorite dans la fenêtre de commande.
             </p>
           </article>
 
@@ -135,122 +120,18 @@
             <div class="card-tag card-tag--special">Personnalisable</div>
             <div class="card-icon" aria-hidden="true">🐱</div>
             <h3>Petit chat qui dort</h3>
-            <p class="meta">Prénom + couleur de fourrure + option bicolore</p>
+            <p class="meta">Fourrure au choix · bicolore et prénom en options</p>
             <p>Immortalisez votre chat dans un tambour de broderie. Prénom, couleur, bicolore : c'est votre chat, ce sera votre broderie.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit chat qui dort">
-              <button
-                class="btn btn-primary"
-                data-paypal="chatKit"
-                data-product="Petit chat — Kit DIY"
-                aria-label="Acheter le kit DIY Petit chat via PayPal"
-              >
+              <button type="button" class="btn btn-primary" data-open-order="chat" data-order-format="kit" aria-label="Commander le kit DIY Petit chat">
                 <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
               </button>
-              <button
-                class="btn btn-outline"
-                data-paypal="chatFini"
-                data-product="Petit chat — Broderie finie"
-                aria-label="Acheter la broderie finie Petit chat via PayPal"
-              >
+              <button type="button" class="btn btn-outline" data-open-order="chat" data-order-format="fini" aria-label="Commander la broderie finie Petit chat">
                 <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
               </button>
             </div>
-            <p class="helper helper-accent">
-              ✦ Option bicolore disponible avec supplément — à préciser dans le formulaire.
-            </p>
           </article>
 
-        </div>
-      </section>
-
-      <!-- ── COMMANDE PERSONNALISÉE ── -->
-      <section id="commande" class="section section-alt" aria-labelledby="commande-title">
-        <div class="container">
-          <div class="section-header reveal">
-            <h2 id="commande-title">Commande personnalisée</h2>
-            <p class="section-sub">
-              Vous voulez une variante, un chat particulier, une phrase bien spéciale ?
-              Remplissez ce formulaire — je vous réponds sous 24 h avec votre lien de paiement.
-            </p>
-          </div>
-
-          <form id="custom-order-form" class="order-form reveal" novalidate>
-
-            <div class="form-row">
-              <label for="produit">
-                Quel produit ? <span class="required" aria-hidden="true">*</span>
-              </label>
-              <select id="produit" name="produit" required>
-                <option value="">Choisir un produit</option>
-                <option value="Petit mot">Petit mot</option>
-                <option value="Grand mot">Grand mot</option>
-                <option value="Petit chat qui dort">Petit chat qui dort</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <label for="format">
-                Quel format ? <span class="required" aria-hidden="true">*</span>
-              </label>
-              <select id="format" name="format" required>
-                <option value="">Choisir un format</option>
-                <option value="Kit DIY">Kit DIY (tout inclus)</option>
-                <option value="Broderie finie">Broderie finie (prête à encadrer)</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <label for="phrase">Texte ou phrase à broder</label>
-              <input
-                id="phrase"
-                name="phrase"
-                type="text"
-                placeholder='Ex. "Pas là pour plaire"'
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="form-row">
-              <label for="prenom">Prénom du chat <span class="label-hint">(pour le motif chat)</span></label>
-              <input
-                id="prenom"
-                name="prenom"
-                type="text"
-                placeholder="Ex. Miso, Noisette, Crevette…"
-              />
-            </div>
-
-            <div class="form-row">
-              <label for="fourrure">Couleur(s) de fourrure <span class="label-hint">(précisez bicolore si besoin)</span></label>
-              <input
-                id="fourrure"
-                name="fourrure"
-                type="text"
-                placeholder="Ex. roux, noir et blanc (bicolore), tabby…"
-              />
-            </div>
-
-            <div class="form-row">
-              <label for="commentaire">Commentaire libre</label>
-              <textarea
-                id="commentaire"
-                name="commentaire"
-                rows="4"
-                placeholder="Dites-moi ce que vous voulez exactement. Rien n'est trop précis, rien n'est trop bizarre."
-              ></textarea>
-            </div>
-
-            <div class="form-footer">
-              <button class="btn btn-primary btn-lg" type="submit">
-                Envoyer ma demande →
-              </button>
-              <p class="form-note">
-                Votre demande ouvrira un email pré-rempli.
-                Je vous réponds sous 24 h avec le lien de paiement.
-              </p>
-            </div>
-
-          </form>
         </div>
       </section>
 
@@ -265,15 +146,15 @@
 
           <article class="card pricing-card reveal" role="listitem">
             <div class="price-label">Mensuel</div>
-            <div class="price">15 <sup>€</sup><span class="price-period">/ mois</span></div>
-            <p class="price-detail">+ frais de livraison</p>
+            <div class="price">19,99 <sup>€</sup><span class="price-period">/ mois</span></div>
+            <p class="price-detail">Abonnement mensuel · livraison France incluse à chaque envoi</p>
             <ul class="price-features" aria-label="Inclus dans la box mensuelle">
               <li>1 kit complet par mois</li>
               <li>Motif exclusif</li>
               <li>Fils, tambour, aiguille</li>
               <li>Résiliable à tout moment</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 15 euros par mois">
+            <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 19,99 euros par mois">
               M'abonner →
             </button>
           </article>
@@ -281,30 +162,30 @@
           <article class="card pricing-card pricing-card--featured reveal" role="listitem" aria-label="Offre la plus populaire">
             <div class="card-tag card-tag--featured">⭐ Le plus populaire</div>
             <div class="price-label">3 mois</div>
-            <div class="price">40 <sup>€</sup></div>
-            <p class="price-detail">+ frais de livraison · économisez 5 €</p>
+            <div class="price">49,99 <sup>€</sup></div>
+            <p class="price-detail">Paiement unique · livraison France incluse</p>
             <ul class="price-features" aria-label="Inclus dans la box 3 mois">
               <li>3 kits complets</li>
               <li>Motifs exclusifs</li>
               <li>Livraison en une fois ou étalée</li>
               <li>Cadeau idéal</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="abo3Mois" aria-label="Prendre la box 3 mois à 40 euros">
+            <button class="btn btn-primary btn-full" data-paypal="abo3Mois" aria-label="Prendre la box 3 mois à 49,99 euros en paiement unique">
               Prendre 3 mois →
             </button>
           </article>
 
           <article class="card pricing-card reveal" role="listitem">
             <div class="price-label">1 an</div>
-            <div class="price">150 <sup>€</sup></div>
-            <p class="price-detail">+ frais de livraison · économisez 30 €</p>
+            <div class="price">199,99 <sup>€</sup></div>
+            <p class="price-detail">Paiement unique · livraison France incluse</p>
             <ul class="price-features" aria-label="Inclus dans la box annuelle">
               <li>12 kits complets</li>
               <li>Motifs exclusifs toute l'année</li>
               <li>Priorité sur les nouveautés</li>
               <li>Le choix des convaincus</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="aboAnnee" aria-label="Prendre la box annuelle à 150 euros">
+            <button class="btn btn-primary btn-full" data-paypal="aboAnnee" aria-label="Prendre la box annuelle à 199,99 euros en paiement unique">
               Prendre 1 an →
             </button>
           </article>
@@ -383,11 +264,132 @@
         <p class="footer-legal">
           <small>
             © <span id="year"></span> Les Points Sauvages · Paiement sécurisé via PayPal ·
-            <button class="legal-link" id="open-legal-modal" type="button">Mentions légales & CGV</button>
+            <button class="legal-link" id="open-legal-modal" type="button">Mentions légales &amp; CGV</button>
+            <span aria-hidden="true"> · </span>
+            <button class="legal-link" id="open-privacy-modal" type="button">Confidentialité</button>
           </small>
         </p>
       </div>
     </footer>
+
+    <!-- ── Modal commande ── -->
+    <div class="modal-backdrop" id="order-modal" aria-hidden="true">
+      <section
+        class="legal-modal order-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="order-modal-title"
+      >
+        <button type="button" class="modal-close" id="close-order-modal" aria-label="Fermer la commande">×</button>
+        <h2 id="order-modal-title">Commander</h2>
+
+        <div class="order-modal-body">
+          <div class="order-modal-section">
+            <p class="order-modal-kicker">Étape 1</p>
+            <div class="form-row" id="order-row-product">
+              <label for="order-product">Produit <span class="required" aria-hidden="true">*</span></label>
+              <select id="order-product" name="order-product">
+                <option value="">Choisir</option>
+                <option value="petit">Petit mot</option>
+                <option value="grand">Grand mot</option>
+                <option value="chat">Petit chat qui dort</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="order-format">Format <span class="required" aria-hidden="true">*</span></label>
+              <select id="order-format" name="order-format">
+                <option value="">Choisir</option>
+                <option value="kit">Kit DIY (tout inclus)</option>
+                <option value="fini">Broderie finie (prête à encadrer)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="order-fields-mot" class="order-modal-section order-fields-group" hidden>
+            <p class="order-modal-kicker">Personnalisation</p>
+            <p class="order-step-hint" id="order-mot-hint" hidden>Choisissez d’abord un format, puis indiquez votre phrase.</p>
+            <div class="form-row" id="order-row-phrase" hidden>
+              <label for="order-phrase" id="order-phrase-label">Phrase brodée <span class="required" aria-hidden="true">*</span></label>
+              <select id="order-phrase" name="order-phrase">
+                <option value="">Choisir</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="order-fields-chat" class="order-modal-section order-fields-group" hidden>
+            <p class="order-modal-kicker">Motif chat</p>
+            <div class="form-row">
+              <label for="order-fourrure">Fourrure <span class="required" aria-hidden="true">*</span></label>
+              <select id="order-fourrure" name="order-fourrure">
+                <option value="">Choisir</option>
+                <option value="noir">Noir</option>
+                <option value="blanc">Blanc</option>
+                <option value="roux">Roux / ginger</option>
+                <option value="gris">Gris</option>
+                <option value="bleu_gris">Bleu-gris</option>
+                <option value="bicolore">Bicolore (supplément)</option>
+              </select>
+            </div>
+            <p class="order-step-hint" id="order-chat-hint-format" hidden>
+              Choisissez un format pour les options payantes, le prénom et la photo.
+            </p>
+
+            <div id="order-chat-step-options" class="order-chat-options" hidden>
+              <div class="form-row" id="order-row-bicolore-detail" hidden>
+                <label for="order-bicolore-detail">Précisions sur le bicolore <span class="required" aria-hidden="true">*</span></label>
+                <textarea id="order-bicolore-detail" rows="2" placeholder="Répartition des couleurs, zones, masque, etc."></textarea>
+              </div>
+
+              <div class="form-row order-pill-field">
+                <span class="order-pill-label" id="order-prenom-legend">Prénom sur le tambour</span>
+                <div class="pill-toggle" role="radiogroup" aria-labelledby="order-prenom-legend">
+                  <input class="pill-toggle-input" type="radio" name="order-prenom-addon" id="order-prenom-addon-no" value="0" checked />
+                  <label class="pill-toggle-label" for="order-prenom-addon-no">Non</label>
+                  <input class="pill-toggle-input" type="radio" name="order-prenom-addon" id="order-prenom-addon-yes" value="1" />
+                  <label class="pill-toggle-label" for="order-prenom-addon-yes">Oui <span class="label-hint" id="order-prenom-price-hint">(+3 €)</span></label>
+                </div>
+              </div>
+              <div class="form-row" id="order-row-prenom" hidden>
+                <label for="order-prenom">Prénom <span class="required" aria-hidden="true">*</span></label>
+                <input id="order-prenom" type="text" placeholder="Ex. Miso, Noisette…" autocomplete="off" />
+              </div>
+
+              <div class="form-row">
+                <label for="order-photo-link">Lien vers une photo du chat <span class="label-hint">(optionnel)</span></label>
+                <input id="order-photo-link" type="url" placeholder="Instagram, Google Photos, lien public…" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row order-modal-section" id="order-row-commentaire" hidden>
+            <label for="order-commentaire">Commentaire libre <span class="label-hint">(optionnel)</span></label>
+            <textarea id="order-commentaire" rows="3" placeholder="Précisions, ton, ce qui vous tient à cœur…"></textarea>
+          </div>
+
+          <div class="order-footer-panel" id="order-footer-panel" hidden>
+            <p class="order-modal-kicker">Récap &amp; paiement</p>
+            <p class="order-multi-hint">
+              Plusieurs tambours ou plusieurs chats ? Une commande par article (refaites une étape après paiement), ou un seul email avec le détail de chaque ligne — on vous envoie un lien adapté.
+            </p>
+            <div class="order-summary" id="order-summary" aria-live="polite"></div>
+
+            <div class="order-pay-primary">
+              <div id="order-paypal-wrap" class="order-paypal-wrap" hidden>
+                <p class="helper order-paypal-label">Payer avec PayPal</p>
+                <div id="order-paypal-container" class="order-paypal-container"></div>
+              </div>
+              <p class="form-note" id="order-paypal-hint" role="status"></p>
+              <p class="order-fallback-mail">
+                <button type="button" class="btn-text-link" id="order-mailto-btn">
+                  Problème avec PayPal ? Envoyer la commande par email
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <div class="modal-backdrop" id="legal-modal" aria-hidden="true">
       <section
@@ -442,6 +444,61 @@
           <h3>Données personnelles</h3>
           <p>
             Les informations transmises via le formulaire ou email sont utilisées uniquement pour répondre aux demandes et gérer les commandes. Vous pouvez demander l’accès, la correction ou la suppression de vos données par email.
+            Pour le détail des traitements, voir aussi la <button type="button" class="legal-inline-link" id="legal-to-privacy">politique de confidentialité</button>.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="privacy-modal" aria-hidden="true">
+      <section
+        class="legal-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="privacy-modal-title"
+      >
+        <button type="button" class="modal-close" id="close-privacy-modal" aria-label="Fermer la politique de confidentialité">
+          ×
+        </button>
+        <h2 id="privacy-modal-title">Politique de confidentialité</h2>
+        <div class="legal-content">
+          <h3>Responsable du traitement</h3>
+          <p>
+            Les Points Sauvages — Les Sorinière, France — SIRET 84344037100030 —
+            <a href="mailto:lespointssauvages@gmail.com" data-email>lespointssauvages@gmail.com</a>
+          </p>
+          <h3>Données collectées</h3>
+          <p>
+            Données saisies dans le formulaire de commande (produit, options, commentaires), adresse email lors d’un
+            contact ou d’un paiement, et données techniques minimales (logs hébergeur / PayPal selon leurs propres
+            politiques).
+          </p>
+          <h3>Finalités</h3>
+          <p>
+            Répondre aux demandes, préparer et livrer les commandes, assurer le suivi client, respecter les obligations
+            légales (facturation, comptabilité si applicable).
+          </p>
+          <h3>Base légale</h3>
+          <p>Exécution du contrat (commande), intérêt légitime (amélioration du service), consentement lorsque requis.</p>
+          <h3>Durée de conservation</h3>
+          <p>
+            Les données liées aux commandes sont conservées le temps nécessaire à leur traitement puis durée légale en
+            matière commerciale et comptable. Les demandes par email sont conservées le temps utile au suivi.
+          </p>
+          <h3>Destinataires</h3>
+          <p>
+            Hébergeur du site (Netlify), prestataire de paiement (PayPal). Aucune revente de données à des tiers
+            commerciaux.
+          </p>
+          <h3>Vos droits</h3>
+          <p>
+            Accès, rectification, effacement, limitation, opposition lorsque le droit applicable le permet — contact
+            par email ci-dessus. Réclamation auprès de la CNIL possible.
+          </p>
+          <h3>Cookies</h3>
+          <p>
+            Ce site vise à rester sobre : pas de bannière cookies intrusive. Des cookies techniques ou liés aux
+            paiements peuvent être déposés par PayPal lors du parcours de paiement.
           </p>
         </div>
       </section>
