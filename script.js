@@ -6,11 +6,13 @@
 
 /**
  * Client ID PayPal (identifiant public pour le SDK navigateur — ce n’est pas le secret).
- * Le secret ne sert qu’en backend ; pas besoin de variable Netlify pour ce site statique.
- * Évitez tout de même de publier le repo en public sans réfléchir : préférez un repo privé
- * ou une injection au build si vous voulez retirer l’ID du fichier versionné.
+ * En production « Live » : définir window.__LPS_PAYPAL_CLIENT_ID__ (snippet Netlify, voir index.html)
+ * ou remplacer PAYPAL_CLIENT_ID_FALLBACK ci-dessous par l’ID du mode Live dans le dashboard PayPal.
  */
-const PAYPAL_CLIENT_ID = "AX-WHqwbPaCEdwVrSjEEdhV-cCM2wtFY1WvUmsHSKtPzMdjmcH4vJFbpmWeB-xv9h9O40GcNlkp6N0sB";
+const PAYPAL_CLIENT_ID_FALLBACK =
+  "AT6mRRcUsZXuZtJBYpnyVTTQieUpW7kUboKftgVS_0bBH2VU14BlOaH-fzqIyeKLYwa8NQk-DZxvxlsm";
+const PAYPAL_CLIENT_ID =
+  (typeof window !== "undefined" && window.__LPS_PAYPAL_CLIENT_ID__) || PAYPAL_CLIENT_ID_FALLBACK;
 
 /**
  * Prix de base (€) — à ajuster selon votre grille tarifaire.
@@ -47,8 +49,8 @@ const PAYPAL_BOX_LINKS = {
 };
 
 const CONTACT_EMAIL = "lespointssauvages@gmail.com";
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://mjegipjdnwcseunsmoyu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_MI3d_8ZFg5eKhWAADfpyvA_6dnc9w8n";
 
 const PRODUCT_LABELS = {
   petit: "Petit mot",
@@ -382,12 +384,16 @@ function toggleChatFieldVisibility() {
 
   const prenomAddon = document.querySelector('input[name="order-prenom-addon"]:checked')?.value === "1";
   const rowPre = document.getElementById("order-row-prenom");
+  const prenomInlineLabel = document.getElementById("order-prenom-inline-label");
   if (rowPre) {
     rowPre.hidden = !prenomAddon;
     if (!prenomAddon) {
       const inp = document.getElementById("order-prenom");
       if (inp) inp.value = "";
     }
+  }
+  if (prenomInlineLabel) {
+    prenomInlineLabel.hidden = !prenomAddon;
   }
 
   updatePillPriceHints();
@@ -490,6 +496,8 @@ function lineDetail(line) {
   const details = [];
   if (line.product === "abo3Mois" || line.product === "aboAnnee") {
     details.push("Paiement one shot");
+    if (line.comment) details.push(line.comment);
+    if (line.shippingCity) details.push(`Livraison: ${line.shippingPostal || ""} ${line.shippingCity}`.trim());
   }
   if (line.color) details.push(`Couleur: ${line.color}`);
   if (line.product === "petit" || line.product === "grand") {
@@ -505,20 +513,169 @@ function lineDetail(line) {
   return details.join(" · ");
 }
 
-function setupBoxAddToCartButtons() {
-  document.querySelectorAll("[data-add-box]").forEach((btn) => {
+function buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping) {
+  if (plan === "aboMensuel") {
+    return null;
+  }
+  const subtotal = BOX_ONE_SHOT_EUR[plan];
+  if (!subtotal) return null;
+  return {
+    product: plan,
+    quantity: 1,
+    subtotal,
+    comment: intent === "gift" ? "Cadeau" : "Pour moi",
+    recipientName: recipientName || "",
+    recipientEmail: recipientEmail || "",
+    shippingName: shipping.fullName || "",
+    shippingAddress: shipping.address1 || "",
+    shippingPostal: shipping.postalCode || "",
+    shippingCity: shipping.city || "",
+    shippingEmail: shipping.email || "",
+    commentaire: message || "",
+  };
+}
+
+function getBoxShippingState() {
+  return {
+    fullName: document.getElementById("box-shipping-fullname")?.value.trim() || "",
+    address1: document.getElementById("box-shipping-address1")?.value.trim() || "",
+    postalCode: document.getElementById("box-shipping-postal")?.value.trim() || "",
+    city: document.getElementById("box-shipping-city")?.value.trim() || "",
+    email: document.getElementById("box-buyer-email")?.value.trim() || "",
+  };
+}
+
+function validateBoxShippingState(state) {
+  return Boolean(state.fullName && state.address1 && state.postalCode && state.city && state.email);
+}
+
+async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping }) {
+  const requestType = intent === "gift" ? "info" : "info";
+  return insertSupabase("subscription_requests", {
+    type: requestType,
+    email: buyerEmail,
+    message: [
+      `Plan: ${plan}`,
+      `Intent: ${intent}`,
+      shipping?.fullName ? `Livraison nom: ${shipping.fullName}` : "",
+      shipping?.address1 ? `Livraison adresse: ${shipping.address1}` : "",
+      shipping?.postalCode ? `Livraison CP: ${shipping.postalCode}` : "",
+      shipping?.city ? `Livraison ville: ${shipping.city}` : "",
+      recipientName ? `Destinataire: ${recipientName}` : "",
+      recipientEmail ? `Email destinataire: ${recipientEmail}` : "",
+      message || "",
+    ].filter(Boolean).join("\n"),
+  });
+}
+
+function setupBoxModal() {
+  const modal = document.getElementById("box-modal");
+  const closeBtn = document.getElementById("close-box-modal");
+  const form = document.getElementById("box-form");
+  const planEl = document.getElementById("box-plan");
+  const buyerEmailEl = document.getElementById("box-buyer-email");
+  const messageEl = document.getElementById("box-message");
+  const recipientNameRow = document.getElementById("box-row-recipient-name");
+  const recipientEmailRow = document.getElementById("box-row-recipient-email");
+  const recipientNameEl = document.getElementById("box-recipient-name");
+  const recipientEmailEl = document.getElementById("box-recipient-email");
+  const shippingFullNameEl = document.getElementById("box-shipping-fullname");
+  const shippingAddressEl = document.getElementById("box-shipping-address1");
+  const shippingPostalEl = document.getElementById("box-shipping-postal");
+  const shippingCityEl = document.getElementById("box-shipping-city");
+  if (!modal || !form || !planEl || !buyerEmailEl) return;
+
+  function syncIntentFields() {
+    const intent = document.querySelector('input[name="box-intent"]:checked')?.value || "self";
+    const isGift = intent === "gift";
+    if (recipientNameRow) recipientNameRow.hidden = !isGift;
+    if (recipientEmailRow) recipientEmailRow.hidden = !isGift;
+    if (!isGift) {
+      if (recipientNameEl) recipientNameEl.value = "";
+      if (recipientEmailEl) recipientEmailEl.value = "";
+    }
+  }
+
+  function openBoxModal(plan) {
+    if (planEl) planEl.value = plan || "aboMensuel";
+    const selfRadio = document.getElementById("box-intent-self");
+    if (selfRadio) selfRadio.checked = true;
+    if (buyerEmailEl) buyerEmailEl.value = "";
+    if (shippingFullNameEl) shippingFullNameEl.value = "";
+    if (shippingAddressEl) shippingAddressEl.value = "";
+    if (shippingPostalEl) shippingPostalEl.value = "";
+    if (shippingCityEl) shippingCityEl.value = "";
+    if (messageEl) messageEl.value = "";
+    syncIntentFields();
+    setModalState(modal, true);
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeBoxModal() {
+    setModalState(modal, false);
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll("[data-open-box-modal]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const key = btn.getAttribute("data-add-box");
-      const price = BOX_ONE_SHOT_EUR[key];
-      if (!price) return;
-      CartStore.add({
-        product: key,
-        quantity: 1,
-        subtotal: price,
-      });
-      renderOrderCart();
-      showToast("Box ajoutée au panier.");
+      const plan = btn.getAttribute("data-open-box-modal") || "aboMensuel";
+      openBoxModal(plan);
     });
+  });
+  document.querySelectorAll('input[name="box-intent"]').forEach((radio) => {
+    radio.addEventListener("change", syncIntentFields);
+  });
+  closeBtn?.addEventListener("click", closeBoxModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeBoxModal();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const plan = planEl.value;
+    const intent = document.querySelector('input[name="box-intent"]:checked')?.value || "self";
+    const buyerEmail = buyerEmailEl.value.trim();
+    const recipientName = recipientNameEl?.value.trim() || "";
+    const recipientEmail = recipientEmailEl?.value.trim() || "";
+    const message = messageEl?.value.trim() || "";
+    const shipping = getBoxShippingState();
+
+    if (!buyerEmail) {
+      showToast("Merci de renseigner votre email.");
+      return;
+    }
+    if (!validateBoxShippingState(shipping)) {
+      showToast("Merci de compléter les coordonnées de livraison.");
+      return;
+    }
+    if (intent === "gift" && !recipientName) {
+      showToast("Merci de renseigner le nom du destinataire.");
+      return;
+    }
+
+    await saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping });
+
+    if (plan === "aboMensuel") {
+      const entry = PAYPAL_BOX_LINKS.aboMensuel;
+      if (entry?.url && entry.url !== "#") {
+        window.open(entry.url, "_blank", "noopener,noreferrer");
+        closeBoxModal();
+        showToast("Redirection vers PayPal pour l'abonnement.");
+      } else {
+        showToast("Lien PayPal mensuel à configurer.");
+      }
+      return;
+    }
+
+    const line = buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping);
+    if (!line) {
+      showToast("Impossible de préparer cette box.");
+      return;
+    }
+    CartStore.add(line);
+    renderOrderCart();
+    closeBoxModal();
+    showToast("Box ajoutée au panier.");
   });
 }
 
@@ -571,7 +728,11 @@ function computeCartSubtotal() {
 function updateCartCountBadges() {
   const count = orderCart.length;
   const badge = document.getElementById("header-cart-count");
+  const floatingBadge = document.getElementById("floating-cart-count");
+  const floatingButton = document.getElementById("open-cart-fab");
   if (badge) badge.textContent = String(count);
+  if (floatingBadge) floatingBadge.textContent = String(count);
+  if (floatingButton) floatingButton.hidden = count < 1;
 }
 
 function renderOrderCart() {
@@ -993,6 +1154,7 @@ function setupOrderModal() {
   const goCheckoutBtn = document.getElementById("order-go-checkout-btn");
   const drawerCheckoutBtn = document.getElementById("drawer-checkout-btn");
   const openDrawerBtn = document.getElementById("open-cart-drawer");
+  const openFabBtn = document.getElementById("open-cart-fab");
   const closeDrawerBtn = document.getElementById("close-cart-drawer");
   const drawer = document.getElementById("cart-drawer");
   const drawerBackdrop = document.getElementById("cart-drawer-backdrop");
@@ -1072,6 +1234,7 @@ function setupOrderModal() {
   }
 
   if (openDrawerBtn) openDrawerBtn.addEventListener("click", () => openCartDrawer(drawer, drawerBackdrop));
+  if (openFabBtn) openFabBtn.addEventListener("click", () => openCartDrawer(drawer, drawerBackdrop));
   if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", () => closeCartDrawer(drawer, drawerBackdrop));
   if (drawerBackdrop) drawerBackdrop.addEventListener("click", () => closeCartDrawer(drawer, drawerBackdrop));
   if (closeCheckoutBtn) closeCheckoutBtn.addEventListener("click", () => closeCheckoutModal(checkoutModal));
@@ -1129,13 +1292,11 @@ function setupSubscriptionRequests() {
   const closeBtn = document.getElementById("close-subscription-modal");
   const form = document.getElementById("subscription-form");
   const typeEl = document.getElementById("subscription-type");
-  document.querySelectorAll("[data-open-subscription-request]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const type = btn.getAttribute("data-open-subscription-request") || "gift";
-      if (typeEl) typeEl.value = type;
-      setModalState(modal, true);
-      document.body.style.overflow = "hidden";
-    });
+  const openManageBtn = document.getElementById("open-subscription-manage-top");
+  openManageBtn?.addEventListener("click", () => {
+    if (typeEl) typeEl.value = "pause";
+    setModalState(modal, true);
+    document.body.style.overflow = "hidden";
   });
   closeBtn?.addEventListener("click", () => {
     setModalState(modal, false);
@@ -1149,7 +1310,7 @@ function setupSubscriptionRequests() {
   });
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const type = document.getElementById("subscription-type")?.value || "gift";
+    const type = document.getElementById("subscription-type")?.value || "info";
     const email = document.getElementById("subscription-email")?.value.trim() || "";
     const message = document.getElementById("subscription-message")?.value.trim() || "";
     if (!email || !message) {
@@ -1347,6 +1508,13 @@ function setupGlobalEscape() {
       setModalState(subscription, false);
       document.body.style.overflow = "";
       event.preventDefault();
+      return;
+    }
+    const boxModal = document.getElementById("box-modal");
+    if (boxModal?.classList.contains("is-open")) {
+      setModalState(boxModal, false);
+      document.body.style.overflow = "";
+      event.preventDefault();
     }
   });
 }
@@ -1355,8 +1523,7 @@ function setupGlobalEscape() {
 
 document.addEventListener("DOMContentLoaded", () => {
   orderCart = CartStore.load();
-  wirePayPalBoxButtons();
-  setupBoxAddToCartButtons();
+  setupBoxModal();
   setupAccessoryAddToCartButtons();
   setupOrderModal();
   renderOrderCart();

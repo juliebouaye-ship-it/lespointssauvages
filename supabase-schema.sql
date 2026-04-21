@@ -31,7 +31,7 @@ create table if not exists public.contact_requests (
 create table if not exists public.subscription_requests (
   id bigint generated always as identity primary key,
   created_at timestamptz not null default now(),
-  type text not null check (type in ('gift', 'manage')),
+  type text not null check (type in ('cancel', 'pause', 'info')),
   email text not null,
   message text not null
 );
