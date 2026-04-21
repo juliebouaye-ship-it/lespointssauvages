@@ -47,6 +47,8 @@ const PAYPAL_BOX_LINKS = {
 };
 
 const CONTACT_EMAIL = "lespointssauvages@gmail.com";
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
 
 const PRODUCT_LABELS = {
   petit: "Petit mot",
@@ -84,8 +86,66 @@ const FOURRURE_LABELS = {
   bicolore: "Bicolore (supplément)",
 };
 
+let supabaseClient = null;
+
 function formatEuro(amount) {
   return `${Number(amount).toFixed(2).replace(".", ",")} €`;
+}
+
+function getSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  if (!window.supabase?.createClient) return null;
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return supabaseClient;
+}
+
+async function insertSupabase(table, payload) {
+  const client = getSupabaseClient();
+  if (!client) return { ok: false, missingConfig: true };
+  const { error } = await client.from(table).insert(payload);
+  if (error) return { ok: false, error };
+  return { ok: true };
+}
+
+function getShippingState() {
+  return {
+    fullName: document.getElementById("shipping-fullname")?.value.trim() || "",
+    email: document.getElementById("shipping-email")?.value.trim() || "",
+    phone: document.getElementById("shipping-phone")?.value.trim() || "",
+    address1: document.getElementById("shipping-address1")?.value.trim() || "",
+    address2: document.getElementById("shipping-address2")?.value.trim() || "",
+    postalCode: document.getElementById("shipping-postal")?.value.trim() || "",
+    city: document.getElementById("shipping-city")?.value.trim() || "",
+    notes: document.getElementById("shipping-notes")?.value.trim() || "",
+  };
+}
+
+function validateShippingState(state) {
+  return Boolean(state.fullName && state.email && state.address1 && state.postalCode && state.city);
+}
+
+async function persistOrderToSupabase(capture, lines, total, shipping) {
+  const payload = {
+    paypal_order_id: capture?.id || null,
+    paypal_status: capture?.status || null,
+    payer_email: capture?.payer?.email_address || shipping.email || null,
+    payer_name: capture?.payer?.name
+      ? `${capture.payer.name.given_name || ""} ${capture.payer.name.surname || ""}`.trim()
+      : shipping.fullName || null,
+    amount_total: total,
+    shipping_fee: SHIPPING_EUR,
+    shipping_full_name: shipping.fullName,
+    shipping_email: shipping.email,
+    shipping_phone: shipping.phone || null,
+    shipping_address_1: shipping.address1,
+    shipping_address_2: shipping.address2 || null,
+    shipping_postal_code: shipping.postalCode,
+    shipping_city: shipping.city,
+    shipping_notes: shipping.notes || null,
+    cart_lines: lines,
+  };
+  return insertSupabase("orders", payload);
 }
 
 function setModalState(element, isOpen) {
@@ -463,23 +523,6 @@ function setupBoxAddToCartButtons() {
 }
 
 function setupAccessoryAddToCartButtons() {
-  document.querySelectorAll("[data-add-accessory]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const key = btn.getAttribute("data-add-accessory");
-      const color = btn.getAttribute("data-color") || "";
-      const accessory = ACCESSORY_PRODUCTS[key];
-      if (!accessory) return;
-      CartStore.add({
-        product: key,
-        quantity: 1,
-        color,
-        subtotal: accessory.price,
-      });
-      renderOrderCart();
-      showToast("Accessoire ajouté au panier.");
-    });
-  });
-
   document.querySelectorAll("[data-add-accessory-card]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const key = btn.getAttribute("data-add-accessory-card");
@@ -683,31 +726,51 @@ async function renderOrderPayPalIfPossible() {
     orderPaypalButtons = paypal.Buttons({
       style: { layout: "vertical", shape: "rect", label: "pay" },
       createOrder: (_data, actions) =>
-        actions.order.create({
-          purchase_units: [
-            {
-              amount: {
-                currency_code: "EUR",
-                value: total.toFixed(2),
-                breakdown: {
-                  item_total: { currency_code: "EUR", value: subStr },
-                  shipping: { currency_code: "EUR", value: shipStr },
+        {
+          const shippingState = getShippingState();
+          if (!validateShippingState(shippingState)) {
+            showToast("Merci de compléter vos coordonnées de livraison avant paiement.");
+            throw new Error("Shipping fields missing");
+          }
+          return actions.order.create({
+            purchase_units: [
+              {
+                amount: {
+                  currency_code: "EUR",
+                  value: total.toFixed(2),
+                  breakdown: {
+                    item_total: { currency_code: "EUR", value: subStr },
+                    shipping: { currency_code: "EUR", value: shipStr },
+                  },
                 },
+                items: [
+                  ...paypalItems,
+                ],
+                description: nameLine.slice(0, 127),
+                custom_id: hasCart ? `lps-cart-${Date.now()}` : buildPayPalCustomId(state),
               },
-              items: [
-                ...paypalItems,
-              ],
-              description: nameLine.slice(0, 127),
-              custom_id: hasCart ? `lps-cart-${Date.now()}` : buildPayPalCustomId(state),
-            },
-          ],
-        }),
+            ],
+          });
+        },
       onApprove: async (_data, actions) => {
-        await actions.order.capture();
+        const capture = await actions.order.capture();
+        const shippingState = getShippingState();
+        await persistOrderToSupabase(capture, lines, total, shippingState);
         showToast("Paiement reçu, merci ! Je prépare votre commande.");
         CartStore.clear();
         renderOrderCart();
+        if (hint) hint.textContent = "Paiement confirmé. Merci !";
+        const checkoutModal = document.getElementById("checkout-modal");
+        const drawer = document.getElementById("cart-drawer");
+        const drawerBackdrop = document.getElementById("cart-drawer-backdrop");
+        closeCheckoutModal(checkoutModal);
+        closeCartDrawer(drawer, drawerBackdrop);
         closeOrderModal();
+      },
+      onCancel: () => {
+        const msg = "Paiement annulé. Vous pouvez réessayer quand vous voulez.";
+        if (hint) hint.textContent = msg;
+        showToast(msg);
       },
       onError: (err) => {
         const msg =
@@ -731,14 +794,32 @@ function updateOrderSummary() {
   populatePhraseSelect();
   const state = getOrderState();
   syncOrderModalLayout();
-  const baseHint = document.getElementById("order-base-price");
-  const base = PRODUCT_BASE_EUR[state.product]?.[state.format];
-  if (baseHint) {
-    if (base != null) {
-      const qty = state.quantity || 1;
-      baseHint.textContent = `Prix article: ${base.toFixed(2)} € x ${qty} = ${(base * qty).toFixed(2)} € (hors options chat et hors livraison)`;
+  const liveTotalEl = document.getElementById("order-live-total");
+  const subtotal = computeSubtotalArticles(state);
+  if (liveTotalEl) {
+    if (subtotal == null) {
+      liveTotalEl.textContent = "—";
     } else {
-      baseHint.textContent = "";
+      const baseUnit = PRODUCT_BASE_EUR[state.product]?.[state.format] || 0;
+      const baseTotal = Math.round(baseUnit * state.quantity * 100) / 100;
+      if (state.product !== "chat") {
+        const formatLabel = state.format === "kit" ? "kit" : "broderie entière";
+        liveTotalEl.textContent = `${formatEuro(subtotal)} — ${formatLabel}`;
+      } else {
+        const detailParts = [`broderie entière ${formatEuro(baseTotal)}`];
+        if (state.bicolore) {
+          const bicoloreUnit = state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
+          detailParts.push(`bicolore ${formatEuro(bicoloreUnit * state.quantity)}`);
+        }
+        if (state.prenomAddon) {
+          const prenomUnit = state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
+          detailParts.push(`prénom ${formatEuro(prenomUnit * state.quantity)}`);
+        }
+        if (state.format === "kit") {
+          detailParts[0] = `kit ${formatEuro(baseTotal)}`;
+        }
+        liveTotalEl.textContent = `${formatEuro(subtotal)} (${detailParts.join(" + ")})`;
+      }
     }
   }
   schedulePayPalRender();
@@ -1011,6 +1092,88 @@ function setupOrderModal() {
   toggleCartActionButtons();
 }
 
+function setupContactForm() {
+  const form = document.getElementById("contact-form");
+  if (!form) return;
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("contact-email")?.value.trim() || "";
+    const message = document.getElementById("contact-message")?.value.trim() || "";
+    const name = document.getElementById("contact-name")?.value.trim() || "";
+    if (!email || !message) {
+      showToast("Merci de remplir email et message.");
+      return;
+    }
+    const result = await insertSupabase("contact_requests", {
+      name: name || null,
+      email,
+      message,
+    });
+    if (result.ok) {
+      form.reset();
+      showToast("Message envoyé. Merci !");
+      return;
+    }
+    if (result.missingConfig) {
+      const subject = encodeURIComponent("Contact Les Points Sauvages");
+      const body = encodeURIComponent(`${name ? `Prénom: ${name}\n` : ""}${message}`);
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      return;
+    }
+    showToast("Impossible d'envoyer pour le moment, réessayez.");
+  });
+}
+
+function setupSubscriptionRequests() {
+  const modal = document.getElementById("subscription-modal");
+  const closeBtn = document.getElementById("close-subscription-modal");
+  const form = document.getElementById("subscription-form");
+  const typeEl = document.getElementById("subscription-type");
+  document.querySelectorAll("[data-open-subscription-request]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const type = btn.getAttribute("data-open-subscription-request") || "gift";
+      if (typeEl) typeEl.value = type;
+      setModalState(modal, true);
+      document.body.style.overflow = "hidden";
+    });
+  });
+  closeBtn?.addEventListener("click", () => {
+    setModalState(modal, false);
+    document.body.style.overflow = "";
+  });
+  modal?.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      setModalState(modal, false);
+      document.body.style.overflow = "";
+    }
+  });
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const type = document.getElementById("subscription-type")?.value || "gift";
+    const email = document.getElementById("subscription-email")?.value.trim() || "";
+    const message = document.getElementById("subscription-message")?.value.trim() || "";
+    if (!email || !message) {
+      showToast("Merci de compléter les champs obligatoires.");
+      return;
+    }
+    const result = await insertSupabase("subscription_requests", { type, email, message });
+    if (result.ok) {
+      form.reset();
+      setModalState(modal, false);
+      document.body.style.overflow = "";
+      showToast("Demande envoyée. Je reviens vers vous rapidement.");
+      return;
+    }
+    if (result.missingConfig) {
+      const subject = encodeURIComponent("Demande abonnement Les Points Sauvages");
+      const body = encodeURIComponent(`Type: ${type}\nEmail: ${email}\n\n${message}`);
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      return;
+    }
+    showToast("Impossible d'envoyer pour le moment.");
+  });
+}
+
 /* ── Contact email link ─────────────────────── */
 
 function updateContactLinks() {
@@ -1177,6 +1340,13 @@ function setupGlobalEscape() {
       document.body.style.overflow = "";
       document.getElementById("open-legal-modal")?.focus();
       event.preventDefault();
+      return;
+    }
+    const subscription = document.getElementById("subscription-modal");
+    if (subscription?.classList.contains("is-open")) {
+      setModalState(subscription, false);
+      document.body.style.overflow = "";
+      event.preventDefault();
     }
   });
 }
@@ -1196,4 +1366,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupLegalModal();
   setupPrivacyModal();
   setupGlobalEscape();
+  setupContactForm();
+  setupSubscriptionRequests();
 });
