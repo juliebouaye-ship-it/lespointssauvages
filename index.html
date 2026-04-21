@@ -34,7 +34,11 @@
           <ul class="nav-links" role="list">
             <li><a href="#produits">Produits</a></li>
             <li><a href="#abonnement">Box</a></li>
-            <li><a href="#produits" class="btn btn-outline btn-sm">Commander</a></li>
+            <li>
+              <button type="button" class="cart-toggle" id="open-cart-drawer" aria-label="Ouvrir le panier">
+                Panier <span id="header-cart-count" class="cart-count">0</span>
+              </button>
+            </li>
           </ul>
         </nav>
       </div>
@@ -157,6 +161,7 @@
             <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 19,99 euros par mois">
               M'abonner →
             </button>
+            <p class="paypal-redirect-note">Vous serez redirigé·e vers PayPal.</p>
           </article>
 
           <article class="card pricing-card pricing-card--featured reveal" role="listitem" aria-label="Offre la plus populaire">
@@ -170,9 +175,8 @@
               <li>Livraison en une fois ou étalée</li>
               <li>Cadeau idéal</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="abo3Mois" aria-label="Prendre la box 3 mois à 49,99 euros en paiement unique">
-              Prendre 3 mois →
-            </button>
+            <button class="btn btn-outline btn-full" type="button" data-add-box="abo3Mois">Ajouter au panier</button>
+            <p class="paypal-redirect-note">Paiement sécurisé via le panier.</p>
           </article>
 
           <article class="card pricing-card reveal" role="listitem">
@@ -185,9 +189,8 @@
               <li>Priorité sur les nouveautés</li>
               <li>Le choix des convaincus</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="aboAnnee" aria-label="Prendre la box annuelle à 199,99 euros en paiement unique">
-              Prendre 1 an →
-            </button>
+            <button class="btn btn-outline btn-full" type="button" data-add-box="aboAnnee">Ajouter au panier</button>
+            <p class="paypal-redirect-note">Paiement sécurisé via le panier.</p>
           </article>
 
         </div>
@@ -230,7 +233,8 @@
             Pour voir les dernières créations, les coulisses, et les chats de service.
           </p>
         </div>
-        <div class="contact-block reveal">
+        <div class="contact-card reveal">
+          <p class="contact-kicker">On discute de votre idée ?</p>
           <a
             class="insta-link"
             href="https://www.instagram.com/les_points_sauvages/"
@@ -245,12 +249,10 @@
             </span>
             @les_points_sauvages
           </a>
-          <p class="contact-email">
-            Pour toute question :
-            <a href="mailto:lespointssauvages@gmail.com" id="contact-email-link">
-              lespointssauvages@gmail.com
-            </a>
-          </p>
+          <a class="contact-mail-btn" href="mailto:lespointssauvages@gmail.com" id="contact-email-link">
+            Ecrire un email
+          </a>
+          <p class="contact-email">Réponse rapide en général sous 24h (hors week-end de marché).</p>
         </div>
       </section>
 
@@ -303,6 +305,10 @@
                 <option value="kit">Kit DIY (tout inclus)</option>
                 <option value="fini">Broderie finie (prête à encadrer)</option>
               </select>
+            </div>
+            <div class="form-row">
+              <label for="order-qty">Quantité <span class="required" aria-hidden="true">*</span></label>
+              <input id="order-qty" name="order-qty" type="number" min="1" value="1" />
             </div>
           </div>
 
@@ -368,25 +374,49 @@
           </div>
 
           <div class="order-footer-panel" id="order-footer-panel" hidden>
-            <p class="order-modal-kicker">Récap &amp; paiement</p>
-            <p class="order-multi-hint">
-              Plusieurs tambours ou plusieurs chats ? Une commande par article (refaites une étape après paiement), ou un seul email avec le détail de chaque ligne — on vous envoie un lien adapté.
-            </p>
-            <div class="order-summary" id="order-summary" aria-live="polite"></div>
-
-            <div class="order-pay-primary">
-              <div id="order-paypal-wrap" class="order-paypal-wrap" hidden>
-                <p class="helper order-paypal-label">Payer avec PayPal</p>
-                <div id="order-paypal-container" class="order-paypal-container"></div>
-              </div>
-              <p class="form-note" id="order-paypal-hint" role="status"></p>
-              <p class="order-fallback-mail">
-                <button type="button" class="btn-text-link" id="order-mailto-btn">
-                  Problème avec PayPal ? Envoyer la commande par email
-                </button>
-              </p>
+            <div class="order-cart-actions">
+              <button type="button" class="btn btn-outline" id="order-add-cart-btn">Ajouter au panier</button>
+              <button type="button" class="btn btn-ghost" id="order-continue-btn" hidden>Continuer mes achats</button>
+              <button type="button" class="btn btn-primary" id="order-go-checkout-btn" hidden>Voir mon panier</button>
             </div>
+            <p class="helper" id="order-base-price"></p>
           </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
+      <div class="cart-drawer-header">
+        <h2>Votre panier</h2>
+        <button type="button" class="modal-close" id="close-cart-drawer" aria-label="Fermer le panier">×</button>
+      </div>
+      <div id="order-cart-list" class="order-cart-list"></div>
+      <p class="order-cart-subtotal"><strong>Sous-total : <span id="order-cart-subtotal">0,00 €</span></strong></p>
+      <p class="order-cart-shipping"><strong>Livraison : 4,99 €</strong></p>
+      <p class="order-cart-total"><strong>Total panier : <span id="order-cart-total">0,00 €</span></strong></p>
+      <div class="order-cart-footer">
+        <button type="button" class="btn btn-outline" id="order-cart-clear-btn">Vider le panier</button>
+        <button type="button" class="btn btn-primary" id="drawer-checkout-btn">Passer au paiement</button>
+      </div>
+    </aside>
+    <div class="cart-drawer-backdrop" id="cart-drawer-backdrop" aria-hidden="true"></div>
+
+    <div class="modal-backdrop" id="checkout-modal" aria-hidden="true">
+      <section class="legal-modal checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+        <button type="button" class="modal-close" id="close-checkout-modal" aria-label="Fermer le paiement">×</button>
+        <h2 id="checkout-modal-title">Paiement</h2>
+        <p class="helper">Finalisez votre commande en toute sécurité via PayPal.</p>
+        <div class="order-pay-primary">
+          <div id="order-paypal-wrap" class="order-paypal-wrap" hidden>
+            <p class="helper order-paypal-label">Payer avec PayPal</p>
+            <div id="order-paypal-container" class="order-paypal-container"></div>
+          </div>
+          <p class="form-note" id="order-paypal-hint" role="status"></p>
+          <p class="order-fallback-mail">
+            <button type="button" class="btn-text-link" id="order-mailto-btn">
+              Problème avec PayPal ? Envoyer la commande par email
+            </button>
+          </p>
         </div>
       </section>
     </div>

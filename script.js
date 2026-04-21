@@ -52,6 +52,8 @@ const PRODUCT_LABELS = {
   petit: "Petit mot",
   grand: "Grand mot",
   chat: "Petit chat qui dort",
+  abo3Mois: "Box broderie 3 mois",
+  aboAnnee: "Box broderie 1 an",
 };
 
 const FORMAT_LABELS = {
@@ -61,6 +63,11 @@ const FORMAT_LABELS = {
 
 const PHRASES_PETIT = ["Merde", "Putain", "Ba super"];
 const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
+const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
+const BOX_ONE_SHOT_EUR = {
+  abo3Mois: 49.99,
+  aboAnnee: 199.99,
+};
 
 const FOURRURE_LABELS = {
   noir: "Noir",
@@ -130,6 +137,30 @@ function loadPayPalSdk(clientId) {
 
 let orderPaypalButtons = null;
 let orderPaypalRenderTimer = null;
+let orderCart = [];
+
+function loadOrderCart() {
+  try {
+    const raw = window.localStorage.getItem(ORDER_CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((line) => ({
+      ...line,
+      quantity: Math.max(1, Number.parseInt(line.quantity || "1", 10) || 1),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function saveOrderCart() {
+  try {
+    window.localStorage.setItem(ORDER_CART_STORAGE_KEY, JSON.stringify(orderCart));
+  } catch {
+    /* ignore */
+  }
+}
 
 /* ── Box PayPal (abonnement mensuel ou liens paiement unique) ───────────────── */
 
@@ -176,6 +207,7 @@ function getOrderState() {
   const prenom = document.getElementById("order-prenom")?.value.trim() || "";
   const photoLink = document.getElementById("order-photo-link")?.value.trim() || "";
   const commentaire = document.getElementById("order-commentaire")?.value.trim() || "";
+  const quantity = Math.max(1, Number.parseInt(document.getElementById("order-qty")?.value || "1", 10) || 1);
   return {
     product,
     format,
@@ -187,22 +219,23 @@ function getOrderState() {
     prenom,
     photoLink,
     commentaire,
+    quantity,
   };
 }
 
 function computeSubtotalArticles(state) {
   const base = PRODUCT_BASE_EUR[state.product]?.[state.format];
   if (base == null) return null;
-  let total = base;
+  let unit = base;
   if (state.product === "chat") {
     if (state.bicolore) {
-      total += state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
+      unit += state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
     }
     if (state.prenomAddon) {
-      total += state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
+      unit += state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
     }
   }
-  return Math.round(total * 100) / 100;
+  return Math.round(unit * state.quantity * 100) / 100;
 }
 
 function computeTotalEur(state) {
@@ -305,6 +338,7 @@ function buildMailtoBody(state, total) {
     "",
     `Produit : ${PRODUCT_LABELS[state.product] || state.product}`,
     `Format : ${FORMAT_LABELS[state.format] || state.format}`,
+    `Quantite : ${state.quantity}`,
     `Montant TTC (articles + port ${SHIPPING_EUR} €) : ${total != null ? `${total} €` : "(à confirmer)"}`,
     "",
   ];
@@ -323,6 +357,131 @@ function buildMailtoBody(state, total) {
   lines.push("");
   lines.push("Merci !");
   return lines.join("\n");
+}
+
+function stateToCartLine(state) {
+  const subArticles = computeSubtotalArticles(state);
+  if (subArticles == null) return null;
+  return {
+    product: state.product,
+    format: state.format,
+    phrase: state.phrase,
+    fourrure: state.fourrure,
+    bicolore: state.bicolore,
+    bicoloreDetail: state.bicoloreDetail,
+    prenomAddon: state.prenomAddon,
+    prenom: state.prenom,
+    photoLink: state.photoLink,
+    commentaire: state.commentaire,
+    quantity: state.quantity,
+    subtotal: subArticles,
+  };
+}
+
+function lineLabel(line) {
+  const product = PRODUCT_LABELS[line.product] || line.product;
+  if (line.format && FORMAT_LABELS[line.format]) {
+    return `${line.quantity} × ${product} — ${FORMAT_LABELS[line.format]}`;
+  }
+  return `${line.quantity} × ${product}`;
+}
+
+function lineDetail(line) {
+  const details = [];
+  if (line.product === "abo3Mois" || line.product === "aboAnnee") {
+    details.push("Paiement one shot");
+  }
+  if (line.product === "petit" || line.product === "grand") {
+    if (line.phrase) details.push(`Phrase: ${line.phrase}`);
+  }
+  if (line.product === "chat") {
+    const fur = FOURRURE_LABELS[line.fourrure] || line.fourrure;
+    if (fur) details.push(`Fourrure: ${fur}`);
+    if (line.bicolore && line.bicoloreDetail) details.push(`Bicolore: ${line.bicoloreDetail}`);
+    if (line.prenomAddon && line.prenom) details.push(`Prenom: ${line.prenom}`);
+  }
+  if (line.commentaire) details.push(`Note: ${line.commentaire}`);
+  return details.join(" · ");
+}
+
+function setupBoxAddToCartButtons() {
+  document.querySelectorAll("[data-add-box]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const key = btn.getAttribute("data-add-box");
+      const price = BOX_ONE_SHOT_EUR[key];
+      if (!price) return;
+      orderCart.push({
+        product: key,
+        quantity: 1,
+        subtotal: price,
+      });
+      saveOrderCart();
+      renderOrderCart();
+      showToast("Box ajoutée au panier.");
+    });
+  });
+}
+
+function computeCartTotal() {
+  const subtotal = orderCart.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
+  if (!orderCart.length) return null;
+  return Math.round((subtotal + SHIPPING_EUR) * 100) / 100;
+}
+
+function computeCartSubtotal() {
+  return orderCart.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
+}
+
+function updateCartCountBadges() {
+  const count = orderCart.length;
+  const badge = document.getElementById("header-cart-count");
+  if (badge) badge.textContent = String(count);
+}
+
+function renderOrderCart() {
+  const list = document.getElementById("order-cart-list");
+  const totalEl = document.getElementById("order-cart-total");
+  const subtotalEl = document.getElementById("order-cart-subtotal");
+  if (!list || !totalEl) return;
+  if (!orderCart.length) {
+    list.innerHTML = "<p class='muted'>Votre panier est vide.</p>";
+    totalEl.textContent = "0,00 €";
+    if (subtotalEl) subtotalEl.textContent = "0,00 €";
+    updateCartCountBadges();
+    toggleCartActionButtons();
+    return;
+  }
+
+  list.innerHTML = orderCart
+    .map(
+      (line, idx) => `
+      <article class="order-cart-item">
+        <div class="order-cart-item-head">
+          <strong>${lineLabel(line)}</strong>
+          <button type="button" class="cart-remove-btn" data-cart-remove="${idx}">Supprimer</button>
+        </div>
+        <p class="muted">${lineDetail(line) || "Sans option"}</p>
+        <p class="muted">${Number(line.subtotal || 0).toFixed(2)} €</p>
+      </article>
+    `
+    )
+    .join("");
+
+  const subtotal = computeCartSubtotal();
+  if (subtotalEl) subtotalEl.textContent = `${subtotal.toFixed(2).replace(".", ",")} €`;
+  totalEl.textContent = `${computeCartTotal().toFixed(2).replace(".", ",")} €`;
+  updateCartCountBadges();
+  toggleCartActionButtons();
+
+  list.querySelectorAll("[data-cart-remove]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.getAttribute("data-cart-remove"));
+      orderCart.splice(index, 1);
+      saveOrderCart();
+      renderOrderCart();
+      schedulePayPalRender();
+    });
+  });
 }
 
 function buildPayPalDescription(state) {
@@ -391,8 +550,10 @@ async function schedulePayPalRender() {
 async function renderOrderPayPalIfPossible() {
   destroyOrderPaypalButtons();
   const state = getOrderState();
-  const total = computeTotalEur(state);
+  const singleTotal = computeTotalEur(state);
   const ok = validateOrder(state);
+  const hasCart = orderCart.length > 0;
+  const total = hasCart ? computeCartTotal() : singleTotal;
   const hint = document.getElementById("order-paypal-hint");
   const wrap = document.getElementById("order-paypal-wrap");
 
@@ -404,7 +565,7 @@ async function renderOrderPayPalIfPossible() {
     return;
   }
 
-  if (!ok || total == null) {
+  if ((!ok && !hasCart) || total == null) {
     if (hint) hint.textContent = "";
     return;
   }
@@ -414,11 +575,18 @@ async function renderOrderPayPalIfPossible() {
   try {
     const paypal = await loadPayPalSdk(PAYPAL_CLIENT_ID);
     if (wrap) wrap.hidden = false;
-    const subArticles = computeSubtotalArticles(state);
+    const lines = hasCart ? orderCart : [stateToCartLine(state)].filter(Boolean);
+    const subArticles = lines.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
     const shipStr = SHIPPING_EUR.toFixed(2);
-    const subStr = subArticles != null ? subArticles.toFixed(2) : total.toFixed(2);
-    const nameLine = buildPayPalDescription(state);
-    const detailLine = buildPayPalItemDetail(state);
+    const subStr = subArticles.toFixed(2);
+    const nameLine = hasCart ? "LPS — Panier multi-produits" : buildPayPalDescription(state);
+    const detailLine = hasCart ? `${lines.length} article(s)` : buildPayPalItemDetail(state);
+    const paypalItems = lines.map((line) => ({
+      name: lineLabel(line).slice(0, 127),
+      description: lineDetail(line).slice(0, 127),
+      quantity: "1",
+      unit_amount: { currency_code: "EUR", value: Number(line.subtotal || 0).toFixed(2) },
+    }));
 
     orderPaypalButtons = paypal.Buttons({
       style: { layout: "vertical", shape: "rect", label: "pay" },
@@ -435,26 +603,19 @@ async function renderOrderPayPalIfPossible() {
                 },
               },
               items: [
-                {
-                  name: nameLine.slice(0, 127),
-                  description: detailLine.slice(0, 127),
-                  quantity: "1",
-                  unit_amount: { currency_code: "EUR", value: subStr },
-                },
-                {
-                  name: "Livraison (France)",
-                  quantity: "1",
-                  unit_amount: { currency_code: "EUR", value: shipStr },
-                },
+                ...paypalItems,
               ],
               description: nameLine.slice(0, 127),
-              custom_id: buildPayPalCustomId(state),
+              custom_id: hasCart ? `lps-cart-${Date.now()}` : buildPayPalCustomId(state),
             },
           ],
         }),
       onApprove: async (_data, actions) => {
         await actions.order.capture();
         showToast("Paiement reçu, merci ! Je prépare votre commande.");
+        orderCart = [];
+        saveOrderCart();
+        renderOrderCart();
         closeOrderModal();
       },
       onError: (err) => {
@@ -476,65 +637,28 @@ async function renderOrderPayPalIfPossible() {
 }
 
 function updateOrderSummary() {
-  const summary = document.getElementById("order-summary");
-  if (!summary) return;
   populatePhraseSelect();
   const state = getOrderState();
   syncOrderModalLayout();
-
-  const subArticles = computeSubtotalArticles(state);
-  const total = computeTotalEur(state);
-  const ok = validateOrder(state);
-
-  if (!state.product || !state.format) {
-    summary.innerHTML = "<span class='muted'>Choisissez un produit et un format pour voir le total.</span>";
-    schedulePayPalRender();
-    return;
-  }
-
-  let html = "";
-  html += `<strong>${PRODUCT_LABELS[state.product]}</strong> — ${FORMAT_LABELS[state.format]}<br/>`;
-
-  if ((state.product === "petit" || state.product === "grand") && state.phrase) {
-    html += `<span class='muted'>Phrase : « ${state.phrase} »</span><br/>`;
-  }
-
-  if (state.product === "chat" && subArticles != null) {
-    const furLabel = FOURRURE_LABELS[state.fourrure] || state.fourrure;
-    if (furLabel) html += `<span class='muted'>Fourrure : ${furLabel}</span><br/>`;
-    if (state.bicolore && state.bicoloreDetail) {
-      html += `<span class='muted'>Précisions bicolore : ${state.bicoloreDetail}</span><br/>`;
+  const baseHint = document.getElementById("order-base-price");
+  const base = PRODUCT_BASE_EUR[state.product]?.[state.format];
+  if (baseHint) {
+    if (base != null) {
+      const qty = state.quantity || 1;
+      baseHint.textContent = `Prix article: ${base.toFixed(2)} € x ${qty} = ${(base * qty).toFixed(2)} € (hors options chat et hors livraison)`;
+    } else {
+      baseHint.textContent = "";
     }
-    const baseOnly = PRODUCT_BASE_EUR.chat[state.format];
-    html += `<span class='muted'>Base ${baseOnly} €</span>`;
-    const extras = [];
-    if (state.bicolore) {
-      const add = state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
-      extras.push(`bicolore +${add} €`);
-    }
-    if (state.prenomAddon) {
-      const add = state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
-      extras.push(`prénom +${add} €`);
-    }
-    if (extras.length) html += `<br/><span class='muted'>Options : ${extras.join(", ")}</span>`;
-  } else if (subArticles != null) {
-    html += `<span class='muted'>Articles ${subArticles.toFixed(2)} €</span>`;
   }
-
-  if (subArticles != null) {
-    html += `<br/><span class='muted'>Livraison ${SHIPPING_EUR.toFixed(2)} €</span>`;
-  }
-
-  if (total != null) {
-    html += `<br/><strong>Total : ${total.toFixed(2)} €</strong>`;
-  }
-
-  if (!ok) {
-    html += `<br/><span class='muted'>Complétez les champs obligatoires pour payer.</span>`;
-  }
-
-  summary.innerHTML = html;
   schedulePayPalRender();
+}
+
+function toggleCartActionButtons() {
+  const continueBtn = document.getElementById("order-continue-btn");
+  const viewCartBtn = document.getElementById("order-go-checkout-btn");
+  const hasCart = orderCart.length > 0;
+  if (continueBtn) continueBtn.hidden = !hasCart;
+  if (viewCartBtn) viewCartBtn.hidden = !hasCart;
 }
 
 function openOrderModal(presetProduct, presetFormat) {
@@ -561,6 +685,7 @@ function openOrderModal(presetProduct, presetFormat) {
     "order-prenom",
     "order-photo-link",
     "order-commentaire",
+    "order-qty",
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -569,6 +694,8 @@ function openOrderModal(presetProduct, presetFormat) {
 
   const fur = document.getElementById("order-fourrure");
   if (fur) fur.value = "";
+  const qty = document.getElementById("order-qty");
+  if (qty) qty.value = "1";
   document.getElementById("order-prenom-addon-no")?.click();
 
   modal.classList.add("is-open");
@@ -599,6 +726,50 @@ function setupOrderModal() {
   const modal = document.getElementById("order-modal");
   const closeBtn = document.getElementById("close-order-modal");
   const mailBtn = document.getElementById("order-mailto-btn");
+  const addCartBtn = document.getElementById("order-add-cart-btn");
+  const clearCartBtn = document.getElementById("order-cart-clear-btn");
+  const continueBtn = document.getElementById("order-continue-btn");
+  const goCheckoutBtn = document.getElementById("order-go-checkout-btn");
+  const drawerCheckoutBtn = document.getElementById("drawer-checkout-btn");
+  const openDrawerBtn = document.getElementById("open-cart-drawer");
+  const closeDrawerBtn = document.getElementById("close-cart-drawer");
+  const drawer = document.getElementById("cart-drawer");
+  const drawerBackdrop = document.getElementById("cart-drawer-backdrop");
+  const checkoutModal = document.getElementById("checkout-modal");
+  const closeCheckoutBtn = document.getElementById("close-checkout-modal");
+
+  const openCartDrawer = () => {
+    if (!drawer || !drawerBackdrop) return;
+    drawer.classList.add("is-open");
+    drawerBackdrop.classList.add("is-open");
+    drawer.setAttribute("aria-hidden", "false");
+    drawerBackdrop.setAttribute("aria-hidden", "false");
+  };
+
+  const closeCartDrawer = () => {
+    if (!drawer || !drawerBackdrop) return;
+    drawer.classList.remove("is-open");
+    drawerBackdrop.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden", "true");
+    drawerBackdrop.setAttribute("aria-hidden", "true");
+  };
+
+  const openCheckoutModal = () => {
+    if (!checkoutModal) return;
+    checkoutModal.classList.add("is-open");
+    checkoutModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    schedulePayPalRender();
+    const wrap = document.getElementById("order-paypal-wrap");
+    if (wrap) wrap.hidden = false;
+  };
+
+  const closeCheckoutModal = () => {
+    if (!checkoutModal) return;
+    checkoutModal.classList.remove("is-open");
+    checkoutModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
 
   document.querySelectorAll("[data-open-order]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -625,6 +796,7 @@ function setupOrderModal() {
     "order-prenom",
     "order-photo-link",
     "order-commentaire",
+    "order-qty",
   ].forEach((id) => {
     document.getElementById(id)?.addEventListener("input", updateOrderSummary);
     document.getElementById(id)?.addEventListener("change", updateOrderSummary);
@@ -636,17 +808,96 @@ function setupOrderModal() {
 
   if (mailBtn) {
     mailBtn.addEventListener("click", () => {
+      const hasCart = orderCart.length > 0;
       const state = getOrderState();
-      const total = computeTotalEur(state);
-      if (!validateOrder(state)) {
+      const total = hasCart ? computeCartTotal() : computeTotalEur(state);
+      if (!hasCart && !validateOrder(state)) {
         showToast("Merci de compléter les champs obligatoires 🙏");
         return;
       }
+      const bodyText = hasCart
+        ? [
+            "Bonjour,",
+            "",
+            "Récapitulatif panier :",
+            "",
+            ...orderCart.flatMap((line) => [
+              `${lineLabel(line)} — ${Number(line.subtotal || 0).toFixed(2)} €`,
+              lineDetail(line) || "Sans option",
+              "",
+            ]),
+            `Livraison : ${SHIPPING_EUR.toFixed(2)} €`,
+            `Total : ${total != null ? `${total.toFixed(2)} €` : "(à confirmer)"}`,
+            "",
+            "Merci !",
+          ].join("\n")
+        : buildMailtoBody(state, total);
       const subject = encodeURIComponent("Commande Les Points Sauvages");
-      const body = encodeURIComponent(buildMailtoBody(state, total));
+      const body = encodeURIComponent(bodyText);
       window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
     });
   }
+
+  if (addCartBtn) {
+    addCartBtn.addEventListener("click", () => {
+      const state = getOrderState();
+      if (!validateOrder(state)) {
+        showToast("Complétez les champs obligatoires avant d'ajouter au panier.");
+        return;
+      }
+      const line = stateToCartLine(state);
+      if (!line) {
+        showToast("Impossible d'ajouter cette ligne.");
+        return;
+      }
+      orderCart.push(line);
+      saveOrderCart();
+      renderOrderCart();
+      schedulePayPalRender();
+      showToast("Article ajouté au panier.");
+    });
+  }
+
+  if (continueBtn) {
+    continueBtn.addEventListener("click", () => {
+      closeOrderModal();
+    });
+  }
+
+  if (goCheckoutBtn) {
+    goCheckoutBtn.addEventListener("click", () => {
+      closeOrderModal();
+      openCartDrawer();
+    });
+  }
+
+  if (drawerCheckoutBtn) {
+    drawerCheckoutBtn.addEventListener("click", () => {
+      closeCartDrawer();
+      openCheckoutModal();
+    });
+  }
+
+  if (openDrawerBtn) openDrawerBtn.addEventListener("click", openCartDrawer);
+  if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeCartDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeCartDrawer);
+  if (closeCheckoutBtn) closeCheckoutBtn.addEventListener("click", closeCheckoutModal);
+  if (checkoutModal) {
+    checkoutModal.addEventListener("click", (e) => {
+      if (e.target === checkoutModal) closeCheckoutModal();
+    });
+  }
+
+  if (clearCartBtn) {
+    clearCartBtn.addEventListener("click", () => {
+      orderCart = [];
+      saveOrderCart();
+      renderOrderCart();
+      schedulePayPalRender();
+    });
+  }
+
+  toggleCartActionButtons();
 }
 
 /* ── Contact email link ─────────────────────── */
@@ -785,6 +1036,24 @@ function setupPrivacyModal() {
 function setupGlobalEscape() {
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+    const checkout = document.getElementById("checkout-modal");
+    if (checkout?.classList.contains("is-open")) {
+      checkout.classList.remove("is-open");
+      checkout.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      event.preventDefault();
+      return;
+    }
+    const drawer = document.getElementById("cart-drawer");
+    const drawerBackdrop = document.getElementById("cart-drawer-backdrop");
+    if (drawer?.classList.contains("is-open")) {
+      drawer.classList.remove("is-open");
+      drawerBackdrop?.classList.remove("is-open");
+      drawer.setAttribute("aria-hidden", "true");
+      drawerBackdrop?.setAttribute("aria-hidden", "true");
+      event.preventDefault();
+      return;
+    }
     const order = document.getElementById("order-modal");
     if (order?.classList.contains("is-open")) {
       closeOrderModal();
@@ -814,8 +1083,11 @@ function setupGlobalEscape() {
 /* ── Init ───────────────────────────────────── */
 
 document.addEventListener("DOMContentLoaded", () => {
+  orderCart = loadOrderCart();
   wirePayPalBoxButtons();
+  setupBoxAddToCartButtons();
   setupOrderModal();
+  renderOrderCart();
   updateContactLinks();
   setupReveal();
   setFooterYear();
