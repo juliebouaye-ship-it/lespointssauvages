@@ -363,6 +363,18 @@ h1 em {
 
 .cards-3 {
   margin-bottom: 1.4rem;
+  align-items: stretch;
+}
+
+.cards-3 > .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-3 > .card .format-toggle,
+.cards-3 > .card .accessory-controls {
+  margin-top: auto;
 }
 
 .cards-2 {
@@ -611,6 +623,7 @@ h1 em {
   flex-direction: column;
   gap: 0.8rem;
   text-align: center;
+  min-height: 100%;
 }
 
 .pricing-card--featured {
@@ -672,6 +685,10 @@ h1 em {
 
 .pricing-card .price {
   min-height: 3.1rem;
+}
+
+.pricing-card .price-detail {
+  min-height: 2.4rem;
 }
 
 .order-inline-fields {
