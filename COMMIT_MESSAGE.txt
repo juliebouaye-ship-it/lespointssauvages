@@ -1,6 +1,0 @@
-Améliore le parcours d'achat mobile avec un panier latéral et une modale de paiement dédiée.
-
-Cette version clarifie les CTA, ajoute la gestion panier multi-produits (incluant les box one-shot), améliore la section contact et corrige les comportements d'interface sur mobile.
-Améliore le parcours d'achat mobile avec un panier latéral et une modale de paiement dédiée.
-
-Cette version clarifie les CTA, ajoute la gestion panier multi-produits (incluant les box one-shot), améliore la section contact et corrige les comportements d'interface sur mobile.
