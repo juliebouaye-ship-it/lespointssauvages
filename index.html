@@ -33,7 +33,7 @@
         <nav aria-label="Navigation principale">
           <ul class="nav-links" role="list">
             <li><a href="#produits">Produits</a></li>
-            <li><a href="#abonnement">Box</a></li>
+            <li><a href="#box">Box</a></li>
             <li>
               <button type="button" class="cart-toggle" id="open-cart-drawer" aria-label="Ouvrir le panier">
                 Panier <span id="header-cart-count" class="cart-count">0</span>
@@ -57,13 +57,14 @@
           <img src="./logolps.png" alt="" class="hero-logo-subtle" width="80" height="80" />
         </div>
         <p class="hero-text reveal">
-          Des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou vos
-          phrases préférées, et des abonnements pour les amateurs de second degré.
+          Je crée des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou
+          vos phrases préférées, et des abonnements pour les amateurs de second degré.
           Parce que parfois, les mots ont besoin d'être brodés.
         </p>
         <div class="hero-actions reveal">
-          <a class="btn btn-primary" href="#produits">Voir les créations</a>
-          <a class="btn btn-ghost" href="#abonnement">La box mensuelle</a>
+          <a class="btn btn-primary" href="#produits">La boutique</a>
+          <a class="btn btn-ghost" href="#box">La box mensuelle</a>
+          <a class="btn btn-outline" href="#marches">Voir mes dates de marché</a>
         </div>
         <p class="trust-inline reveal">
           <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé via PayPal
@@ -73,106 +74,135 @@
       <!-- ── PRODUITS ── -->
       <section id="produits" class="section container" aria-labelledby="produits-title">
         <div class="section-header reveal">
-          <h2 id="produits-title">Nos créations</h2>
-          <p class="section-sub">Choisissez votre arme. Brodée avec amour (et un peu de rage).</p>
+          <h2 id="produits-title">Tous les produits</h2>
+          <p class="section-sub">Broderies et accessoires 3D, au même endroit.</p>
         </div>
-
-        <div class="cards" role="list">
-
-          <!-- PETIT MOT -->
+        <h3 class="product-group-title reveal">Mes broderies</h3>
+        <div class="cards cards-3" role="list">
           <article class="card reveal" role="listitem">
-            <div class="card-tag">Bestseller</div>
-            <div class="card-icon" aria-hidden="true">🪡</div>
+            <div class="card-tag"><span aria-hidden="true">⭐</span> Bestseller</div>
+            <img class="card-thumb" src="./images/embroidery-petit-mot.jpg" alt="Broderie petit mot" loading="lazy" />
             <h3>Petit mot</h3>
             <p class="meta">« Merde » · « Putain » · « Ba super »</p>
-            <p>Le classique impertinent. Petit format, grand impact. Disponible en kit à broder vous-même ou broderie finie prête à encadrer.</p>
+            <p>Mon classique impertinent. Petit format, grand impact. Disponible en kit DIY ou en broderie finie.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit mot">
-              <button type="button" class="btn btn-primary" data-open-order="petit" data-order-format="kit" aria-label="Commander le kit DIY Petit mot">
-                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
-              </button>
-              <button type="button" class="btn btn-outline" data-open-order="petit" data-order-format="fini" aria-label="Commander la broderie finie Petit mot">
-                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
-              </button>
+              <button type="button" class="btn btn-primary" data-open-order="petit" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
+              <button type="button" class="btn btn-outline" data-open-order="petit" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
             </div>
-            <p class="helper">
-              Choisissez votre texte au moment de la commande (fenêtre sécurisée).
-            </p>
           </article>
 
-          <!-- GRAND MOT -->
           <article class="card reveal" role="listitem">
-            <div class="card-tag">Coup de gueule</div>
-            <div class="card-icon" aria-hidden="true">✂️</div>
+            <div class="card-tag"><span aria-hidden="true">🔥</span> Coup de gueule</div>
+            <img class="card-thumb" src="./images/embroidery-grand-mot.jpg" alt="Broderie grand mot" loading="lazy" />
             <h3>Grand mot</h3>
             <p class="meta">« Sauf erreur de ma part » · « Pas là pour plaire »</p>
-            <p>Pour les phrases qui tiennent en une ligne mais résument toute une philosophie de vie. Format plus grand, plus de fil, autant de satisfaction.</p>
+            <p>Pour les phrases qui piquent juste comme il faut. Format plus grand, même énergie.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Grand mot">
-              <button type="button" class="btn btn-primary" data-open-order="grand" data-order-format="kit" aria-label="Commander le kit DIY Grand mot">
-                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
-              </button>
-              <button type="button" class="btn btn-outline" data-open-order="grand" data-order-format="fini" aria-label="Commander la broderie finie Grand mot">
-                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
-              </button>
+              <button type="button" class="btn btn-primary" data-open-order="grand" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
+              <button type="button" class="btn btn-outline" data-open-order="grand" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
             </div>
-            <p class="helper">
-              Précisez votre phrase favorite dans la fenêtre de commande.
-            </p>
           </article>
 
-          <!-- PETIT CHAT -->
           <article class="card reveal" role="listitem">
-            <div class="card-tag card-tag--special">Personnalisable</div>
-            <div class="card-icon" aria-hidden="true">🐱</div>
+            <div class="card-tag card-tag--special"><span aria-hidden="true">🎨</span> Personnalisable</div>
+            <img class="card-thumb" src="./images/embroidery-petit-chat.jpg" alt="Broderie petit chat personnalisable" loading="lazy" />
             <h3>Petit chat qui dort</h3>
             <p class="meta">Fourrure au choix · bicolore et prénom en options</p>
-            <p>Immortalisez votre chat dans un tambour de broderie. Prénom, couleur, bicolore : c'est votre chat, ce sera votre broderie.</p>
+            <p>Votre chat, votre style : prénom et couleurs personnalisables.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit chat qui dort">
-              <button type="button" class="btn btn-primary" data-open-order="chat" data-order-format="kit" aria-label="Commander le kit DIY Petit chat">
-                <span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY
-              </button>
-              <button type="button" class="btn btn-outline" data-open-order="chat" data-order-format="fini" aria-label="Commander la broderie finie Petit chat">
-                <span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie
-              </button>
+              <button type="button" class="btn btn-primary" data-open-order="chat" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
+              <button type="button" class="btn btn-outline" data-open-order="chat" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
+            </div>
+          </article>
+        </div>
+
+        <h3 class="product-group-title reveal">Mes accessoires PLA biosourcés</h3>
+        <div class="cards cards-3" role="list">
+          <div class="accessory-note reveal">
+            <h3>Imprimés localement en PLA biosourcé</h3>
+            <p>
+              Le PLA est un plastique d'origine végétale (souvent à base d'amidon de maïs), plus léger côté impact.
+              J'imprime chaque accessoire en local sur mon imprimante 3D pour garder une production artisanale.
+            </p>
+          </div>
+
+          <article class="card reveal" role="listitem">
+            <div class="card-icon" aria-hidden="true">🐾</div>
+            <h3>Cercle à broder oreilles de chat</h3>
+            <p class="meta">5,00 € · PLA biosourcé</p>
+            <p>Disponible en noir ou en blanc.</p>
+            <div class="accessory-controls">
+              <div class="accessory-inline-row">
+                <div class="pill-toggle" role="radiogroup" aria-label="Couleur cercle oreilles de chat">
+                  <input class="pill-toggle-input" type="radio" name="accessory-color-oreilles-chat" id="accessory-oreilles-noir" value="Noir" checked />
+                  <label class="pill-toggle-label" for="accessory-oreilles-noir">Noir</label>
+                  <input class="pill-toggle-input" type="radio" name="accessory-color-oreilles-chat" id="accessory-oreilles-blanc" value="Blanc" />
+                  <label class="pill-toggle-label" for="accessory-oreilles-blanc">Blanc</label>
+                </div>
+                <div class="qty-stepper">
+                  <button type="button" class="qty-step-btn" data-qty-step="-1" aria-label="Diminuer la quantité">-</button>
+                  <input id="accessory-qty-oreilles" class="accessory-qty" type="number" min="1" value="1" />
+                  <button type="button" class="qty-step-btn" data-qty-step="1" aria-label="Augmenter la quantité">+</button>
+                </div>
+              </div>
+              <button class="btn btn-outline" type="button" data-add-accessory-card="oreilles-chat">Ajouter au panier</button>
             </div>
           </article>
 
+          <article class="card reveal" role="listitem">
+            <div class="card-icon" aria-hidden="true">🔺</div>
+            <h3>Stand triangle pour broderie</h3>
+            <p class="meta">3,00 € · PLA biosourcé</p>
+            <p>Support discret pour exposer vos broderies debout.</p>
+            <div class="accessory-controls">
+              <div class="accessory-inline-row">
+                <div class="pill-toggle" role="radiogroup" aria-label="Couleur stand triangle">
+                  <input class="pill-toggle-input" type="radio" name="accessory-color-stand-triangle" id="accessory-stand-noir" value="Noir" checked />
+                  <label class="pill-toggle-label" for="accessory-stand-noir">Noir</label>
+                  <input class="pill-toggle-input" type="radio" name="accessory-color-stand-triangle" id="accessory-stand-blanc" value="Blanc" />
+                  <label class="pill-toggle-label" for="accessory-stand-blanc">Blanc</label>
+                </div>
+                <div class="qty-stepper">
+                  <button type="button" class="qty-step-btn" data-qty-step="-1" aria-label="Diminuer la quantité">-</button>
+                  <input id="accessory-qty-stand" class="accessory-qty" type="number" min="1" value="1" />
+                  <button type="button" class="qty-step-btn" data-qty-step="1" aria-label="Augmenter la quantité">+</button>
+                </div>
+              </div>
+              <button class="btn btn-outline" type="button" data-add-accessory-card="stand-triangle">Ajouter au panier</button>
+            </div>
+          </article>
         </div>
       </section>
 
-      <!-- ── BOX ABONNEMENT ── -->
       <section id="abonnement" class="section container" aria-labelledby="abo-title">
         <div class="section-header reveal">
-          <h2 id="abo-title">Box broderie mensuelle</h2>
+          <h2 id="abo-title">La box mensuelle</h2>
           <p class="section-sub">Un nouveau motif chaque mois, les accessoires inclus, livré chez vous.<br />Pour les addict·es qui veulent toujours un projet en cours.</p>
         </div>
 
         <div class="cards pricing" role="list">
-
-          <article class="card pricing-card reveal" role="listitem">
+          <article class="card pricing-card reveal" role="listitem" id="box">
             <div class="price-label">Mensuel</div>
-            <div class="price">19,99 <sup>€</sup><span class="price-period">/ mois</span></div>
-            <p class="price-detail">Abonnement mensuel · livraison France incluse à chaque envoi</p>
+            <div class="price">15 <sup>€</sup><span class="price-period"> / box</span></div>
+            <p class="price-detail">+ 3,50 € de frais de livraison</p>
             <ul class="price-features" aria-label="Inclus dans la box mensuelle">
               <li>1 kit complet par mois</li>
               <li>Motif exclusif</li>
               <li>Fils, tambour, aiguille</li>
               <li>Résiliable à tout moment</li>
             </ul>
-            <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 19,99 euros par mois">
-              M'abonner →
-            </button>
+            <button class="btn btn-primary btn-full" data-paypal="aboMensuel" aria-label="S'abonner à la box mensuelle à 15 euros par box">M'abonner →</button>
             <p class="paypal-redirect-note">Vous serez redirigé·e vers PayPal.</p>
           </article>
 
-          <article class="card pricing-card pricing-card--featured reveal" role="listitem" aria-label="Offre la plus populaire">
-            <div class="card-tag card-tag--featured">⭐ Le plus populaire</div>
-            <div class="price-label">3 mois</div>
-            <div class="price">49,99 <sup>€</sup></div>
-            <p class="price-detail">Paiement unique · livraison France incluse</p>
+          <article class="card pricing-card pricing-card--featured reveal" role="listitem">
+            <div class="card-tag card-tag--featured">⭐ Le plus populaire - 3 mois</div>
+            <div class="price">40 <sup>€</sup></div>
+            <p class="price-detail">13 €/box + frais de livraison</p>
             <ul class="price-features" aria-label="Inclus dans la box 3 mois">
               <li>3 kits complets</li>
               <li>Motifs exclusifs</li>
-              <li>Livraison en une fois ou étalée</li>
+              <li>Un nouveau kit chaque mois</li>
               <li>Cadeau idéal</li>
             </ul>
             <button class="btn btn-outline btn-full" type="button" data-add-box="abo3Mois">Ajouter au panier</button>
@@ -180,19 +210,42 @@
           </article>
 
           <article class="card pricing-card reveal" role="listitem">
-            <div class="price-label">1 an</div>
-            <div class="price">199,99 <sup>€</sup></div>
-            <p class="price-detail">Paiement unique · livraison France incluse</p>
+            <div class="card-tag">Un an de broderie</div>
+            <div class="price">195 <sup>€</sup></div>
+            <p class="price-detail">2 box offertes !</p>
             <ul class="price-features" aria-label="Inclus dans la box annuelle">
               <li>12 kits complets</li>
               <li>Motifs exclusifs toute l'année</li>
               <li>Priorité sur les nouveautés</li>
-              <li>Le choix des convaincus</li>
+              <li>Un projet broderie toute l'année</li>
             </ul>
             <button class="btn btn-outline btn-full" type="button" data-add-box="aboAnnee">Ajouter au panier</button>
             <p class="paypal-redirect-note">Paiement sécurisé via le panier.</p>
           </article>
+        </div>
+      </section>
 
+      <section id="marches" class="section section-alt" aria-labelledby="marches-title">
+        <div class="container">
+          <div class="section-header reveal">
+            <h2 id="marches-title">Prochaines dates de marché</h2>
+            <p class="section-sub">Retrouvez-moi en vrai pour des prix préférentiels sur le stand.</p>
+          </div>
+          <div class="market-list reveal">
+            <article class="market-item">
+              <p class="market-date">Samedi 26 avril 2026</p>
+              <p class="market-place">Nantes - Marché de créateur·ices (à confirmer)</p>
+            </article>
+            <article class="market-item">
+              <p class="market-date">Dimanche 4 mai 2026</p>
+              <p class="market-place">Rezé - Marché local (à confirmer)</p>
+            </article>
+            <article class="market-item">
+              <p class="market-date">Samedi 18 mai 2026</p>
+              <p class="market-place">Les Sorinières - Pop-up créatif (à confirmer)</p>
+            </article>
+          </div>
+          <p class="helper">Mettez ces dates à jour dès qu'un événement est validé.</p>
         </div>
       </section>
 
@@ -204,12 +257,12 @@
             <li class="reassurance-item">
               <span class="re-icon" aria-hidden="true">🇫🇷</span>
               <strong>Fait main en France</strong>
-              <p>Chaque kit et chaque broderie est préparé à la main, avec soin et un peu d'amour sarcastique.</p>
+              <p>Je prépare chaque kit et chaque broderie à la main, avec soin et un peu d'amour sarcastique.</p>
             </li>
             <li class="reassurance-item">
               <span class="re-icon" aria-hidden="true">📦</span>
               <strong>Livraison soignée</strong>
-              <p>Expédition sous 48 h en semaine pour les kits. Emballage soigné pour que votre rage ou votre amour félin arrive intact.</p>
+              <p>J'expédie sous 48 h en semaine pour les kits. Emballage soigné pour que votre rage ou votre amour félin arrive intact.</p>
             </li>
             <li class="reassurance-item">
               <span class="re-icon" aria-hidden="true">🔒</span>
@@ -219,7 +272,7 @@
             <li class="reassurance-item">
               <span class="re-icon" aria-hidden="true">🎨</span>
               <strong>Personnalisable</strong>
-              <p>Vos chats, vos phrases, vos couleurs. Si vous pouvez le rêver, on peut (probablement) le broder.</p>
+              <p>Vos chats, vos phrases, vos couleurs. Si vous pouvez le rêver, je peux (probablement) le broder.</p>
             </li>
           </ul>
         </div>
@@ -227,14 +280,9 @@
 
       <!-- ── CONTACT / INSTAGRAM ── -->
       <section class="section container contact-section" aria-labelledby="contact-title">
-        <div class="section-header reveal">
-          <h2 id="contact-title">Suivre & contacter</h2>
-          <p class="section-sub">
-            Pour voir les dernières créations, les coulisses, et les chats de service.
-          </p>
-        </div>
         <div class="contact-card reveal">
-          <p class="contact-kicker">On discute de votre idée ?</p>
+          <h2 id="contact-title" class="sr-only">Suivre et contacter</h2>
+          <p class="contact-kicker">Suivre et contacter</p>
           <a
             class="insta-link"
             href="https://www.instagram.com/les_points_sauvages/"
@@ -252,7 +300,6 @@
           <a class="contact-mail-btn" href="mailto:lespointssauvages@gmail.com" id="contact-email-link">
             Ecrire un email
           </a>
-          <p class="contact-email">Réponse rapide en général sous 24h (hors week-end de marché).</p>
         </div>
       </section>
 
@@ -298,17 +345,29 @@
               </select>
             </div>
 
-            <div class="form-row">
-              <label for="order-format">Format <span class="required" aria-hidden="true">*</span></label>
-              <select id="order-format" name="order-format">
-                <option value="">Choisir</option>
-                <option value="kit">Kit DIY (tout inclus)</option>
-                <option value="fini">Broderie finie (prête à encadrer)</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label for="order-qty">Quantité <span class="required" aria-hidden="true">*</span></label>
-              <input id="order-qty" name="order-qty" type="number" min="1" value="1" />
+            <div class="order-inline-fields">
+              <div class="form-row">
+                <label for="order-format">Format <span class="required" aria-hidden="true">*</span></label>
+                <div class="pill-toggle" role="radiogroup" aria-label="Choisir le format">
+                  <input class="pill-toggle-input" type="radio" name="order-format-pill" id="order-format-kit" value="kit" />
+                  <label class="pill-toggle-label" for="order-format-kit">Kit DIY</label>
+                  <input class="pill-toggle-input" type="radio" name="order-format-pill" id="order-format-fini" value="fini" />
+                  <label class="pill-toggle-label" for="order-format-fini">Broderie finie</label>
+                </div>
+                <select id="order-format" name="order-format" class="sr-only" aria-hidden="true" tabindex="-1">
+                  <option value="">Choisir</option>
+                  <option value="kit">Kit DIY (tout inclus)</option>
+                  <option value="fini">Broderie finie (prête à encadrer)</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="order-qty">Quantité <span class="required" aria-hidden="true">*</span></label>
+                <div class="qty-stepper qty-stepper--wide">
+                  <button type="button" class="qty-step-btn" data-qty-step="-1" aria-label="Diminuer la quantité">-</button>
+                  <input id="order-qty" name="order-qty" class="accessory-qty" type="number" min="1" value="1" />
+                  <button type="button" class="qty-step-btn" data-qty-step="1" aria-label="Augmenter la quantité">+</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -392,7 +451,7 @@
       </div>
       <div id="order-cart-list" class="order-cart-list"></div>
       <p class="order-cart-subtotal"><strong>Sous-total : <span id="order-cart-subtotal">0,00 €</span></strong></p>
-      <p class="order-cart-shipping"><strong>Livraison : 4,99 €</strong></p>
+      <p class="order-cart-shipping"><strong>Livraison : 3,50 €</strong></p>
       <p class="order-cart-total"><strong>Total panier : <span id="order-cart-total">0,00 €</span></strong></p>
       <div class="order-cart-footer">
         <button type="button" class="btn btn-outline" id="order-cart-clear-btn">Vider le panier</button>
