@@ -1471,6 +1471,66 @@ function setupSubscriptionRequests() {
   });
 }
 
+function setupCustomRequestModal() {
+  const modal = document.getElementById("custom-request-modal");
+  const openBtn = document.getElementById("open-custom-request-modal");
+  const closeBtn = document.getElementById("close-custom-request-modal");
+  const form = document.getElementById("custom-request-form");
+  if (!modal || !openBtn || !closeBtn || !form) return;
+
+  const closeModal = () => {
+    setModalState(modal, false);
+    document.body.style.overflow = "";
+  };
+
+  openBtn.addEventListener("click", () => {
+    setModalState(modal, true);
+    document.body.style.overflow = "hidden";
+  });
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("custom-request-name")?.value.trim() || "";
+    const email = document.getElementById("custom-request-email")?.value.trim() || "";
+    const message = document.getElementById("custom-request-message")?.value.trim() || "";
+    const deadline = document.getElementById("custom-request-deadline")?.value.trim() || "";
+    if (!email || !message) {
+      showToast("Merci de compléter l'email et votre idée.");
+      return;
+    }
+    const composedMessage = [
+      "[Motif personnalisé]",
+      message,
+      deadline ? `Date souhaitée : ${deadline}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+
+    const result = await insertSupabase("contact_requests", {
+      name: name || null,
+      email,
+      message: composedMessage,
+    });
+    if (result.ok) {
+      form.reset();
+      closeModal();
+      showToast("Demande envoyée. Je vous réponds rapidement.");
+      return;
+    }
+    if (result.missingConfig) {
+      const subject = encodeURIComponent("Demande motif personnalisé - Les Points Sauvages");
+      const body = encodeURIComponent(`${name ? `Prénom: ${name}\n` : ""}${composedMessage}`);
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      return;
+    }
+    showToast("Impossible d'envoyer pour le moment.");
+  });
+}
+
 /* ── Contact email link ─────────────────────── */
 
 function updateContactLinks() {
@@ -1646,6 +1706,13 @@ function setupGlobalEscape() {
       event.preventDefault();
       return;
     }
+    const customRequest = document.getElementById("custom-request-modal");
+    if (customRequest?.classList.contains("is-open")) {
+      setModalState(customRequest, false);
+      document.body.style.overflow = "";
+      event.preventDefault();
+      return;
+    }
     const boxModal = document.getElementById("box-modal");
     if (boxModal?.classList.contains("is-open")) {
       setModalState(boxModal, false);
@@ -1671,4 +1738,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupGlobalEscape();
   setupContactForm();
   setupSubscriptionRequests();
+  setupCustomRequestModal();
 });
