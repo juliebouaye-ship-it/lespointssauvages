@@ -340,7 +340,7 @@ h1 em {
 }
 
 .section-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .section-header-row {
@@ -402,6 +402,7 @@ h1 em {
   color: var(--muted);
   align-self: start;
   padding: 0.85rem 0.4rem 0.4rem 0;
+  margin: 0 0 1.1rem;
 }
 
 .accessory-note h3 {
@@ -764,33 +765,120 @@ h1 em {
   color: var(--muted);
 }
 
+/* ── About ── */
+.about-merged-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(260px, 0.9fr);
+  gap: 0.9rem 2.7rem;
+  align-items: stretch;
+}
+
+.about-merged-grid > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-merged-grid > div:last-child {
+  margin-top: 0;
+  justify-content: flex-end;
+  padding-top: 1.15rem;
+}
+
+.about-photo-frame {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  min-height: 150px;
+  max-height: 220px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.7rem;
+  flex: 1 1 auto;
+}
+
+.about-photo-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: aboutSlideFade 12s infinite;
+}
+
+.about-photo-slide:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.about-photo-slide:nth-child(2) {
+  animation-delay: 6s;
+}
+
+.about-copy {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: -0.45rem;
+}
+
+.about-copy p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@keyframes aboutSlideFade {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  14%,
+  44% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* ── Reassurance ── */
 .reassurance-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 2rem;  
 }
 
 .reassurance-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-rows: 34px auto auto;
+  align-items: start;
+  row-gap: 0.4rem;
 }
 
 .re-icon {
   font-size: 2.2rem;
-  display: block;
+  display: flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .reassurance-item strong {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0;
 }
 
 .reassurance-item p {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--muted);
   margin: 0;
+  line-height: 1.55;
 }
 
 /* ── Contact ── */
@@ -1640,6 +1728,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .pricing { grid-template-columns: 1fr; }
   .contact-layout { grid-template-columns: 1fr; }
+  .about-merged-grid { grid-template-columns: 1fr; }
 
   .reassurance-grid { grid-template-columns: 1fr 1fr; }
 
