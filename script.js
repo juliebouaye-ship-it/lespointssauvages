@@ -1531,6 +1531,104 @@ function setupCustomRequestModal() {
   });
 }
 
+function setupProductGalleryModal() {
+  const modal = document.getElementById("photo-gallery-modal");
+  const closeBtn = document.getElementById("close-photo-gallery-modal");
+  const titleEl = document.getElementById("photo-gallery-title");
+  const imageEl = document.getElementById("photo-gallery-image");
+  const captionEl = document.getElementById("photo-gallery-caption");
+  const prevBtn = document.getElementById("photo-gallery-prev");
+  const nextBtn = document.getElementById("photo-gallery-next");
+  const openBtns = document.querySelectorAll("[data-open-gallery]");
+  if (!modal || !closeBtn || !titleEl || !imageEl || !captionEl || !prevBtn || !nextBtn || !openBtns.length) return;
+
+  let galleryItems = [];
+  let galleryIndex = 0;
+  let imageFallbackActive = false;
+
+  const resolveImageFallback = (src) => {
+    if (!src) return null;
+    const normalized = src.split("?")[0];
+    const match = normalized.match(/\.(jpe?g|png|webp)$/i);
+    if (!match) return null;
+    const ext = match[1].toLowerCase();
+    const alternatives = ["jpg", "jpeg", "png", "webp"].filter((candidate) => candidate !== ext);
+    const base = normalized.slice(0, -match[0].length);
+    return alternatives.length ? `${base}.${alternatives[0]}` : null;
+  };
+
+  imageEl.addEventListener("error", () => {
+    if (imageFallbackActive) {
+      imageFallbackActive = false;
+      return;
+    }
+    const fallbackSrc = resolveImageFallback(imageEl.src);
+    if (!fallbackSrc) return;
+    imageFallbackActive = true;
+    imageEl.src = fallbackSrc;
+  });
+
+  const renderCurrent = () => {
+    if (!galleryItems.length) return;
+    const current = galleryItems[galleryIndex];
+    imageFallbackActive = false;
+    imageEl.src = current.src;
+    imageEl.alt = current.alt;
+    imageEl.style.setProperty("--gallery-rotation", `${current.rotation || 0}deg`);
+    captionEl.textContent = `${current.alt} (${galleryIndex + 1}/${galleryItems.length})`;
+    prevBtn.disabled = galleryItems.length <= 1;
+    nextBtn.disabled = galleryItems.length <= 1;
+  };
+
+  const closeModal = () => {
+    setModalState(modal, false);
+    document.body.style.overflow = "";
+  };
+
+  prevBtn.addEventListener("click", () => {
+    if (!galleryItems.length) return;
+    galleryIndex = (galleryIndex - 1 + galleryItems.length) % galleryItems.length;
+    renderCurrent();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (!galleryItems.length) return;
+    galleryIndex = (galleryIndex + 1) % galleryItems.length;
+    renderCurrent();
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  openBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const rawImages = btn.getAttribute("data-gallery-images") || "";
+      const rawAlts = btn.getAttribute("data-gallery-alts") || "";
+      const rawRotations = btn.getAttribute("data-gallery-rotations") || "";
+      const title = btn.getAttribute("data-gallery-title") || "Photos produit";
+      const images = rawImages.split("|").map((value) => value.trim()).filter(Boolean);
+      const alts = rawAlts.split("|").map((value) => value.trim());
+      const rotations = rawRotations
+        .split("|")
+        .map((value) => Number.parseInt(value.trim(), 10))
+        .map((value) => (Number.isFinite(value) ? value : 0));
+      if (!images.length) return;
+      galleryItems = images.map((src, index) => ({
+        src,
+        alt: alts[index] || `Photo ${index + 1}`,
+        rotation: rotations[index] || 0,
+      }));
+      galleryIndex = 0;
+      titleEl.textContent = `Photos - ${title}`;
+      renderCurrent();
+      setModalState(modal, true);
+      document.body.style.overflow = "hidden";
+    });
+  });
+}
+
 /* ── Contact email link ─────────────────────── */
 
 function updateContactLinks() {
@@ -1718,6 +1816,13 @@ function setupGlobalEscape() {
       setModalState(boxModal, false);
       document.body.style.overflow = "";
       event.preventDefault();
+      return;
+    }
+    const productGallery = document.getElementById("photo-gallery-modal");
+    if (productGallery?.classList.contains("is-open")) {
+      setModalState(productGallery, false);
+      document.body.style.overflow = "";
+      event.preventDefault();
     }
   });
 }
@@ -1739,4 +1844,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupContactForm();
   setupSubscriptionRequests();
   setupCustomRequestModal();
+  setupProductGalleryModal();
 });
