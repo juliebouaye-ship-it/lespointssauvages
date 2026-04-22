@@ -315,7 +315,11 @@
             </details>
             <details class="faq-item">
               <summary>Les frais de livraison sont-ils toujours de 3,50 € ?</summary>
-              <p>Oui, pour simplifier : un tarif unique à 3,50 € sur tout le site.</p>
+              <p>Expédition : tarif unique à 3,50 €. Le retrait à l'atelier (Les Sorinières) est gratuit.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Puis-je retirer ma commande à l'atelier ?</summary>
+              <p>Oui. Sélectionnez "Retrait à l'atelier" au paiement : les frais passent à 0 €. Horaires : lundi à vendredi, 17h-19h (Les Sorinières). Un email est envoyé pour confirmer les détails de remise.</p>
             </details>
             <details class="faq-item">
               <summary>Comment envoyer la photo de mon chat ?</summary>
@@ -334,7 +338,7 @@
               <p>Vérifiez vos spams. Si rien sous 5 minutes, écrivez-moi et je vous renvoie une confirmation.</p>
             </details>
             <div class="policy-strip">
-              <p><strong>Livraison :</strong> 3,50 € sur toute commande.</p>
+              <p><strong>Expédition :</strong> 3,50 € · <strong>Retrait atelier :</strong> gratuit (Les Sorinières).</p>
               <p><strong>Modifications :</strong> possible sous 24 h après commande par email.</p>
             </div>
           </div>
@@ -443,6 +447,9 @@
                 <option value="bleu_gris">Bleu-gris</option>
                 <option value="bicolore">Bicolore (supplément)</option>
               </select>
+              <p class="form-note" id="order-fur-note" hidden>
+                Note : pour fourrure blanche ou gris clair, le tissu est actuellement orange (plus de choix à venir).
+              </p>
             </div>
             <p class="order-step-hint" id="order-chat-hint-format" hidden>
               Choisissez un format pour les options payantes, le prénom et la photo.
@@ -502,7 +509,16 @@
       </div>
       <div id="order-cart-list" class="order-cart-list"></div>
       <p class="order-cart-subtotal"><strong>Sous-total : <span id="order-cart-subtotal">0,00 €</span></strong></p>
-      <p class="order-cart-shipping"><strong>Livraison : 3,50 €</strong></p>
+      <div class="order-cart-delivery" id="order-cart-delivery">
+        <p class="order-cart-delivery-label">Mode de remise</p>
+        <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Mode de remise panier">
+          <input class="pill-toggle-input" type="radio" name="delivery-method" id="delivery-method-ship" value="ship" checked />
+          <label class="pill-toggle-label" for="delivery-method-ship">Expédition</label>
+          <input class="pill-toggle-input" type="radio" name="delivery-method" id="delivery-method-pickup" value="pickup" />
+          <label class="pill-toggle-label" for="delivery-method-pickup">Retrait atelier</label>
+        </div>
+      </div>
+      <p class="order-cart-shipping" id="order-cart-shipping"><strong>Livraison : 3,50 €</strong></p>
       <p class="order-cart-total"><strong>Total panier : <span id="order-cart-total">0,00 €</span></strong></p>
       <div class="order-cart-footer">
         <button type="button" class="btn btn-outline" id="order-cart-clear-btn">Vider le panier</button>
@@ -519,6 +535,18 @@
         <p class="helper">Un reçu PayPal est envoyé automatiquement après paiement. Si vous ne le recevez pas sous 5 minutes, contactez-moi.</p>
         <div class="order-form" id="checkout-shipping-form">
           <div class="form-row">
+            <span class="order-pill-label">Mode de remise <span class="required" aria-hidden="true">*</span></span>
+            <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Mode de remise paiement">
+              <input class="pill-toggle-input" type="radio" name="delivery-method-checkout" id="delivery-method-checkout-ship" value="ship" checked />
+              <label class="pill-toggle-label" for="delivery-method-checkout-ship">Expédition (+3,50 €)</label>
+              <input class="pill-toggle-input" type="radio" name="delivery-method-checkout" id="delivery-method-checkout-pickup" value="pickup" />
+              <label class="pill-toggle-label" for="delivery-method-checkout-pickup">Retrait atelier (gratuit)</label>
+            </div>
+            <p class="form-note shipping-method-note" id="shipping-method-note" hidden>
+              Retrait atelier : Les Sorinières, lundi à vendredi, 17h-19h. Un email de confirmation vous sera envoyé avec les détails.
+            </p>
+          </div>
+          <div class="form-row">
             <label for="shipping-fullname">Nom complet <span class="required" aria-hidden="true">*</span></label>
             <input id="shipping-fullname" type="text" required placeholder="Prénom Nom" />
           </div>
@@ -530,15 +558,15 @@
             <label for="shipping-phone">Téléphone</label>
             <input id="shipping-phone" type="tel" placeholder="06..." />
           </div>
-          <div class="form-row">
+          <div class="form-row shipping-address-row">
             <label for="shipping-address1">Adresse <span class="required" aria-hidden="true">*</span></label>
             <input id="shipping-address1" type="text" required placeholder="Numéro et rue" />
           </div>
-          <div class="form-row">
+          <div class="form-row shipping-address-row">
             <label for="shipping-address2">Complément</label>
             <input id="shipping-address2" type="text" placeholder="Bâtiment, étage, etc." />
           </div>
-          <div class="order-inline-fields">
+          <div class="order-inline-fields shipping-address-row" id="shipping-inline-city">
             <div class="form-row">
               <label for="shipping-postal">Code postal <span class="required" aria-hidden="true">*</span></label>
               <input id="shipping-postal" type="text" required placeholder="44000" />

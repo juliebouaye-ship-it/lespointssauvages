@@ -1394,6 +1394,19 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0.45rem 0 0;
 }
 
+.order-cart-delivery {
+  margin: 0.55rem 0 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.order-cart-delivery-label {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
 .order-cart-footer {
   margin-top: 0.55rem;
   display: flex;
@@ -1492,6 +1505,14 @@ input[type="number"]::-webkit-inner-spin-button {
 #checkout-shipping-form {
   margin: 0.6rem 0 0.8rem;
   max-width: 100%;
+}
+
+.shipping-method-note {
+  margin-top: 0.45rem;
+}
+
+.shipping-address-row[hidden] {
+  display: none !important;
 }
 
 .box-intent-label {

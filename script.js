@@ -34,6 +34,12 @@ const OPTION_FEES = {
 
 /** Livraison ajoutée à chaque commande passée via la modale (PayPal ou email). */
 const SHIPPING_EUR = 3.5;
+const SHIPPING_METHODS = {
+  ship: "ship",
+  pickup: "pickup",
+};
+const PICKUP_LABEL = "Retrait atelier Les Sorinières";
+const PICKUP_CITY = "Les Sorinières";
 
 /**
  * PayPal : mensuel = abonnement (plan) ; 3 mois / 1 an = paiement unique (lien bouton ou facture PayPal).
@@ -111,7 +117,9 @@ async function insertSupabase(table, payload) {
 }
 
 function getShippingState() {
+  const deliveryMethod = getSelectedDeliveryMethod();
   return {
+    deliveryMethod,
     fullName: document.getElementById("shipping-fullname")?.value.trim() || "",
     email: document.getElementById("shipping-email")?.value.trim() || "",
     phone: document.getElementById("shipping-phone")?.value.trim() || "",
@@ -123,11 +131,54 @@ function getShippingState() {
   };
 }
 
+function getSelectedDeliveryMethod() {
+  return (
+    document.querySelector('input[name="delivery-method-checkout"]:checked')?.value ||
+    document.querySelector('input[name="delivery-method"]:checked')?.value ||
+    SHIPPING_METHODS.ship
+  );
+}
+
+function syncDeliveryMethodToggles(method) {
+  document.querySelectorAll('input[name="delivery-method"], input[name="delivery-method-checkout"]').forEach((input) => {
+    input.checked = input.value === method;
+  });
+}
+
+function isPickupDelivery(state) {
+  return state?.deliveryMethod === SHIPPING_METHODS.pickup;
+}
+
+function getShippingFeeFromState(state) {
+  return isPickupDelivery(state) ? 0 : SHIPPING_EUR;
+}
+
 function validateShippingState(state) {
-  return Boolean(state.fullName && state.email && state.address1 && state.postalCode && state.city);
+  if (!state.fullName || !state.email) return false;
+  if (isPickupDelivery(state)) return true;
+  return Boolean(state.address1 && state.postalCode && state.city);
+}
+
+function buildPayPalShippingAddress(state) {
+  if (!validateShippingState(state)) return null;
+  if (isPickupDelivery(state)) return null;
+  return {
+    name: {
+      full_name: state.fullName,
+    },
+    address: {
+      address_line_1: state.address1,
+      address_line_2: state.address2 || undefined,
+      admin_area_2: state.city,
+      postal_code: state.postalCode,
+      country_code: "FR",
+    },
+  };
 }
 
 async function persistOrderToSupabase(capture, lines, total, shipping) {
+  const shippingFee = getShippingFeeFromState(shipping);
+  const pickup = isPickupDelivery(shipping);
   const payload = {
     paypal_order_id: capture?.id || null,
     paypal_status: capture?.status || null,
@@ -136,15 +187,19 @@ async function persistOrderToSupabase(capture, lines, total, shipping) {
       ? `${capture.payer.name.given_name || ""} ${capture.payer.name.surname || ""}`.trim()
       : shipping.fullName || null,
     amount_total: total,
-    shipping_fee: SHIPPING_EUR,
+    shipping_fee: shippingFee,
     shipping_full_name: shipping.fullName,
     shipping_email: shipping.email,
     shipping_phone: shipping.phone || null,
-    shipping_address_1: shipping.address1,
-    shipping_address_2: shipping.address2 || null,
-    shipping_postal_code: shipping.postalCode,
-    shipping_city: shipping.city,
-    shipping_notes: shipping.notes || null,
+    shipping_address_1: pickup ? PICKUP_LABEL : shipping.address1,
+    shipping_address_2: pickup ? null : shipping.address2 || null,
+    shipping_postal_code: pickup ? "RETRAIT" : shipping.postalCode,
+    shipping_city: pickup ? PICKUP_CITY : shipping.city,
+    shipping_notes: pickup
+      ? [shipping.notes, "Mode de remise: retrait atelier"]
+          .filter(Boolean)
+          .join(" · ")
+      : shipping.notes || null,
     cart_lines: lines,
   };
   return insertSupabase("orders", payload);
@@ -340,10 +395,10 @@ function computeSubtotalArticles(state) {
   return Math.round(unit * state.quantity * 100) / 100;
 }
 
-function computeTotalEur(state) {
+function computeTotalEur(state, shippingFee = SHIPPING_EUR) {
   const sub = computeSubtotalArticles(state);
   if (sub == null) return null;
-  return Math.round((sub + SHIPPING_EUR) * 100) / 100;
+  return Math.round((sub + shippingFee) * 100) / 100;
 }
 
 function validateOrder(state) {
@@ -394,6 +449,11 @@ function toggleChatFieldVisibility() {
   }
   if (prenomInlineLabel) {
     prenomInlineLabel.hidden = !prenomAddon;
+  }
+
+  const furHint = document.getElementById("order-fur-note");
+  if (furHint) {
+    furHint.hidden = !(fur === "blanc" || fur === "bleu_gris");
   }
 
   updatePillPriceHints();
@@ -715,10 +775,10 @@ function setupAccessoryAddToCartButtons() {
   });
 }
 
-function computeCartTotal() {
+function computeCartTotal(shippingFee = SHIPPING_EUR) {
   const subtotal = orderCart.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
   if (!orderCart.length) return null;
-  return Math.round((subtotal + SHIPPING_EUR) * 100) / 100;
+  return Math.round((subtotal + shippingFee) * 100) / 100;
 }
 
 function computeCartSubtotal() {
@@ -739,15 +799,29 @@ function renderOrderCart() {
   const list = document.getElementById("order-cart-list");
   const totalEl = document.getElementById("order-cart-total");
   const subtotalEl = document.getElementById("order-cart-subtotal");
+  const shippingRow = document.getElementById("order-cart-shipping");
+  const deliveryBlock = document.getElementById("order-cart-delivery");
+  const shippingEl = document.querySelector(".order-cart-shipping strong");
+  const shippingState = getShippingState();
+  const shippingFee = getShippingFeeFromState(shippingState);
   if (!list || !totalEl) return;
+  if (shippingEl) {
+    shippingEl.textContent = isPickupDelivery(shippingState)
+      ? "Retrait atelier : gratuit"
+      : `Livraison : ${formatEuro(shippingFee)}`;
+  }
   if (!orderCart.length) {
     list.innerHTML = "<p class='muted'>Votre panier est vide.</p>";
     totalEl.textContent = "0,00 €";
     if (subtotalEl) subtotalEl.textContent = "0,00 €";
+    if (shippingRow) shippingRow.hidden = true;
+    if (deliveryBlock) deliveryBlock.hidden = true;
     updateCartCountBadges();
     toggleCartActionButtons();
     return;
   }
+  if (shippingRow) shippingRow.hidden = false;
+  if (deliveryBlock) deliveryBlock.hidden = false;
 
   list.innerHTML = orderCart
     .map(
@@ -766,7 +840,7 @@ function renderOrderCart() {
 
   const subtotal = computeCartSubtotal();
   if (subtotalEl) subtotalEl.textContent = formatEuro(subtotal);
-  totalEl.textContent = formatEuro(computeCartTotal());
+  totalEl.textContent = formatEuro(computeCartTotal(shippingFee));
   updateCartCountBadges();
   toggleCartActionButtons();
 
@@ -846,10 +920,12 @@ async function schedulePayPalRender() {
 async function renderOrderPayPalIfPossible() {
   destroyOrderPaypalButtons();
   const state = getOrderState();
-  const singleTotal = computeTotalEur(state);
+  const shippingState = getShippingState();
+  const shippingFee = getShippingFeeFromState(shippingState);
+  const singleTotal = computeTotalEur(state, shippingFee);
   const ok = validateOrder(state);
   const hasCart = orderCart.length > 0;
-  const total = hasCart ? computeCartTotal() : singleTotal;
+  const total = hasCart ? computeCartTotal(shippingFee) : singleTotal;
   const hint = document.getElementById("order-paypal-hint");
   const wrap = document.getElementById("order-paypal-wrap");
 
@@ -873,7 +949,7 @@ async function renderOrderPayPalIfPossible() {
     if (wrap) wrap.hidden = false;
     const lines = hasCart ? orderCart : [stateToCartLine(state)].filter(Boolean);
     const subArticles = lines.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
-    const shipStr = SHIPPING_EUR.toFixed(2);
+    const shipStr = shippingFee.toFixed(2);
     const subStr = subArticles.toFixed(2);
     const nameLine = hasCart ? "LPS — Panier multi-produits" : buildPayPalDescription(state);
     const detailLine = hasCart ? `${lines.length} article(s)` : buildPayPalItemDetail(state);
@@ -888,20 +964,26 @@ async function renderOrderPayPalIfPossible() {
       style: { layout: "vertical", shape: "rect", label: "pay" },
       createOrder: (_data, actions) =>
         {
-          const shippingState = getShippingState();
-          if (!validateShippingState(shippingState)) {
+          const freshShippingState = getShippingState();
+          const paypalShipping = buildPayPalShippingAddress(freshShippingState);
+          const freshShippingFee = getShippingFeeFromState(freshShippingState);
+          const freshTotal = hasCart ? computeCartTotal(freshShippingFee) : computeTotalEur(state, freshShippingFee);
+          if (!validateShippingState(freshShippingState)) {
             showToast("Merci de compléter vos coordonnées de livraison avant paiement.");
             throw new Error("Shipping fields missing");
           }
           return actions.order.create({
+            application_context: {
+              shipping_preference: isPickupDelivery(freshShippingState) ? "NO_SHIPPING" : "SET_PROVIDED_ADDRESS",
+            },
             purchase_units: [
               {
                 amount: {
                   currency_code: "EUR",
-                  value: total.toFixed(2),
+                  value: freshTotal.toFixed(2),
                   breakdown: {
                     item_total: { currency_code: "EUR", value: subStr },
-                    shipping: { currency_code: "EUR", value: shipStr },
+                    shipping: { currency_code: "EUR", value: freshShippingFee.toFixed(2) },
                   },
                 },
                 items: [
@@ -909,6 +991,7 @@ async function renderOrderPayPalIfPossible() {
                 ],
                 description: nameLine.slice(0, 127),
                 custom_id: hasCart ? `lps-cart-${Date.now()}` : buildPayPalCustomId(state),
+                shipping: paypalShipping || undefined,
               },
             ],
           });
@@ -916,7 +999,8 @@ async function renderOrderPayPalIfPossible() {
       onApprove: async (_data, actions) => {
         const capture = await actions.order.capture();
         const shippingState = getShippingState();
-        await persistOrderToSupabase(capture, lines, total, shippingState);
+        const captureTotal = hasCart ? computeCartTotal(getShippingFeeFromState(shippingState)) : computeTotalEur(state, getShippingFeeFromState(shippingState));
+        await persistOrderToSupabase(capture, lines, captureTotal, shippingState);
         showToast("Paiement reçu, merci ! Je prépare votre commande.");
         CartStore.clear();
         renderOrderCart();
@@ -1100,6 +1184,9 @@ function bindOrderInputsForSummary() {
 }
 
 function buildCartMailBody(total) {
+  const shippingState = getShippingState();
+  const shippingFee = getShippingFeeFromState(shippingState);
+  const shippingLine = isPickupDelivery(shippingState) ? "Retrait atelier : gratuit" : `Livraison : ${shippingFee.toFixed(2)} €`;
   return [
     "Bonjour,",
     "",
@@ -1110,11 +1197,30 @@ function buildCartMailBody(total) {
       lineDetail(line) || "Sans option",
       "",
     ]),
-    `Livraison : ${SHIPPING_EUR.toFixed(2)} €`,
+    shippingLine,
     `Total : ${total != null ? `${total.toFixed(2)} €` : "(à confirmer)"}`,
     "",
     "Merci !",
   ].join("\n");
+}
+
+function syncCheckoutDeliveryFields() {
+  const shippingState = getShippingState();
+  const pickup = isPickupDelivery(shippingState);
+  const note = document.getElementById("shipping-method-note");
+  if (note) note.hidden = !pickup;
+  document.querySelectorAll(".shipping-address-row").forEach((row) => {
+    row.hidden = pickup;
+  });
+  ["shipping-address1", "shipping-postal", "shipping-city"].forEach((id) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    input.required = !pickup;
+  });
+  const shippingText = document.querySelector(".order-cart-shipping strong");
+  if (shippingText) {
+    shippingText.textContent = pickup ? "Retrait atelier : gratuit" : `Livraison : ${formatEuro(SHIPPING_EUR)}`;
+  }
 }
 
 function openCartDrawer(drawer, drawerBackdrop) {
@@ -1160,6 +1266,7 @@ function setupOrderModal() {
   const drawerBackdrop = document.getElementById("cart-drawer-backdrop");
   const checkoutModal = document.getElementById("checkout-modal");
   const closeCheckoutBtn = document.getElementById("close-checkout-modal");
+  const deliveryMethodInputs = document.querySelectorAll('input[name="delivery-method"], input[name="delivery-method-checkout"]');
 
   document.querySelectorAll("[data-open-order]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1182,7 +1289,9 @@ function setupOrderModal() {
     mailBtn.addEventListener("click", () => {
       const hasCart = orderCart.length > 0;
       const state = getOrderState();
-      const total = hasCart ? computeCartTotal() : computeTotalEur(state);
+      const shippingState = getShippingState();
+      const shippingFee = getShippingFeeFromState(shippingState);
+      const total = hasCart ? computeCartTotal(shippingFee) : computeTotalEur(state, shippingFee);
       if (!hasCart && !validateOrder(state)) {
         showToast("Merci de compléter les champs obligatoires 🙏");
         return;
@@ -1251,6 +1360,33 @@ function setupOrderModal() {
       schedulePayPalRender();
     });
   }
+
+  [
+    "shipping-fullname",
+    "shipping-email",
+    "shipping-phone",
+    "shipping-address1",
+    "shipping-address2",
+    "shipping-postal",
+    "shipping-city",
+    "shipping-notes",
+  ].forEach((id) => {
+    const field = document.getElementById(id);
+    if (!field) return;
+    field.addEventListener("input", () => schedulePayPalRender());
+    field.addEventListener("change", () => schedulePayPalRender());
+  });
+
+  deliveryMethodInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      syncDeliveryMethodToggles(input.value);
+      syncCheckoutDeliveryFields();
+      renderOrderCart();
+      schedulePayPalRender();
+    });
+  });
+  syncDeliveryMethodToggles(getSelectedDeliveryMethod());
+  syncCheckoutDeliveryFields();
 
   toggleCartActionButtons();
 }
