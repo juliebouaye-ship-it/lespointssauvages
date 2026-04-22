@@ -1228,7 +1228,10 @@ h1 em {
   font-size: 0.94rem;
 }
 
-.order-modal { text-align: left; }
+.order-modal {
+  text-align: left;
+  width: min(92vw, 72ch);
+}
 .order-modal h2 {
   margin-right: 2rem;
   margin-bottom: 0.15rem;
@@ -1489,11 +1492,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .order-prenom-head {
   display: grid;
-  grid-template-columns: auto minmax(160px, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   align-items: start;
-  gap: 1rem 0.9rem;
+  gap: 0.4rem 1rem;
   margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .order-prenom-label {
@@ -1504,11 +1507,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .order-prenom-grid {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--form-row-gap);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 0.45rem 1rem;
   align-items: start;
-  justify-items: start;
 }
+
 
 .order-prenom-inline {
   min-width: 0;
@@ -1825,10 +1828,16 @@ input[type="number"]::-webkit-inner-spin-button {
   text-align: center;
   white-space: normal;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.35s ease, opacity 0.25s ease, visibility 0s linear 0.35s;
 }
 
 #toast.show {
   transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition: transform 0.35s ease, opacity 0.25s ease;
 }
 
 /* ── Responsive ── */
