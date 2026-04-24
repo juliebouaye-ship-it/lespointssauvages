@@ -43,6 +43,7 @@ const PRODUCT_LABELS = {
   petit: "Petit mot",
   grand: "Grand mot",
   chat: "Petit chat qui dort",
+  "gift-card": "Carte cadeau",
   abo3Mois: "Box broderie 3 mois",
   aboAnnee: "Box broderie 1 an",
   "oreilles-chat": "Cercle oreilles de chat",

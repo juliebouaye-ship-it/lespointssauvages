@@ -232,6 +232,10 @@ function lineLabel(line) {
 
 function lineDetail(line) {
   const details = [];
+  if (line.product === "gift-card") {
+    if (line.giftAmount) details.push(`Montant: ${formatEuro(line.giftAmount)}`);
+    details.push("Envoi par email");
+  }
   if (line.product === "abo3Mois" || line.product === "aboAnnee") {
     details.push("Paiement one shot");
     if (line.comment) details.push(line.comment);

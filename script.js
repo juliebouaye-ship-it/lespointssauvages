@@ -96,6 +96,8 @@ function isPickupDelivery(state) {
 }
 
 function getShippingFeeFromState(state) {
+  const hasOnlyGiftCards = Array.isArray(orderCart) && orderCart.length > 0 && orderCart.every((line) => line?.product === "gift-card");
+  if (hasOnlyGiftCards) return 0;
   return isPickupDelivery(state) ? 0 : SHIPPING_EUR;
 }
 
@@ -446,6 +448,42 @@ function setupAccessoryAddToCartButtons() {
   });
 }
 
+function addGiftCardLine(amountRaw) {
+  const amount = Number.parseFloat(String(amountRaw).replace(",", "."));
+  if (!Number.isFinite(amount) || amount <= 0) {
+    showToast("Merci d'indiquer un montant valide pour la carte cadeau.");
+    return;
+  }
+  const rounded = Math.round(amount * 100) / 100;
+  CartStore.add({
+    product: "gift-card",
+    quantity: 1,
+    subtotal: rounded,
+    giftAmount: rounded,
+    commentaire: "Carte cadeau (envoi par email)",
+  });
+  renderOrderCart();
+  schedulePayPalRender();
+  showToast(`Carte cadeau ${formatEuro(rounded)} ajoutée au panier.`);
+}
+
+function setupGiftCardButtons() {
+  document.querySelectorAll("[data-add-gift-card]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      addGiftCardLine(btn.getAttribute("data-add-gift-card") || "");
+    });
+  });
+
+  const customInput = document.getElementById("gift-card-custom-amount");
+  const customBtn = document.getElementById("add-gift-card-custom-btn");
+  if (customBtn && customInput) {
+    customBtn.addEventListener("click", () => {
+      addGiftCardLine(customInput.value || "");
+      customInput.value = "";
+    });
+  }
+}
+
 /* Fonctions checkout/panier/paypal deplacees dans components/order-flow.js */
 
 /* Fonctions formulaires/galerie deplacees dans components/forms-gallery.js */
@@ -462,6 +500,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   orderCart = CartStore.load();
   setupBoxModal();
   setupAccessoryAddToCartButtons();
+  setupGiftCardButtons();
   setupOrderModal();
   renderOrderCart();
   updateContactLinks();
