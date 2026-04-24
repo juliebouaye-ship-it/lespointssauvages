@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lespointssauvages.netlify.app/sitemap.xml

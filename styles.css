@@ -1205,14 +1205,14 @@ h1 em {
 
 .modal-close {
   position: absolute;
-  top: 0.55rem;
-  right: 0.65rem;
-  width: 2rem;
-  height: 2rem;
+  top: 0.5rem;
+  right: 0.55rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: #fff;
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   line-height: 1;
   cursor: pointer;
 }
