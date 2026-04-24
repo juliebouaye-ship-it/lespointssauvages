@@ -51,6 +51,10 @@ function computeTotalEur(state, shippingFee = SHIPPING_EUR) {
 
 function computeLineSubtotal(line) {
   if (!line) return 0;
+  if (line.product === "gift-card") {
+    const v = Number(line.giftAmount ?? line.subtotal ?? 0);
+    return Math.round(v * 100) / 100;
+  }
   if (line.product === "abo3Mois" || line.product === "aboAnnee") {
     return Math.round((BOX_ONE_SHOT_EUR[line.product] || 0) * 100) / 100;
   }
@@ -234,7 +238,9 @@ function lineDetail(line) {
   const details = [];
   if (line.product === "gift-card") {
     if (line.giftAmount) details.push(`Montant: ${formatEuro(line.giftAmount)}`);
-    details.push("Envoi par email");
+    if (line.giftRecipientPrenom) details.push(`Pour: ${line.giftRecipientPrenom}`);
+    if (line.commentaire) details.push(`Précisions: ${line.commentaire}`);
+    details.push("Code → email de la commande (souvent sous 24 h)");
   }
   if (line.product === "abo3Mois" || line.product === "aboAnnee") {
     details.push("Paiement one shot");
@@ -251,7 +257,7 @@ function lineDetail(line) {
     if (line.bicolore && line.bicoloreDetail) details.push(`Bicolore: ${line.bicoloreDetail}`);
     if (line.prenomAddon && line.prenom) details.push(`Prenom: ${line.prenom}`);
   }
-  if (line.commentaire) details.push(`Note: ${line.commentaire}`);
+  if (line.commentaire && line.product !== "gift-card") details.push(`Note: ${line.commentaire}`);
   return details.join(" · ");
 }
 

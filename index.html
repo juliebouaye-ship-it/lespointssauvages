@@ -61,6 +61,9 @@
             <li><a href="#produits">Produits</a></li>
             <li><a href="#box">Box</a></li>
             <li>
+              <button type="button" class="nav-link-btn js-open-gift-card" id="open-gift-card-modal">🎁 Carte cadeau</button>
+            </li>
+            <li>
               <button type="button" class="cart-toggle" id="open-cart-drawer" aria-label="Ouvrir le panier">
                 Panier <span id="header-cart-count" class="cart-count">0</span>
               </button>
@@ -280,6 +283,11 @@
             </p>
           </div>
         </div>
+
+        <p class="gift-card-inline-hint reveal" role="note">
+          <span aria-hidden="true">🎁</span> Pensez à la carte cadeau !
+          <button type="button" class="btn-text-link-inline js-open-gift-card">Choisir un montant</button>
+        </p>
       </section>
 
       <section id="abonnement" class="section container" aria-labelledby="abo-title">
@@ -332,35 +340,6 @@
             </ul>
             <button class="btn btn-outline btn-full" type="button" data-open-box-modal="aboAnnee">Choisir cette box</button>
             <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="cartes-cadeaux" class="section container" aria-labelledby="gift-title">
-        <div class="section-header reveal">
-          <h2 id="gift-title">Carte cadeau</h2>
-          <p class="section-sub">Parfait pour offrir : vous choisissez le montant, la carte est envoyée par email.</p>
-        </div>
-        <div class="cards cards-3" role="list">
-          <article class="card reveal" role="listitem">
-            <div class="card-tag"><span aria-hidden="true">🎁</span> Nouveau</div>
-            <h3>Carte cadeau Les Points Sauvages</h3>
-            <p class="product-desc">Valable sur toute la boutique (kits, broderies, accessoires et box one-shot).</p>
-            <p class="micro-info">Envoi par email sous 24h avec un joli visuel prêt à offrir.</p>
-            <div class="gift-card-amounts" role="group" aria-label="Montants carte cadeau">
-              <button type="button" class="btn btn-outline btn-sm" data-add-gift-card="5">5 €</button>
-              <button type="button" class="btn btn-outline btn-sm" data-add-gift-card="10">10 €</button>
-              <button type="button" class="btn btn-outline btn-sm" data-add-gift-card="30">30 €</button>
-              <button type="button" class="btn btn-outline btn-sm" data-add-gift-card="50">50 €</button>
-              <button type="button" class="btn btn-outline btn-sm" data-add-gift-card="100">100 €</button>
-            </div>
-            <div class="gift-card-custom">
-              <label for="gift-card-custom-amount">Montant libre</label>
-              <div class="gift-card-custom-row">
-                <input id="gift-card-custom-amount" type="number" min="1" step="0.01" inputmode="decimal" placeholder="Ex. 75" />
-                <button type="button" class="btn btn-primary" id="add-gift-card-custom-btn">Ajouter</button>
-              </div>
-            </div>
           </article>
         </div>
       </section>
@@ -437,7 +416,7 @@
       </section>
 
       <!-- ── CONTACT / INSTAGRAM ── -->
-      <section class="section container contact-section" aria-labelledby="contact-title">
+      <section id="contact" class="section container contact-section" aria-labelledby="contact-title">
         <h2 id="contact-title" class="sr-only">Suivre, contacter et FAQ</h2>
         <div class="contact-layout">
           <div class="contact-card reveal">
@@ -519,6 +498,19 @@
           </a>
         </div>
         <p class="footer-tagline">Broderie libre & impertinente · Fait main en France</p>
+        <nav class="footer-sitemap" aria-label="Accès rapide">
+          <a href="#produits">Boutique</a>
+          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
+          <a href="#box">Box</a>
+          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
+          <button type="button" class="footer-sitemap-link js-open-gift-card">Carte cadeau</button>
+          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
+          <a href="#marches">Marchés</a>
+          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
+          <a href="#a-propos">À propos</a>
+          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
+          <a href="#contact">Contact &amp; FAQ</a>
+        </nav>
         <p class="footer-legal">
           <small>
             © <span id="year"></span> Les Points Sauvages · Paiement sécurisé avec PayPal ·

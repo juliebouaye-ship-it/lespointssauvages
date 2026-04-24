@@ -141,6 +141,14 @@ function setupGlobalEscape() {
       event.preventDefault();
       return;
     }
+    const giftCard = document.getElementById("gift-card-modal");
+    if (giftCard?.classList.contains("is-open")) {
+      setModalState(giftCard, false);
+      document.body.style.overflow = "";
+      document.getElementById("open-gift-card-modal")?.focus();
+      event.preventDefault();
+      return;
+    }
     const privacy = document.getElementById("privacy-modal");
     if (privacy?.classList.contains("is-open")) {
       setModalState(privacy, false);

@@ -471,6 +471,41 @@ const LPS_MODALS_HTML = `
       </section>
     </div>
 
+    <div class="modal-backdrop" id="gift-card-modal" aria-hidden="true">
+      <section class="legal-modal gift-card-modal" role="dialog" aria-modal="true" aria-labelledby="gift-card-modal-title">
+        <button type="button" class="modal-close" id="close-gift-card-modal" aria-label="Fermer la carte cadeau">×</button>
+        <h2 id="gift-card-modal-title">Carte cadeau</h2>
+        <p class="helper gift-card-modal-lead">Utilisable sur toute la boutique. Envoyé sous 24h par email après paiement.</p>
+        <div class="order-form gift-card-modal-form">
+          <div class="form-row">
+            <label id="gift-amount-legend" for="gift-card-amount">Montant (€) <span class="required" aria-hidden="true">*</span></label>
+            <div class="gift-card-presets" role="group" aria-labelledby="gift-amount-legend">
+              <button type="button" class="gift-card-preset" data-gift-preset="5" aria-pressed="false">5</button>
+              <button type="button" class="gift-card-preset" data-gift-preset="10" aria-pressed="false">10</button>
+              <button type="button" class="gift-card-preset" data-gift-preset="30" aria-pressed="false">30</button>
+              <button type="button" class="gift-card-preset" data-gift-preset="50" aria-pressed="false">50</button>
+              <button type="button" class="gift-card-preset" data-gift-preset="100" aria-pressed="false">100</button>
+            </div>
+            <div class="gift-card-amount-wrap">
+              <input id="gift-card-amount" class="gift-card-amount-input" type="number" min="1" step="0.01" inputmode="decimal" placeholder="ex. 25" aria-label="Montant en euros" />
+              <span class="gift-card-amount-currency" aria-hidden="true">€</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="gift-recipient-prenom">Prénom (pour la personne concernée) <span class="required" aria-hidden="true">*</span></label>
+            <input id="gift-recipient-prenom" type="text" placeholder="Ex. Camille" autocomplete="off" required />
+          </div>
+          <div class="form-row">
+            <label for="gift-note">Précisions <span class="label-hint">(optionnel)</span></label>
+            <textarea id="gift-note" class="gift-card-note" name="gift-note" rows="1" placeholder="Ex. remise pour Noël, ton du message, etc."></textarea>
+          </div>
+          <div class="form-row gift-card-submit-wrap">
+            <button type="button" class="btn btn-primary btn-full" id="gift-card-submit-btn">Ajouter au panier</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <div class="modal-backdrop" id="photo-gallery-modal" aria-hidden="true">
       <section class="legal-modal photo-gallery-modal" role="dialog" aria-modal="true" aria-labelledby="photo-gallery-title">
         <button type="button" class="modal-close" id="close-photo-gallery-modal" aria-label="Fermer la galerie">×</button>

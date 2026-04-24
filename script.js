@@ -22,7 +22,7 @@ function syncDisplayedPrices() {
   if (prixGrand) {
     prixGrand.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.grand.kit)}`;
   }
-  if (prixChat) {
+  if (prixChat) { 
     prixChat.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.chat.kit)}`;
   }
 
@@ -448,40 +448,116 @@ function setupAccessoryAddToCartButtons() {
   });
 }
 
-function addGiftCardLine(amountRaw) {
-  const amount = Number.parseFloat(String(amountRaw).replace(",", "."));
+function getGiftCardFormState() {
+  return {
+    giftRecipientPrenom: document.getElementById("gift-recipient-prenom")?.value.trim() || "",
+    giftNote: document.getElementById("gift-note")?.value.trim() || "",
+  };
+}
+
+function clearGiftCardPresetSelection() {
+  document.querySelectorAll(".gift-card-preset").forEach((btn) => {
+    btn.classList.remove("is-selected");
+    btn.setAttribute("aria-pressed", "false");
+  });
+}
+
+function resetGiftCardModalFields() {
+  const amount = document.getElementById("gift-card-amount");
+  if (amount) amount.value = "";
+  const p = document.getElementById("gift-recipient-prenom");
+  const n = document.getElementById("gift-note");
+  if (p) p.value = "";
+  if (n) n.value = "";
+  clearGiftCardPresetSelection();
+}
+
+function closeGiftCardModal() {
+  const modal = document.getElementById("gift-card-modal");
+  if (!modal) return;
+  setModalState(modal, false);
+  document.body.style.overflow = "";
+  document.getElementById("open-gift-card-modal")?.focus();
+}
+
+function submitGiftCardLine() {
+  const amountInput = document.getElementById("gift-card-amount");
+  const raw = amountInput?.value?.trim() || "";
+  const amount = Number.parseFloat(String(raw).replace(",", "."));
   if (!Number.isFinite(amount) || amount <= 0) {
-    showToast("Merci d'indiquer un montant valide pour la carte cadeau.");
+    showToast("Indiquez un montant valide (€).");
+    return;
+  }
+  const { giftRecipientPrenom, giftNote } = getGiftCardFormState();
+  if (!giftRecipientPrenom) {
+    showToast("Indiquez le prénom (pour la personne concernée).");
     return;
   }
   const rounded = Math.round(amount * 100) / 100;
-  CartStore.add({
+  const line = {
     product: "gift-card",
     quantity: 1,
     subtotal: rounded,
     giftAmount: rounded,
-    commentaire: "Carte cadeau (envoi par email)",
-  });
+    giftRecipientPrenom,
+    ...(giftNote ? { commentaire: giftNote } : {}),
+  };
+  CartStore.add(line);
   renderOrderCart();
   schedulePayPalRender();
   showToast(`Carte cadeau ${formatEuro(rounded)} ajoutée au panier.`);
+  resetGiftCardModalFields();
+  closeGiftCardModal();
 }
 
 function setupGiftCardButtons() {
-  document.querySelectorAll("[data-add-gift-card]").forEach((btn) => {
+  const modal = document.getElementById("gift-card-modal");
+  const closeBtn = document.getElementById("close-gift-card-modal");
+
+  const openGiftCardModal = () => {
+    if (!modal) return;
+    resetGiftCardModalFields();
+    setModalState(modal, true);
+    document.body.style.overflow = "hidden";
+    document.getElementById("gift-card-amount")?.focus();
+  };
+
+  document.querySelectorAll(".js-open-gift-card").forEach((el) => {
+    el.addEventListener("click", openGiftCardModal);
+  });
+  closeBtn?.addEventListener("click", closeGiftCardModal);
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeGiftCardModal();
+  });
+
+  document.querySelectorAll(".gift-card-preset").forEach((btn) => {
     btn.addEventListener("click", () => {
-      addGiftCardLine(btn.getAttribute("data-add-gift-card") || "");
+      const v = btn.getAttribute("data-gift-preset") || "";
+      const input = document.getElementById("gift-card-amount");
+      if (input) input.value = v;
+      clearGiftCardPresetSelection();
+      btn.classList.add("is-selected");
+      btn.setAttribute("aria-pressed", "true");
     });
   });
 
-  const customInput = document.getElementById("gift-card-custom-amount");
-  const customBtn = document.getElementById("add-gift-card-custom-btn");
-  if (customBtn && customInput) {
-    customBtn.addEventListener("click", () => {
-      addGiftCardLine(customInput.value || "");
-      customInput.value = "";
+  const amountInput = document.getElementById("gift-card-amount");
+  amountInput?.addEventListener("input", () => {
+    const val = amountInput.value.trim();
+    if (!val) {
+      clearGiftCardPresetSelection();
+      return;
+    }
+    const n = String(Number.parseFloat(val.replace(",", ".")));
+    document.querySelectorAll(".gift-card-preset").forEach((b) => {
+      const p = b.getAttribute("data-gift-preset");
+      const match = p != null && n === p;
+      b.classList.toggle("is-selected", match);
+      b.setAttribute("aria-pressed", match ? "true" : "false");
     });
-  }
+  });
+
+  document.getElementById("gift-card-submit-btn")?.addEventListener("click", submitGiftCardLine);
 }
 
 /* Fonctions checkout/panier/paypal deplacees dans components/order-flow.js */
