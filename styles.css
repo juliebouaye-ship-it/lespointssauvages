@@ -1632,6 +1632,41 @@ input[type="number"]::-webkit-inner-spin-button {
   flex-wrap: wrap;
 }
 
+.promo-block {
+  margin: 0.55rem 0 0;
+}
+
+.promo-block label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.promo-inline {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.promo-inline input {
+  flex: 1 1 180px;
+  min-width: 0;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.62rem 0.72rem;
+  font: 400 0.95rem "Inter", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.promo-inline input:focus {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rose) 20%, transparent);
+}
+
 .order-actions { margin-top: 0; }
 
 .order-pay-primary {

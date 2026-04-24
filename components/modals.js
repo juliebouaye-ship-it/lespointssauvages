@@ -133,6 +133,15 @@ const LPS_MODALS_HTML = `
         <button type="button" class="modal-close" id="close-cart-drawer" aria-label="Fermer le panier">×</button>
       </div>
       <div id="order-cart-list" class="order-cart-list"></div>
+      <div class="promo-block">
+        <label for="drawer-promo-code-input">Code promo</label>
+        <div class="promo-inline">
+          <input id="drawer-promo-code-input" type="text" placeholder="Votre code promo" />
+          <button type="button" class="btn btn-outline" id="drawer-promo-apply-btn">Appliquer</button>
+          <button type="button" class="btn btn-ghost" id="drawer-promo-clear-btn">Retirer</button>
+        </div>
+        <p class="form-note" id="drawer-promo-feedback"></p>
+      </div>
       <p class="order-cart-subtotal"><strong>Sous-total : <span id="order-cart-subtotal">0,00 €</span></strong></p>
       <div class="order-cart-delivery" id="order-cart-delivery">
         <p class="order-cart-delivery-label">Mode de remise</p>
@@ -207,6 +216,20 @@ const LPS_MODALS_HTML = `
           </div>
         </div>
         <div class="order-pay-primary">
+          <div class="order-summary" id="checkout-summary-box">
+            <p><strong>Sous-total articles :</strong> <span id="checkout-summary-subtotal">0,00 €</span></p>
+            <p><strong>Livraison :</strong> <span id="checkout-summary-shipping">0,00 €</span></p>
+            <p><strong>Total :</strong> <span id="checkout-summary-total">0,00 €</span></p>
+          </div>
+          <div class="form-row">
+            <label for="promo-code-input">Code promo</label>
+            <div class="promo-inline">
+              <input id="promo-code-input" type="text" placeholder="Votre code promo" />
+              <button type="button" class="btn btn-outline" id="promo-apply-btn">Appliquer</button>
+              <button type="button" class="btn btn-ghost" id="promo-clear-btn">Retirer</button>
+            </div>
+            <p class="form-note" id="promo-feedback"></p>
+          </div>
           <div id="order-paypal-wrap" class="order-paypal-wrap" hidden>
             <p class="helper order-paypal-label">Payer avec PayPal</p>
             <div id="order-paypal-container" class="order-paypal-container"></div>

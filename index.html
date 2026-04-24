@@ -107,7 +107,8 @@
             </div>
             <h3>Petit mot</h3>
             <p class="product-desc">Mon classique impertinent. Petit format, grand impact. Disponible en kit DIY ou en broderie finie.</p>
-            <p class="micro-info">Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
+            <p class="meta" id="price-petit">À partir de : 0,00 €</p>
+            <p class="micro-info">Diamètre : 10 cm · Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit mot">
               <button type="button" class="btn btn-primary" data-open-order="petit" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
               <button type="button" class="btn btn-outline" data-open-order="petit" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
@@ -132,7 +133,8 @@
             </div>
             <h3>Grand mot</h3>
             <p class="product-desc">Pour les phrases qui piquent juste comme il faut. Format plus grand, même énergie.</p>
-            <p class="micro-info">Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
+            <p class="meta" id="price-grand">À partir de : 0,00 €</p>
+            <p class="micro-info">Diamètre : 16 cm · Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Grand mot">
               <button type="button" class="btn btn-primary" data-open-order="grand" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
               <button type="button" class="btn btn-outline" data-open-order="grand" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
@@ -156,8 +158,9 @@
               </button>
             </div>
             <h3>Petit chat qui dort</h3>
-            <p class="product-desc">Votre chat, votre style : prénom et couleurs personnalisables.</p>
-            <p class="micro-info">Expédition estimée : kit 3 à 5 jours · broderie finie 7 à 12 jours.</p>
+            <p class="product-desc">Votre chat, votre style : prénom et couleurs de fourrure personnalisables.</p>
+            <p class="meta" id="price-chat">À partir de : 0,00 €</p>
+            <p class="micro-info">Diamètre : 14 cm · Expédition estimée : kit 3 à 5 jours · broderie finie 7 à 12 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit chat qui dort">
               <button type="button" class="btn btn-primary" data-open-order="chat" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
               <button type="button" class="btn btn-outline" data-open-order="chat" data-order-format="fini"><span class="btn-icon" aria-hidden="true">🖼️</span> Broderie finie</button>
@@ -173,7 +176,7 @@
           <article class="card reveal" role="listitem">
             <h3><span aria-hidden="true">🐾</span> Cercle à broder oreilles de chat</h3>
             <div class="accessory-meta-row">
-              <p class="meta">5,00 € · PLA biosourcé</p>
+              <p class="meta" id="accessory-price-oreilles">5,00 € · PLA biosourcé</p>
               <button
                 class="accessory-photo-link"
                 type="button"
@@ -211,7 +214,7 @@
           <article class="card reveal" role="listitem">
             <h3><span aria-hidden="true">🔺</span> Stand triangle pour poser les broderie</h3>
             <div class="accessory-meta-row">
-              <p class="meta">3,00 € · PLA biosourcé</p>
+              <p class="meta" id="accessory-price-stand">3,00 € · PLA biosourcé</p>
               <button
                 class="accessory-photo-link"
                 type="button"
@@ -273,8 +276,8 @@
         <div class="cards pricing" role="list">
           <article class="card pricing-card reveal" role="listitem" id="box">
             <div class="card-tag">Mensuel</div>
-            <div class="price">15 <sup>€</sup><span class="price-period"> / box</span></div>
-            <p class="price-detail">+ 3,50 € de frais de livraison</p>
+            <div class="price" id="box-price-monthly">15 <sup>€</sup><span class="price-period"> / box</span></div>
+            <p class="price-detail" id="box-price-monthly-detail">+ 3,50 € de frais de livraison</p>
             <ul class="price-features" aria-label="Inclus dans la box mensuelle">
               <li>1 kit complet par mois</li>
               <li>Motif exclusif</li>
@@ -287,8 +290,8 @@
 
           <article class="card pricing-card pricing-card--featured reveal" role="listitem">
             <div class="card-tag card-tag--featured">⭐ Le plus populaire - 3 mois</div>
-            <div class="price">40 <sup>€</sup></div>
-            <p class="price-detail">13 €/box + frais de livraison</p>
+            <div class="price" id="box-price-3mois">40 <sup>€</sup></div>
+            <p class="price-detail" id="box-price-3mois-detail">13 €/box + frais de livraison</p>
             <ul class="price-features" aria-label="Inclus dans la box 3 mois">
               <li>3 kits complets</li>
               <li>Motifs exclusifs</li>
@@ -301,7 +304,7 @@
 
           <article class="card pricing-card reveal" role="listitem">
             <div class="card-tag">Un an de broderie</div>
-            <div class="price">195 <sup>€</sup></div>
+            <div class="price" id="box-price-annee">195 <sup>€</sup></div>
             <p class="price-detail">2 box offertes !</p>
             <ul class="price-features" aria-label="Inclus dans la box annuelle">
               <li>12 kits complets</li>
@@ -412,8 +415,12 @@
           <div class="faq-panel reveal" aria-label="Questions fréquentes">
             <h3>Questions fréquentes</h3>
             <details class="faq-item">
-              <summary>Quel est le délai pour une broderie finie ?</summary>
-              <p>En général entre 5 et 12 jours selon le modèle et le niveau de personnalisation.</p>
+              <summary>Quel est le délai de réception pour une broderie finie ?</summary>
+              <p>En général entre 5 et 12 jours selon le modèle et le niveau de personnalisation (préparation + expédition).</p>
+            </details>
+            <details class="faq-item">
+              <summary>Combien de temps faut-il pour broder soi-même un kit ?</summary>
+              <p>Selon votre rythme : comptez souvent 2 à 6 heures pour un petit motif et davantage pour un grand modèle.</p>
             </details>
             <details class="faq-item">
               <summary>Les frais de livraison sont-ils toujours de 3,50 € ?</summary>

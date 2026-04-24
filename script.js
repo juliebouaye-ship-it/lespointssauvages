@@ -12,6 +12,40 @@ function formatEuro(amount) {
   return `${Number(amount).toFixed(2).replace(".", ",")} €`;
 }
 
+function syncDisplayedPrices() {
+  const prixPetit = document.getElementById("price-petit");
+  const prixGrand = document.getElementById("price-grand");
+  const prixChat = document.getElementById("price-chat");
+  if (prixPetit) {
+    prixPetit.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.petit.kit)}`;
+  }
+  if (prixGrand) {
+    prixGrand.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.grand.kit)}`;
+  }
+  if (prixChat) {
+    prixChat.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.chat.kit)}`;
+  }
+
+  const ear = document.getElementById("accessory-price-oreilles");
+  const stand = document.getElementById("accessory-price-stand");
+  if (ear && ACCESSORY_PRODUCTS["oreilles-chat"]) {
+    ear.textContent = `${formatEuro(ACCESSORY_PRODUCTS["oreilles-chat"].price)} · PLA biosourcé`;
+  }
+  if (stand && ACCESSORY_PRODUCTS["stand-triangle"]) {
+    stand.textContent = `${formatEuro(ACCESSORY_PRODUCTS["stand-triangle"].price)} · PLA biosourcé`;
+  }
+
+  const boxSelect = document.getElementById("box-plan");
+  if (boxSelect) {
+    const monthlyOpt = boxSelect.querySelector('option[value="aboMensuel"]');
+    const threeOpt = boxSelect.querySelector('option[value="abo3Mois"]');
+    const yearOpt = boxSelect.querySelector('option[value="aboAnnee"]');
+    if (monthlyOpt) monthlyOpt.textContent = "Mensuelle — 15 € / box";
+    if (threeOpt) threeOpt.textContent = "3 mois — 40 €";
+    if (yearOpt) yearOpt.textContent = "1 an — 195 €";
+  }
+}
+
 function getSupabaseClient() {
   if (supabaseClient) return supabaseClient;
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
@@ -420,7 +454,11 @@ function setupAccessoryAddToCartButtons() {
 
 /* ── Init ───────────────────────────────────── */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (typeof window.loadPricingFromSupabase === "function") {
+    await window.loadPricingFromSupabase();
+  }
+  syncDisplayedPrices();
   orderCart = CartStore.load();
   setupBoxModal();
   setupAccessoryAddToCartButtons();

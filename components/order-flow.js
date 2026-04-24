@@ -1,4 +1,5 @@
 /* ── Commande modale + calcul ───────────────── */
+let hasAddedToCartThisModalOpen = false;
 
 function getOrderState() {
   const product = document.getElementById("order-product")?.value || "";
@@ -46,6 +47,36 @@ function computeTotalEur(state, shippingFee = SHIPPING_EUR) {
   const sub = computeSubtotalArticles(state);
   if (sub == null) return null;
   return Math.round((sub + shippingFee) * 100) / 100;
+}
+
+function computeLineSubtotal(line) {
+  if (!line) return 0;
+  if (line.product === "abo3Mois" || line.product === "aboAnnee") {
+    return Math.round((BOX_ONE_SHOT_EUR[line.product] || 0) * 100) / 100;
+  }
+  if (line.product === "oreilles-chat" || line.product === "stand-triangle") {
+    const unit = ACCESSORY_PRODUCTS[line.product]?.price || 0;
+    const qty = Math.max(1, Number.parseInt(line.quantity || "1", 10) || 1);
+    return Math.round(unit * qty * 100) / 100;
+  }
+  if (line.product && line.format) {
+    return (
+      computeSubtotalArticles({
+        product: line.product,
+        format: line.format,
+        phrase: line.phrase || "",
+        fourrure: line.fourrure || "",
+        bicolore: Boolean(line.bicolore),
+        bicoloreDetail: line.bicoloreDetail || "",
+        prenomAddon: Boolean(line.prenomAddon),
+        prenom: line.prenom || "",
+        photoLink: line.photoLink || "",
+        commentaire: line.commentaire || "",
+        quantity: Math.max(1, Number.parseInt(line.quantity || "1", 10) || 1),
+      }) || 0
+    );
+  }
+  return Math.round(Number(line.subtotal || 0) * 100) / 100;
 }
 
 function validateOrder(state) {
@@ -276,13 +307,13 @@ async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName
 }
 
 function computeCartTotal(shippingFee = SHIPPING_EUR) {
-  const subtotal = orderCart.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
+  const subtotal = orderCart.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
   if (!orderCart.length) return null;
   return Math.round((subtotal + shippingFee) * 100) / 100;
 }
 
 function computeCartSubtotal() {
-  return orderCart.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
+  return orderCart.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
 }
 
 function updateCartCountBadges() {
@@ -318,6 +349,7 @@ function renderOrderCart() {
     if (shippingRow) shippingRow.hidden = true;
     if (deliveryBlock) deliveryBlock.hidden = true;
     if (checkoutBtn) checkoutBtn.hidden = true;
+    updateCheckoutSummary(0, 0, 0);
     updateCartCountBadges();
     toggleCartActionButtons();
     return;
@@ -335,7 +367,7 @@ function renderOrderCart() {
           <button type="button" class="cart-remove-btn" data-cart-remove="${idx}">Supprimer</button>
         </div>
         <p class="muted">${lineDetail(line) || "Sans option"}</p>
-        <p class="muted">${formatEuro(line.subtotal || 0)}</p>
+        <p class="muted">${formatEuro(computeLineSubtotal(line) || 0)}</p>
       </article>
     `
     )
@@ -343,7 +375,9 @@ function renderOrderCart() {
 
   const subtotal = computeCartSubtotal();
   if (subtotalEl) subtotalEl.textContent = formatEuro(subtotal);
-  totalEl.textContent = formatEuro(computeCartTotal(shippingFee));
+  const total = computeCartTotal(shippingFee);
+  totalEl.textContent = formatEuro(total);
+  updateCheckoutSummary(subtotal, shippingFee, total);
   updateCartCountBadges();
   toggleCartActionButtons();
 
@@ -355,6 +389,15 @@ function renderOrderCart() {
       schedulePayPalRender();
     });
   });
+}
+
+function updateCheckoutSummary(subtotal, shippingFee, total) {
+  const subEl = document.getElementById("checkout-summary-subtotal");
+  const shipEl = document.getElementById("checkout-summary-shipping");
+  const totalEl = document.getElementById("checkout-summary-total");
+  if (subEl) subEl.textContent = formatEuro(subtotal || 0);
+  if (shipEl) shipEl.textContent = formatEuro(shippingFee || 0);
+  if (totalEl) totalEl.textContent = formatEuro(total || 0);
 }
 
 function buildPayPalDescription(state) {
@@ -450,14 +493,14 @@ async function renderOrderPayPalIfPossible() {
     const paypal = await loadPayPalSdk(PAYPAL_CLIENT_ID);
     if (wrap) wrap.hidden = false;
     const lines = hasCart ? orderCart : [stateToCartLine(state)].filter(Boolean);
-    const subArticles = lines.reduce((sum, line) => sum + Math.round(Number(line.subtotal || 0) * 100), 0) / 100;
+    const subArticles = lines.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
     const subStr = subArticles.toFixed(2);
     const nameLine = hasCart ? "LPS — Panier multi-produits" : buildPayPalDescription(state);
     const paypalItems = lines.map((line) => ({
       name: lineLabel(line).slice(0, 127),
       description: lineDetail(line).slice(0, 127),
       quantity: "1",
-      unit_amount: { currency_code: "EUR", value: Number(line.subtotal || 0).toFixed(2) },
+      unit_amount: { currency_code: "EUR", value: Number(computeLineSubtotal(line) || 0).toFixed(2) },
     }));
 
     orderPaypalButtons = paypal.Buttons({
@@ -569,9 +612,9 @@ function updateOrderSummary() {
 function toggleCartActionButtons() {
   const continueBtn = document.getElementById("order-continue-btn");
   const viewCartBtn = document.getElementById("order-go-checkout-btn");
-  const hasCart = CartStore.hasItems();
-  if (continueBtn) continueBtn.hidden = !hasCart;
-  if (viewCartBtn) viewCartBtn.hidden = !hasCart;
+  const canShow = hasAddedToCartThisModalOpen && CartStore.hasItems();
+  if (continueBtn) continueBtn.hidden = !canShow;
+  if (viewCartBtn) viewCartBtn.hidden = !canShow;
 }
 
 function syncOrderFormatPills(formatValue) {
@@ -603,6 +646,8 @@ function openOrderModal(presetProduct, presetFormat) {
   const qty = document.getElementById("order-qty");
   if (qty) qty.value = "1";
   document.getElementById("order-prenom-addon-no")?.click();
+  hasAddedToCartThisModalOpen = false;
+  toggleCartActionButtons();
   setModalState(modal, true);
   document.body.style.overflow = "hidden";
   updateOrderSummary();
@@ -620,6 +665,8 @@ function closeOrderModal() {
   const rowProduct = document.getElementById("order-row-product");
   if (productEl) productEl.disabled = false;
   if (rowProduct) rowProduct.style.display = "";
+  hasAddedToCartThisModalOpen = false;
+  toggleCartActionButtons();
 }
 
 function bindOrderInputsForSummary() {
@@ -653,7 +700,7 @@ function buildCartMailBody(total) {
     "",
     "Récapitulatif panier :",
     "",
-    ...orderCart.flatMap((line) => [`${lineLabel(line)} — ${Number(line.subtotal || 0).toFixed(2)} €`, lineDetail(line) || "Sans option", ""]),
+    ...orderCart.flatMap((line) => [`${lineLabel(line)} — ${Number(computeLineSubtotal(line) || 0).toFixed(2)} €`, lineDetail(line) || "Sans option", ""]),
     shippingLine,
     `Total : ${total != null ? `${total.toFixed(2)} €` : "(à confirmer)"}`,
     "",
@@ -679,6 +726,10 @@ function openCartDrawer(drawer, drawerBackdrop) {
   if (!drawer || !drawerBackdrop) return;
   setModalState(drawer, true);
   setModalState(drawerBackdrop, true);
+  const drawerPromoInput = document.getElementById("drawer-promo-code-input");
+  if (drawerPromoInput && typeof window.getActivePromoCode === "function") {
+    drawerPromoInput.value = window.getActivePromoCode() || "";
+  }
 }
 
 function closeCartDrawer(drawer, drawerBackdrop) {
@@ -691,6 +742,15 @@ function openCheckoutModal(checkoutModal) {
   if (!checkoutModal) return;
   setModalState(checkoutModal, true);
   document.body.style.overflow = "hidden";
+  const promoInput = document.getElementById("promo-code-input");
+  const drawerPromoInput = document.getElementById("drawer-promo-code-input");
+  if (promoInput && typeof window.getActivePromoCode === "function") {
+    promoInput.value = window.getActivePromoCode() || "";
+  }
+  if (drawerPromoInput && typeof window.getActivePromoCode === "function") {
+    drawerPromoInput.value = window.getActivePromoCode() || "";
+  }
+  updateCheckoutSummary(computeCartSubtotal(), getShippingFeeFromState(getShippingState()), computeCartTotal(getShippingFeeFromState(getShippingState())));
   schedulePayPalRender();
   const wrap = document.getElementById("order-paypal-wrap");
   if (wrap) wrap.hidden = false;
@@ -719,6 +779,25 @@ function setupOrderModal() {
   const checkoutModal = document.getElementById("checkout-modal");
   const closeCheckoutBtn = document.getElementById("close-checkout-modal");
   const deliveryMethodInputs = document.querySelectorAll('input[name="delivery-method"], input[name="delivery-method-checkout"]');
+  const promoInput = document.getElementById("promo-code-input");
+  const promoApplyBtn = document.getElementById("promo-apply-btn");
+  const promoClearBtn = document.getElementById("promo-clear-btn");
+  const promoFeedback = document.getElementById("promo-feedback");
+  const drawerPromoInput = document.getElementById("drawer-promo-code-input");
+  const drawerPromoApplyBtn = document.getElementById("drawer-promo-apply-btn");
+  const drawerPromoClearBtn = document.getElementById("drawer-promo-clear-btn");
+  const drawerPromoFeedback = document.getElementById("drawer-promo-feedback");
+
+  const setPromoFeedback = (msg, isError = false) => {
+    if (!promoFeedback) return;
+    promoFeedback.textContent = msg || "";
+    promoFeedback.style.color = isError ? "#a2362b" : "";
+  };
+  const setDrawerPromoFeedback = (msg, isError = false) => {
+    if (!drawerPromoFeedback) return;
+    drawerPromoFeedback.textContent = msg || "";
+    drawerPromoFeedback.style.color = isError ? "#a2362b" : "";
+  };
 
   document.querySelectorAll("[data-open-order]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -763,6 +842,7 @@ function setupOrderModal() {
       return;
     }
     CartStore.add(line);
+    hasAddedToCartThisModalOpen = true;
     renderOrderCart();
     schedulePayPalRender();
     showToast("Article ajouté au panier.");
@@ -792,6 +872,46 @@ function setupOrderModal() {
     renderOrderCart();
     schedulePayPalRender();
   });
+
+  promoApplyBtn?.addEventListener("click", async () => {
+    const code = promoInput?.value?.trim() || drawerPromoInput?.value?.trim() || "";
+    if (!code) {
+      setPromoFeedback("Entre un code promo.", true);
+      return;
+    }
+    if (typeof window.applyPromoCode !== "function") {
+      setPromoFeedback("Promo indisponible pour le moment.", true);
+      return;
+    }
+    const res = await window.applyPromoCode(code);
+    if (!res?.ok) {
+      setPromoFeedback("Code invalide ou expiré.", true);
+      setDrawerPromoFeedback("Code invalide ou expiré.", true);
+      return;
+    }
+    setPromoFeedback(`Code ${res.code} appliqué ✅`);
+    setDrawerPromoFeedback(`Code ${res.code} appliqué ✅`);
+    if (promoInput) promoInput.value = res.code;
+    if (drawerPromoInput) drawerPromoInput.value = res.code;
+    renderOrderCart();
+    updateOrderSummary();
+    schedulePayPalRender();
+  });
+
+  promoClearBtn?.addEventListener("click", () => {
+    if (typeof window.clearPromoCode === "function") {
+      window.clearPromoCode();
+    }
+    if (promoInput) promoInput.value = "";
+    if (drawerPromoInput) drawerPromoInput.value = "";
+    setPromoFeedback("Code promo retiré.");
+    setDrawerPromoFeedback("Code promo retiré.");
+    renderOrderCart();
+    updateOrderSummary();
+    schedulePayPalRender();
+  });
+  drawerPromoApplyBtn?.addEventListener("click", () => promoApplyBtn?.click());
+  drawerPromoClearBtn?.addEventListener("click", () => promoClearBtn?.click());
 
   ["shipping-fullname", "shipping-email", "shipping-phone", "shipping-address1", "shipping-address2", "shipping-postal", "shipping-city", "shipping-notes"].forEach((id) => {
     const field = document.getElementById(id);
