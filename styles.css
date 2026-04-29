@@ -79,6 +79,44 @@ ul { margin: 0; padding: 0; list-style: none; }
   border: 0;
 }
 
+/* Premier lien : saut au contenu principal (clavier / lecteurs d'écran) */
+.skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 10001;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.65rem 1.1rem;
+  clip: auto;
+  overflow: visible;
+  white-space: normal;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--rose);
+  font-weight: 600;
+  text-decoration: none;
+  outline: none;
+}
+.skip-link:focus-visible {
+  outline: 3px solid var(--rose);
+  outline-offset: 3px;
+}
+
 /* ── Layout ── */
 .container {
   width: min(1100px, 92vw);
@@ -141,6 +179,12 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 .nav-links a:hover { color: var(--ink); }
 
+.nav-links a:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 .nav-link-btn {
   background: none;
   border: none;
@@ -158,6 +202,12 @@ ul { margin: 0; padding: 0; list-style: none; }
   color: var(--ink);
 }
 
+.nav-link-btn:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 .cart-toggle {
   border: 1px solid var(--line);
   background: #fff;
@@ -169,6 +219,11 @@ ul { margin: 0; padding: 0; list-style: none; }
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+.cart-toggle:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
 }
 
 .cart-count {
@@ -1310,6 +1365,13 @@ h1 em {
 
 .footer-sitemap-link:hover { color: #fff; }
 
+.footer-sitemap a:focus-visible,
+.footer-sitemap-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
 .gift-card-inline-hint {
   text-align: left;
   font-size: 0.95rem;
@@ -1400,6 +1462,11 @@ h1 em {
   font-size: 1.55rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.legal-content {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .legal-content h3 {

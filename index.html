@@ -35,6 +35,9 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <!-- LCP : logo + première vignette produit (prix kits alignés sur PRODUCT_BASE_EUR dans components/config.js) -->
+    <link rel="preload" as="image" href="./logolps.png" />
+    <link rel="preload" as="image" href="./images/embroidery-petit-mot.jpg" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -48,12 +51,13 @@
     </script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Aller au contenu principal</a>
 
     <!-- ── HEADER ── -->
     <header class="site-header">
       <div class="container nav">
         <a href="#" class="brand-wrap" aria-label="Retour en haut de page Les Points Sauvages">
-          <img src="./logolps.png" alt="" class="brand-logo" />
+          <img src="./logolps.png" alt="" class="brand-logo" width="28" height="28" decoding="async" fetchpriority="high" />
           <span class="brand">Les Points Sauvages</span>
         </a>
         <nav aria-label="Navigation principale">
@@ -73,7 +77,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="main-content" tabindex="-1">
 
       <!-- ── HERO ── -->
       <section class="hero container" aria-labelledby="hero-title">
@@ -83,7 +87,7 @@
         </h1>
         <p class="badge reveal">✦ Fait main en France ✦</p>
         <div class="hero-mark reveal" aria-hidden="true">
-          <img src="./logolps.png" alt="" class="hero-logo-subtle" width="80" height="80" />
+          <img src="./logolps.png" alt="" class="hero-logo-subtle" width="80" height="80" decoding="async" />
         </div>
         <p class="hero-text reveal">
           Des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou
@@ -113,7 +117,7 @@
           <article class="card reveal" role="listitem">
             <div class="card-tag"><span aria-hidden="true">⭐</span> Bestseller</div>
             <div class="card-thumb-wrap">
-              <img class="card-thumb" src="./images/embroidery-petit-mot.jpg" alt="Broderie petit mot" loading="lazy" />
+              <img class="card-thumb" src="./images/embroidery-petit-mot.jpg" alt="Broderie petit mot" loading="eager" decoding="async" fetchpriority="high" />
               <button
                 type="button"
                 class="card-photo-btn"
@@ -128,7 +132,7 @@
             </div>
             <h3>Petit mot</h3>
             <p class="product-desc">Mon classique impertinent. Petit format, grand impact. Disponible en kit DIY ou en broderie finie.</p>
-            <p class="meta" id="price-petit">À partir de : 0,00 €</p>
+            <p class="meta" id="price-petit">À partir de : 10,00 €</p>
             <p class="micro-info">Diamètre : 10 cm · Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit mot">
               <button type="button" class="btn btn-primary" data-open-order="petit" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
@@ -139,7 +143,7 @@
           <article class="card reveal" role="listitem">
             <div class="card-tag"><span aria-hidden="true">🔥</span> Coup de gueule</div>
             <div class="card-thumb-wrap">
-              <img class="card-thumb" src="./images/embroidery-grand-mot.jpg" alt="Broderie grand mot" loading="lazy" />
+              <img class="card-thumb" src="./images/embroidery-grand-mot.jpg" alt="Broderie grand mot" loading="lazy" decoding="async" />
               <button
                 type="button"
                 class="card-photo-btn"
@@ -154,7 +158,7 @@
             </div>
             <h3>Grand mot</h3>
             <p class="product-desc">Pour les phrases qui piquent juste comme il faut. Format plus grand, même énergie.</p>
-            <p class="meta" id="price-grand">À partir de : 0,00 €</p>
+            <p class="meta" id="price-grand">À partir de : 20,00 €</p>
             <p class="micro-info">Diamètre : 16 cm · Expédition estimée : kit 48 h ouvrées · broderie finie 5 à 8 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Grand mot">
               <button type="button" class="btn btn-primary" data-open-order="grand" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>
@@ -165,7 +169,7 @@
           <article class="card reveal" role="listitem">
             <div class="card-tag card-tag--special"><span aria-hidden="true">🎨</span> Personnalisable</div>
             <div class="card-thumb-wrap">
-              <img class="card-thumb" src="./images/embroidery-petit-chat.jpg" alt="Broderie petit chat personnalisable" loading="lazy" />
+              <img class="card-thumb" src="./images/embroidery-petit-chat.jpg" alt="Broderie petit chat personnalisable" loading="lazy" decoding="async" />
               <button
                 type="button"
                 class="card-photo-btn"
@@ -180,7 +184,7 @@
             </div>
             <h3>Petit chat qui dort</h3>
             <p class="product-desc">Votre chat, votre style : prénom et couleurs de fourrure personnalisables.</p>
-            <p class="meta" id="price-chat">À partir de : 0,00 €</p>
+            <p class="meta" id="price-chat">À partir de : 14,00 €</p>
             <p class="micro-info">Diamètre : 14 cm · Expédition estimée : kit 3 à 5 jours · broderie finie 7 à 12 jours.</p>
             <div class="format-toggle" role="group" aria-label="Choisir le format pour Petit chat qui dort">
               <button type="button" class="btn btn-primary" data-open-order="chat" data-order-format="kit"><span class="btn-icon" aria-hidden="true">🧵</span> Kit DIY</button>

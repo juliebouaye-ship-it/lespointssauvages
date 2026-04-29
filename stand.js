@@ -1,5 +1,14 @@
 let standSupabaseClient = null;
 const STAND_SHIPPING_EUR = 3.5;
+const STAND_TOKEN_KEY = "lps-stand-dashboard-token";
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -34,38 +43,80 @@ function renderRows(rows) {
   tbody.innerHTML = rows
     .map(
       (row) => `<tr>
-      <td>${formatDate(row.created_at)}</td>
-      <td>${row.customer_name || ""}</td>
-      <td>${row.customer_email || ""}</td>
-      <td>${row.shipping_method === "ship" ? "Livraison" : "Retrait"}</td>
-      <td>${euros(row.amount_total)}</td>
-      <td>${euros(row.amount_remaining)}</td>
-      <td>${row.pos_reference || ""}</td>
+      <td>${escapeHtml(formatDate(row.created_at))}</td>
+      <td>${escapeHtml(row.customer_name || "")}</td>
+      <td>${escapeHtml(row.customer_email || "")}</td>
+      <td>${escapeHtml(row.shipping_method === "ship" ? "Livraison" : "Retrait")}</td>
+      <td>${escapeHtml(euros(row.amount_total))}</td>
+      <td>${escapeHtml(euros(row.amount_remaining))}</td>
+      <td>${escapeHtml(row.pos_reference || "")}</td>
     </tr>`
     )
     .join("");
 }
 
-async function loadOrders() {
-  const client = getStandClient();
-  const feedback = document.getElementById("stand-dashboard-feedback");
-  if (!client) {
-    feedback.textContent = "Supabase non configuré.";
-    return;
+function getStandDashboardToken() {
+  let t = sessionStorage.getItem(STAND_TOKEN_KEY);
+  if (!t) {
+    t = window.prompt("Mot de passe tableau de bord marché")?.trim();
+    if (!t) return null;
+    sessionStorage.setItem(STAND_TOKEN_KEY, t);
   }
-  feedback.textContent = "Chargement...";
-  const { data, error } = await client
-    .from("stand_orders")
-    .select("created_at,customer_name,customer_email,shipping_method,amount_total,amount_remaining,pos_reference")
-    .order("created_at", { ascending: false })
-    .limit(80);
+  return t;
+}
 
-  if (error) {
-    feedback.textContent = `Erreur lecture: ${error.message}`;
+async function loadOrders() {
+  const feedback = document.getElementById("stand-dashboard-feedback");
+  const tbody = document.getElementById("stand-orders-body");
+  const token = getStandDashboardToken();
+  if (!token) {
+    if (feedback) feedback.textContent = "Liste masquée : mot de passe annulé.";
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7">Session tableau non ouverte.</td></tr>`;
     return;
   }
-  renderRows(data || []);
-  feedback.textContent = `${(data || []).length} fiche(s) chargée(s).`;
+
+  if (feedback) feedback.textContent = "Chargement...";
+  const res = await fetch("/.netlify/functions/stand-orders-list", {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: "same-origin",
+  });
+
+  if (res.status === 401) {
+    sessionStorage.removeItem(STAND_TOKEN_KEY);
+    if (feedback) feedback.textContent = "Mot de passe refusé ou révoqué : Rafraîchir pour saisir à nouveau.";
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7">Non autorisé.</td></tr>`;
+    return;
+  }
+
+  if (!res.ok) {
+    let detail = "";
+    try {
+      const err = await res.json();
+      detail = err?.error ? JSON.stringify(err.error) : res.statusText;
+    } catch {
+      detail = res.statusText;
+    }
+    if (feedback) feedback.textContent = `Erreur liste (${res.status}): ${detail}`;
+    return;
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    if (feedback) feedback.textContent = "Réponse tableau invalide.";
+    return;
+  }
+  renderRows(Array.isArray(data) ? data : []);
+  if (feedback) feedback.textContent = `${(Array.isArray(data) ? data : []).length} fiche(s) chargée(s).`;
+}
+
+function clearStandDashboardSession() {
+  sessionStorage.removeItem(STAND_TOKEN_KEY);
+  const feedback = document.getElementById("stand-dashboard-feedback");
+  const tbody = document.getElementById("stand-orders-body");
+  if (feedback) feedback.textContent = "Session fermée. Cliquez « Rafraîchir la liste » pour ouvrir une nouvelle session.";
+  if (tbody) tbody.innerHTML = `<tr><td colspan="7">Liste masquée.</td></tr>`;
 }
 
 function setFormFeedback(msg, isError = false) {
@@ -212,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target?.id === "stand-modal-backdrop") closeStandModal();
   });
   document.getElementById("reload-stand-orders")?.addEventListener("click", loadOrders);
+  document.getElementById("stand-clear-dashboard-session")?.addEventListener("click", clearStandDashboardSession);
   document.getElementById("delivery-method")?.addEventListener("change", syncDeliveryUI);
   ["amount-products", "amount-paid"].forEach((id) => {
     document.getElementById(id)?.addEventListener("input", refreshTotals);

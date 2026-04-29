@@ -36,9 +36,27 @@ Ou utilisez directement:
 Le site est deploye via Netlify.
 Les deploiements automatiques se font depuis la branche `main` du repository GitHub.
 
+### Preview CLI (alias fixe `preview`)
+
+Depuis ce dossier `Netlify`. Reference complete : **`../brief-agent-extra-site.md`** (section « Deploiement Netlify »).
+
+```powershell
+npx --yes netlify-cli deploy --no-build --dir . --alias preview
+```
+
+URL du type : `https://preview--lespointssauvages.netlify.app`.
+
+### Production CLI
+
+```powershell
+npx --yes netlify-cli deploy --no-build --dir . --prod
+```
+
 ## Workflow recommande
 
 1. Modifier les fichiers du site dans ce dossier.
 2. Committer les changements.
 3. Pousser sur GitHub.
 4. Laisser Netlify redeployer automatiquement.
+
+Pour tester avant merge vers `main`, utiliser la commande preview ci‑dessus avec `--alias preview`.
