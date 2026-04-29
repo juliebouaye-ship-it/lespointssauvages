@@ -152,7 +152,7 @@ const LPS_MODALS_HTML = `
           <label class="pill-toggle-label" for="delivery-method-pickup">Retrait atelier</label>
         </div>
       </div>
-      <p class="order-cart-shipping" id="order-cart-shipping"><strong>Livraison : 3,50 €</strong></p>
+      <p class="order-cart-shipping" id="order-cart-shipping"><strong>Livraison : à calculer</strong></p>
       <p class="order-cart-total"><strong>Total panier : <span id="order-cart-total">0,00 €</span></strong></p>
       <div class="order-cart-footer">
         <button type="button" class="btn btn-outline" id="order-cart-clear-btn">Vider le panier</button>
@@ -168,11 +168,11 @@ const LPS_MODALS_HTML = `
         <p class="helper">Finalisez votre commande en toute sécurité avec PayPal.</p>
         <p class="helper">Un reçu PayPal est envoyé automatiquement après paiement. Si vous ne le recevez pas sous 5 minutes, contactez-moi.</p>
         <div class="order-form" id="checkout-shipping-form">
-          <div class="form-row">
+          <div class="form-row" id="checkout-delivery-row">
             <span class="order-pill-label">Mode de remise <span class="required" aria-hidden="true">*</span></span>
             <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Mode de remise paiement">
               <input class="pill-toggle-input" type="radio" name="delivery-method-checkout" id="delivery-method-checkout-ship" value="ship" checked />
-              <label class="pill-toggle-label" for="delivery-method-checkout-ship">Expédition (+3,50 €)</label>
+              <label class="pill-toggle-label" for="delivery-method-checkout-ship">Expédition</label>
               <input class="pill-toggle-input" type="radio" name="delivery-method-checkout" id="delivery-method-checkout-pickup" value="pickup" />
               <label class="pill-toggle-label" for="delivery-method-checkout-pickup">Retrait atelier (gratuit)</label>
             </div>
@@ -366,8 +366,8 @@ const LPS_MODALS_HTML = `
             <div class="box-plan-grid">
               <label for="box-plan">Offre <span class="required" aria-hidden="true">*</span></label>
               <select id="box-plan" required>
-                <option value="aboMensuel">Mensuelle — 15 € / box</option>
-                <option value="abo3Mois">3 mois — 40 €</option>
+                <option value="aboMensuel">Mensuelle — 19,50 € / box</option>
+                <option value="abo3Mois">3 mois — 49,50 €</option>
                 <option value="aboAnnee">1 an — 195 €</option>
               </select>
               <span class="box-intent-label">Cette box est faite pour</span>
@@ -415,6 +415,16 @@ const LPS_MODALS_HTML = `
           </div>
           <button type="submit" class="btn btn-primary">Continuer</button>
         </form>
+        <div id="box-paypal-step" class="order-summary" hidden>
+          <p><strong>Dernière étape avant PayPal</strong></p>
+          <p id="box-paypal-step-intro" class="muted">Votre demande est prête. Vous allez être redirigée vers PayPal pour confirmer l'abonnement mensuel.</p>
+          <p id="box-paypal-step-recap" class="muted"></p>
+          <p class="muted">Après validation sur PayPal, vous recevrez votre confirmation habituelle par email.</p>
+          <div class="order-cart-actions">
+            <button type="button" class="btn btn-primary" id="box-paypal-continue-btn">Continuer vers PayPal</button>
+            <button type="button" class="btn btn-ghost" id="box-paypal-back-btn">Modifier mes infos</button>
+          </div>
+        </div>
       </section>
     </div>
 

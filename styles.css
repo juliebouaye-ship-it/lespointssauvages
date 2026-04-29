@@ -2171,6 +2171,28 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 @media (max-width: 420px) {
+  .nav {
+    gap: 0.5rem;
+  }
+
+  .nav-links {
+    gap: 0.5rem;
+  }
+
+  .nav-links li:nth-child(3) {
+    display: none;
+  }
+
+  .cart-toggle {
+    padding: 0.38rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .gift-card-inline-hint {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
   .reassurance-grid { grid-template-columns: 1fr; }
 }
 

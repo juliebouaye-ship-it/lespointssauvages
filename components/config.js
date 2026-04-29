@@ -59,8 +59,8 @@ const PHRASES_PETIT = ["Merde", "Putain", "Ba super"];
 const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
 const BOX_ONE_SHOT_EUR = {
-  abo3Mois: 51.5,
-  aboAnnee: 191.5,
+  abo3Mois: 49.9,
+  aboAnnee: 195,
 };
 const ACCESSORY_PRODUCTS = {
   "oreilles-chat": { label: "Cercle oreilles de chat (PLA)", price: 5.0 },

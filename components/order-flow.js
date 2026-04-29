@@ -326,6 +326,14 @@ function computeCartSubtotal() {
   return orderCart.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
 }
 
+function hasOnlySubscriptionLines() {
+  return (
+    Array.isArray(orderCart) &&
+    orderCart.length > 0 &&
+    orderCart.every((line) => line?.product === "aboMensuel" || line?.product === "abo3Mois" || line?.product === "aboAnnee")
+  );
+}
+
 function updateCartCountBadges() {
   const count = orderCart.length;
   const badge = document.getElementById("header-cart-count");
@@ -346,9 +354,12 @@ function renderOrderCart() {
   const shippingEl = document.querySelector(".order-cart-shipping strong");
   const shippingState = getShippingState();
   const shippingFee = getShippingFeeFromState(shippingState);
+  const subscriptionOnlyCart = hasOnlySubscriptionLines();
   if (!list || !totalEl) return;
   if (shippingEl) {
-    shippingEl.textContent = isPickupDelivery(shippingState)
+    shippingEl.textContent = subscriptionOnlyCart
+      ? "Livraison : incluse"
+      : isPickupDelivery(shippingState)
       ? "Retrait atelier : gratuit"
       : `Livraison : ${formatEuro(shippingFee)}`;
   }
@@ -365,7 +376,7 @@ function renderOrderCart() {
     return;
   }
   if (shippingRow) shippingRow.hidden = false;
-  if (deliveryBlock) deliveryBlock.hidden = false;
+  if (deliveryBlock) deliveryBlock.hidden = subscriptionOnlyCart;
   if (checkoutBtn) checkoutBtn.hidden = false;
 
   list.innerHTML = orderCart
@@ -720,16 +731,21 @@ function buildCartMailBody(total) {
 
 function syncCheckoutDeliveryFields() {
   const shippingState = getShippingState();
+  const subscriptionOnlyCart = hasOnlySubscriptionLines();
   const pickup = isPickupDelivery(shippingState);
   const note = document.getElementById("shipping-method-note");
-  if (note) note.hidden = !pickup;
+  const checkoutShippingEl = document.getElementById("checkout-summary-shipping");
+  if (note) note.hidden = subscriptionOnlyCart || !pickup;
+  const deliveryRow = document.getElementById("checkout-delivery-row");
+  if (deliveryRow) deliveryRow.hidden = subscriptionOnlyCart;
   document.querySelectorAll(".shipping-address-row").forEach((row) => (row.hidden = pickup));
   ["shipping-address1", "shipping-postal", "shipping-city"].forEach((id) => {
     const input = document.getElementById(id);
     if (input) input.required = !pickup;
   });
   const shippingText = document.querySelector(".order-cart-shipping strong");
-  if (shippingText) shippingText.textContent = pickup ? "Retrait atelier : gratuit" : `Livraison : ${formatEuro(SHIPPING_EUR)}`;
+  if (shippingText) shippingText.textContent = subscriptionOnlyCart ? "Livraison : incluse" : pickup ? "Retrait atelier : gratuit" : `Livraison : ${formatEuro(SHIPPING_EUR)}`;
+  if (checkoutShippingEl && subscriptionOnlyCart) checkoutShippingEl.textContent = "Incluse";
 }
 
 function openCartDrawer(drawer, drawerBackdrop) {

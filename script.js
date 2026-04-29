@@ -40,8 +40,8 @@ function syncDisplayedPrices() {
     const monthlyOpt = boxSelect.querySelector('option[value="aboMensuel"]');
     const threeOpt = boxSelect.querySelector('option[value="abo3Mois"]');
     const yearOpt = boxSelect.querySelector('option[value="aboAnnee"]');
-    if (monthlyOpt) monthlyOpt.textContent = "Mensuelle — 15 € / box";
-    if (threeOpt) threeOpt.textContent = "3 mois — 40 €";
+    if (monthlyOpt) monthlyOpt.textContent = "Mensuelle — 19,50 € / box";
+    if (threeOpt) threeOpt.textContent = "3 mois — 49,50 €";
     if (yearOpt) yearOpt.textContent = "1 an — 195 €";
   }
 }
@@ -97,6 +97,11 @@ function isPickupDelivery(state) {
 
 function getShippingFeeFromState(state) {
   const hasOnlyGiftCards = Array.isArray(orderCart) && orderCart.length > 0 && orderCart.every((line) => line?.product === "gift-card");
+  const hasOnlySubscriptionBoxes =
+    Array.isArray(orderCart) &&
+    orderCart.length > 0 &&
+    orderCart.every((line) => line?.product === "aboMensuel" || line?.product === "abo3Mois" || line?.product === "aboAnnee");
+  if (hasOnlySubscriptionBoxes) return 0;
   if (hasOnlyGiftCards) return 0;
   return isPickupDelivery(state) ? 0 : SHIPPING_EUR;
 }
@@ -305,6 +310,10 @@ function setupBoxModal() {
   const modal = document.getElementById("box-modal");
   const closeBtn = document.getElementById("close-box-modal");
   const form = document.getElementById("box-form");
+  const paypalStep = document.getElementById("box-paypal-step");
+  const paypalStepRecap = document.getElementById("box-paypal-step-recap");
+  const paypalContinueBtn = document.getElementById("box-paypal-continue-btn");
+  const paypalBackBtn = document.getElementById("box-paypal-back-btn");
   const planEl = document.getElementById("box-plan");
   const buyerEmailEl = document.getElementById("box-buyer-email");
   const messageEl = document.getElementById("box-message");
@@ -317,6 +326,14 @@ function setupBoxModal() {
   const shippingPostalEl = document.getElementById("box-shipping-postal");
   const shippingCityEl = document.getElementById("box-shipping-city");
   if (!modal || !form || !planEl || !buyerEmailEl) return;
+  let pendingMonthlyPayPalUrl = "";
+
+  function resetBoxSteps() {
+    pendingMonthlyPayPalUrl = "";
+    form.hidden = false;
+    if (paypalStep) paypalStep.hidden = true;
+    if (paypalStepRecap) paypalStepRecap.textContent = "";
+  }
 
   function syncIntentFields() {
     const intent = document.querySelector('input[name="box-intent"]:checked')?.value || "self";
@@ -340,11 +357,13 @@ function setupBoxModal() {
     if (shippingCityEl) shippingCityEl.value = "";
     if (messageEl) messageEl.value = "";
     syncIntentFields();
+    resetBoxSteps();
     setModalState(modal, true);
     document.body.style.overflow = "hidden";
   }
 
   function closeBoxModal() {
+    resetBoxSteps();
     setModalState(modal, false);
     document.body.style.overflow = "";
   }
@@ -386,19 +405,24 @@ function setupBoxModal() {
       return;
     }
 
-    await saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping });
-
     if (plan === "aboMensuel") {
       const entry = PAYPAL_BOX_LINKS.aboMensuel;
       if (entry?.url && entry.url !== "#") {
-        window.open(entry.url, "_blank", "noopener,noreferrer");
-        closeBoxModal();
-        showToast("Redirection vers PayPal pour l'abonnement.");
+        pendingMonthlyPayPalUrl = entry.url;
+        const destination = [shipping.postalCode, shipping.city].filter(Boolean).join(" ");
+        if (paypalStepRecap) {
+          paypalStepRecap.textContent = `Email: ${buyerEmail} · Livraison: ${shipping.fullName}, ${destination || shipping.address1}`;
+        }
+        form.hidden = true;
+        if (paypalStep) paypalStep.hidden = false;
+        showToast("Parfait. Vérifiez le récapitulatif puis continuez vers PayPal.");
       } else {
         showToast("Lien PayPal mensuel à configurer.");
       }
       return;
     }
+
+    await saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping });
 
     const line = buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping);
     if (!line) {
@@ -409,6 +433,19 @@ function setupBoxModal() {
     renderOrderCart();
     closeBoxModal();
     showToast("Box ajoutée au panier.");
+  });
+
+  paypalContinueBtn?.addEventListener("click", () => {
+    if (!pendingMonthlyPayPalUrl) {
+      showToast("Lien PayPal indisponible pour le moment.");
+      return;
+    }
+    window.location.href = pendingMonthlyPayPalUrl;
+  });
+
+  paypalBackBtn?.addEventListener("click", () => {
+    resetBoxSteps();
+    showToast("Infos réaffichées. Vous pouvez modifier avant de continuer.");
   });
 }
 

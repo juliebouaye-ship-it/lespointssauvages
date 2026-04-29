@@ -6,6 +6,9 @@ plugins = []
   [functions."*"]
 
 [build]
+# Ne jamais sauter le build côté Netlify : code de sortie ≠ 0 → le déploiement part (toutes les étapes s’enchaînent).
+# (Code 0 sur cette commande = « annuler le build » selon la doc Netlify.)
+ignore = "exit 1"
 publish = "."
 publishOrigin = "config"
 
