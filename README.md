@@ -1,6 +1,6 @@
-# Les Points Sauvages
+# Les Points Rebelles
 
-Site vitrine statique de **Les Points Sauvages**.
+Site vitrine statique de **Les Points Rebelles**.
 
 ## Stack
 
@@ -44,7 +44,7 @@ Depuis ce dossier `Netlify`. Reference complete : **`../brief-agent-extra-site.m
 npx --yes netlify-cli deploy --no-build --dir . --alias preview
 ```
 
-URL du type : `https://preview--lespointssauvages.netlify.app`.
+URL du type : `https://preview--lespointsrebelles.netlify.app`.
 
 ### Production CLI
 

@@ -1,0 +1,11 @@
+{
+  "name": "lespointsrebelles-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "logo:knockout": "node scripts/logo-knockout-white.mjs"
+  },
+  "devDependencies": {
+    "pngjs": "^7.0.0"
+  }
+}

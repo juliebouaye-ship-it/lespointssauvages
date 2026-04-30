@@ -4,7 +4,7 @@ function updateContactLinks() {
   const emailLinks = document.querySelectorAll("#contact-email-link, [data-email]");
   emailLinks.forEach((link) => {
     link.setAttribute("href", `mailto:${CONTACT_EMAIL}`);
-    if (!link.textContent.trim() || link.textContent.includes("contact@lespointssauvages")) {
+    if (!link.textContent.trim() || link.textContent.includes("lespointssauvages")) {
       link.textContent = CONTACT_EMAIL;
     }
   });

@@ -1,2 +1,10 @@
+# Dépendances locales (script logo, etc.)
+node_modules/
+
 # Local Netlify folder
 .netlify
+
+# Secrets locaux (jamais committer)
+.env
+.env.*
+!.env.example

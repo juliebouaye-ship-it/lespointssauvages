@@ -258,10 +258,10 @@ const LPS_MODALS_HTML = `
         <div class="legal-content">
           <h3>Éditeur du site</h3>
           <p>
-            Les Points Sauvages<br />
+            Les Points Rebelles<br />
             Les Sorinières, France<br />
             SIRET : 84344037100030<br />
-            Contact : <a href="mailto:lespointssauvages@gmail.com" data-email>lespointssauvages@gmail.com</a>
+            Contact : <a href="mailto:lespointsrebelles@gmail.com" data-email>lespointsrebelles@gmail.com</a>
           </p>
 
           <h3>Activité</h3>
@@ -317,8 +317,8 @@ const LPS_MODALS_HTML = `
         <div class="legal-content">
           <h3>Responsable du traitement</h3>
           <p>
-            Les Points Sauvages — Les Sorinières, France — SIRET 84344037100030 —
-            <a href="mailto:lespointssauvages@gmail.com" data-email>lespointssauvages@gmail.com</a>
+            Les Points Rebelles — Les Sorinières, France — SIRET 84344037100030 —
+            <a href="mailto:lespointsrebelles@gmail.com" data-email>lespointsrebelles@gmail.com</a>
           </p>
           <h3>Données collectées</h3>
           <p>

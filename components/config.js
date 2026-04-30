@@ -35,7 +35,7 @@ const PAYPAL_BOX_LINKS = {
   aboAnnee: { kind: "once", url: "#" },
 };
 
-const CONTACT_EMAIL = "lespointssauvages@gmail.com";
+const CONTACT_EMAIL = "lespointsrebelles@gmail.com";
 const SUPABASE_URL = "https://mjegipjdnwcseunsmoyu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_MI3d_8ZFg5eKhWAADfpyvA_6dnc9w8n";
 

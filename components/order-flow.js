@@ -851,7 +851,7 @@ function setupOrderModal() {
       return;
     }
     const bodyText = hasCart ? buildCartMailBody(total) : buildMailtoBody(state, total);
-    const subject = encodeURIComponent("Commande Les Points Sauvages");
+    const subject = encodeURIComponent("Commande Les Points Rebelles");
     const body = encodeURIComponent(bodyText);
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   });

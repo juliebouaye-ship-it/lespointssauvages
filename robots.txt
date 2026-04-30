@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lespointssauvages.netlify.app/sitemap.xml
+Sitemap: https://lespointsrebelles.netlify.app/sitemap.xml

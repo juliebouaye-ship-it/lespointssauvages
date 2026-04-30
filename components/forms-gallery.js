@@ -23,7 +23,7 @@ function setupContactForm() {
       return;
     }
     if (result.missingConfig) {
-      const subject = encodeURIComponent("Contact Les Points Sauvages");
+      const subject = encodeURIComponent("Contact Les Points Rebelles");
       const body = encodeURIComponent(`${name ? `Prénom: ${name}\n` : ""}${message}`);
       window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
       return;
@@ -71,7 +71,7 @@ function setupSubscriptionRequests() {
       return;
     }
     if (result.missingConfig) {
-      const subject = encodeURIComponent("Demande abonnement Les Points Sauvages");
+      const subject = encodeURIComponent("Demande abonnement Les Points Rebelles");
       const body = encodeURIComponent(`Type: ${type}\nEmail: ${email}\n\n${message}`);
       window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
       return;
@@ -131,7 +131,7 @@ function setupCustomRequestModal() {
       return;
     }
     if (result.missingConfig) {
-      const subject = encodeURIComponent("Demande motif personnalisé - Les Points Sauvages");
+      const subject = encodeURIComponent("Demande motif personnalisé - Les Points Rebelles");
       const body = encodeURIComponent(`${name ? `Prénom: ${name}\n` : ""}${composedMessage}`);
       window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
       return;
