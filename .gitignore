@@ -4,6 +4,9 @@ node_modules/
 # Local Netlify folder
 .netlify
 
+# Rapport Lighthouse local (contient des URLs / bruit pour le scan Netlify)
+qa-lighthouse.json
+
 # Secrets locaux (jamais committer)
 .env
 .env.*
