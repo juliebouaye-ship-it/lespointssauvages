@@ -31,10 +31,9 @@ const PAYPAL_BOX_LINKS = {
     kind: "subscribe",
     url: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6U9022504A2672356NHOSYVA",
   },
-  /** Abonnement bi-mensuel : même prix par box — plan PayPal distinct à configurer */
   aboBiMensuel: {
     kind: "subscribe",
-    url: "#",
+    url: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-2TS26772XT5333600NHZ3NRA",
   },
   abo3Mois: { kind: "once", url: "#" },
 };

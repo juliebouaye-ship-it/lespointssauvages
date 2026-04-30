@@ -734,7 +734,7 @@ function buildCartMailBody(total) {
 function syncCheckoutDeliveryFields() {
   const shippingState = getShippingState();
   const subscriptionOnlyCart = hasOnlySubscriptionLines();
-  const pickup = isPickupDelivery(shippingState);
+  const pickup = subscriptionOnlyCart ? false : isPickupDelivery(shippingState);
   const note = document.getElementById("shipping-method-note");
   const checkoutShippingEl = document.getElementById("checkout-summary-shipping");
   if (note) note.hidden = subscriptionOnlyCart || !pickup;
@@ -748,6 +748,32 @@ function syncCheckoutDeliveryFields() {
   const shippingText = document.querySelector(".order-cart-shipping strong");
   if (shippingText) shippingText.textContent = subscriptionOnlyCart ? "Livraison : incluse" : pickup ? "Retrait atelier : gratuit" : `Livraison : ${formatEuro(SHIPPING_EUR)}`;
   if (checkoutShippingEl && subscriptionOnlyCart) checkoutShippingEl.textContent = "Incluse";
+}
+
+/** Panier uniquement box (ex. coffret 3 mois) : reprend nom / email acheteur / adresse saisis dans la modale box, sans écraser si déjà modifié. */
+function prefillCheckoutShippingFromBoxCart() {
+  if (!hasOnlySubscriptionLines()) return;
+  const line = orderCart.find((l) => l?.product === "abo3Mois");
+  if (!line) return;
+
+  const applyIfEmpty = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el || value == null) return;
+    const v = String(value).trim();
+    if (!v) return;
+    if (!String(el.value || "").trim()) el.value = v;
+  };
+
+  applyIfEmpty("shipping-fullname", line.shippingName);
+  applyIfEmpty("shipping-email", line.shippingEmail);
+  applyIfEmpty("shipping-address1", line.shippingAddress);
+  applyIfEmpty("shipping-postal", line.shippingPostal);
+  applyIfEmpty("shipping-city", line.shippingCity);
+
+  const notesEl = document.getElementById("shipping-notes");
+  if (notesEl && line.commentaire && !String(notesEl.value || "").trim()) {
+    notesEl.value = String(line.commentaire).trim();
+  }
 }
 
 function openCartDrawer(drawer, drawerBackdrop) {
@@ -770,6 +796,11 @@ function openCheckoutModal(checkoutModal) {
   if (!checkoutModal) return;
   setModalState(checkoutModal, true);
   document.body.style.overflow = "hidden";
+  if (hasOnlySubscriptionLines()) {
+    syncDeliveryMethodToggles(SHIPPING_METHODS.ship);
+  }
+  syncCheckoutDeliveryFields();
+  prefillCheckoutShippingFromBoxCart();
   const promoInput = document.getElementById("promo-code-input");
   const drawerPromoInput = document.getElementById("drawer-promo-code-input");
   if (promoInput && typeof window.getActivePromoCode === "function") {
