@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "logo:knockout": "node scripts/logo-knockout-white.mjs"
+    "logo:knockout": "node scripts/logo-knockout-white.mjs",
+    "dev": "npx -y serve@14 . -l 5173 -n",
+    "deploy:preview": "npx -y netlify-cli deploy --no-build --dir . --alias preview",
+    "deploy:prod": "npx -y netlify-cli deploy --no-build --dir . --prod"
   },
   "devDependencies": {
     "pngjs": "^7.0.0"

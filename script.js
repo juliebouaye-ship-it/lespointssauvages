@@ -12,6 +12,10 @@ function formatEuro(amount) {
   return `${Number(amount).toFixed(2).replace(".", ",")} €`;
 }
 
+function formatEuroPlain(amount) {
+  return Number(amount).toFixed(2).replace(".", ",");
+}
+
 function syncDisplayedPrices() {
   const prixPetit = document.getElementById("price-petit");
   const prixGrand = document.getElementById("price-grand");
@@ -35,14 +39,22 @@ function syncDisplayedPrices() {
     stand.textContent = `${formatEuro(ACCESSORY_PRODUCTS["stand-triangle"].price)} · PLA biosourcé`;
   }
 
-  const boxSelect = document.getElementById("box-plan");
-  if (boxSelect) {
-    const monthlyOpt = boxSelect.querySelector('option[value="aboMensuel"]');
-    const threeOpt = boxSelect.querySelector('option[value="abo3Mois"]');
-    const yearOpt = boxSelect.querySelector('option[value="aboAnnee"]');
-    if (monthlyOpt) monthlyOpt.textContent = "Mensuelle — 19,50 € / box";
-    if (threeOpt) threeOpt.textContent = "3 mois — 49,50 €";
-    if (yearOpt) yearOpt.textContent = "1 an — 195 €";
+  const pm = document.getElementById("box-price-monthly");
+  if (pm) {
+    pm.innerHTML = `${formatEuroPlain(BOX_MONTHLY_EUR)} <sup>€</sup><span class="price-period"> / box</span>`;
+  }
+  const p3 = document.getElementById("box-price-3mois");
+  if (p3) {
+    p3.innerHTML = `${formatEuroPlain(BOX_ONE_SHOT_EUR.abo3Mois)} <sup>€</sup>`;
+  }
+
+  const unitSpan = document.getElementById("box-subscribe-unit-price");
+  if (unitSpan) {
+    unitSpan.textContent = formatEuroPlain(BOX_MONTHLY_EUR);
+  }
+  const onceTotal = document.getElementById("box-once-total-label");
+  if (onceTotal) {
+    onceTotal.textContent = formatEuroPlain(BOX_ONE_SHOT_EUR.abo3Mois);
   }
 }
 
@@ -100,7 +112,9 @@ function getShippingFeeFromState(state) {
   const hasOnlySubscriptionBoxes =
     Array.isArray(orderCart) &&
     orderCart.length > 0 &&
-    orderCart.every((line) => line?.product === "aboMensuel" || line?.product === "abo3Mois" || line?.product === "aboAnnee");
+    orderCart.every((line) =>
+      ["aboMensuel", "abo3Mois", "aboBiMensuel"].includes(line?.product)
+    );
   if (hasOnlySubscriptionBoxes) return 0;
   if (hasOnlyGiftCards) return 0;
   return isPickupDelivery(state) ? 0 : SHIPPING_EUR;
@@ -288,7 +302,7 @@ function wirePayPalBoxButtons() {
         e.preventDefault();
         const msg =
           entry?.kind === "once"
-            ? "Lien de paiement unique (3 mois / 1 an) à coller dans script.js — PayPal → boutons / lien de paiement 🔧"
+            ? "Lien de paiement PayPal (offre 3 mois) à coller dans config.js — PayPal → boutons / lien 🔧"
             : "Lien PayPal à configurer dans script.js 🔧";
         showToast(msg);
       });
@@ -315,6 +329,8 @@ function setupBoxModal() {
   const paypalContinueBtn = document.getElementById("box-paypal-continue-btn");
   const paypalBackBtn = document.getElementById("box-paypal-back-btn");
   const planEl = document.getElementById("box-plan");
+  const subscribePanel = document.getElementById("box-subscribe-panel");
+  const onceSummary = document.getElementById("box-once-summary");
   const buyerEmailEl = document.getElementById("box-buyer-email");
   const messageEl = document.getElementById("box-message");
   const recipientNameRow = document.getElementById("box-row-recipient-name");
@@ -327,6 +343,11 @@ function setupBoxModal() {
   const shippingCityEl = document.getElementById("box-shipping-city");
   if (!modal || !form || !planEl || !buyerEmailEl) return;
   let pendingMonthlyPayPalUrl = "";
+
+  function syncPlanFromCadence() {
+    const cadence = document.querySelector('input[name="box-cadence"]:checked')?.value || "monthly";
+    planEl.value = cadence === "bimonthly" ? "aboBiMensuel" : "aboMensuel";
+  }
 
   function resetBoxSteps() {
     pendingMonthlyPayPalUrl = "";
@@ -346,10 +367,24 @@ function setupBoxModal() {
     }
   }
 
-  function openBoxModal(plan) {
-    if (planEl) planEl.value = plan || "aboMensuel";
+  function openBoxModal(flow) {
     const selfRadio = document.getElementById("box-intent-self");
-    if (selfRadio) selfRadio.checked = true;
+    const giftRadio = document.getElementById("box-intent-gift");
+    const monthlyCadence = document.getElementById("box-cadence-monthly");
+
+    if (flow === "once") {
+      if (subscribePanel) subscribePanel.hidden = true;
+      if (onceSummary) onceSummary.hidden = false;
+      planEl.value = "abo3Mois";
+      if (giftRadio) giftRadio.checked = true;
+    } else {
+      if (subscribePanel) subscribePanel.hidden = false;
+      if (onceSummary) onceSummary.hidden = true;
+      if (monthlyCadence) monthlyCadence.checked = true;
+      syncPlanFromCadence();
+      if (selfRadio) selfRadio.checked = true;
+    }
+
     if (buyerEmailEl) buyerEmailEl.value = "";
     if (shippingFullNameEl) shippingFullNameEl.value = "";
     if (shippingAddressEl) shippingAddressEl.value = "";
@@ -368,11 +403,14 @@ function setupBoxModal() {
     document.body.style.overflow = "";
   }
 
-  document.querySelectorAll("[data-open-box-modal]").forEach((btn) => {
+  document.querySelectorAll("[data-box-flow]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const plan = btn.getAttribute("data-open-box-modal") || "aboMensuel";
-      openBoxModal(plan);
+      const flow = btn.getAttribute("data-box-flow") || "subscribe";
+      openBoxModal(flow);
     });
+  });
+  document.querySelectorAll('input[name="box-cadence"]').forEach((radio) => {
+    radio.addEventListener("change", syncPlanFromCadence);
   });
   document.querySelectorAll('input[name="box-intent"]').forEach((radio) => {
     radio.addEventListener("change", syncIntentFields);
@@ -405,19 +443,30 @@ function setupBoxModal() {
       return;
     }
 
-    if (plan === "aboMensuel") {
-      const entry = PAYPAL_BOX_LINKS.aboMensuel;
+    if (plan === "aboMensuel" || plan === "aboBiMensuel") {
+      const entry = PAYPAL_BOX_LINKS[plan];
       if (entry?.url && entry.url !== "#") {
         pendingMonthlyPayPalUrl = entry.url;
         const destination = [shipping.postalCode, shipping.city].filter(Boolean).join(" ");
         if (paypalStepRecap) {
           paypalStepRecap.textContent = `Email: ${buyerEmail} · Livraison: ${shipping.fullName}, ${destination || shipping.address1}`;
         }
+        const intro = document.getElementById("box-paypal-step-intro");
+        if (intro) {
+          intro.textContent =
+            plan === "aboBiMensuel"
+              ? "Direction PayPal pour valider l’abonnement — une box tous les deux mois, même prix à chaque envoi."
+              : "Direction PayPal pour valider l’abonnement — une box chaque mois.";
+        }
         form.hidden = true;
         if (paypalStep) paypalStep.hidden = false;
-        showToast("Parfait. Vérifiez le récapitulatif puis continuez vers PayPal.");
+        showToast("Parfait : un coup d’œil au récap, puis ouverture de PayPal.");
       } else {
-        showToast("Lien PayPal mensuel à configurer.");
+        showToast(
+          plan === "aboBiMensuel"
+            ? "Lien PayPal abonnement bi-mensuel à configurer (plan distinct sur PayPal)."
+            : "Lien PayPal mensuel à configurer.",
+        );
       }
       return;
     }

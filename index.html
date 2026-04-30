@@ -10,19 +10,19 @@
     <title>Les Points Rebelles | Broderies libres et impertinentes</title>
     <meta
       name="description"
-      content="Kits DIY passif-agressifs, broderies finies personnalisables (chats, phrases piquantes) et box mensuelle. Fait main en France. Livraison soignée."
+      content="Box broderie à l’abonnement ou en coffret trois mois — même prix par box, rythme au choix. Kits DIY et broderies personnalisables, faits main en France, avec un brin d’impertinence."
     />
     <link rel="canonical" href="https://lespointsrebelles.netlify.app/" />
     <meta property="og:site_name" content="Les Points Rebelles" />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:title" content="Les Points Rebelles | Broderies impertinentes" />
-    <meta property="og:description" content="Kits DIY sarcastiques, broderies finies et box mensuelle. Fait main en France." />
+    <meta property="og:description" content="Broderie et kits DIY faits main en France — un peu d’impertinence, beaucoup de plaisir à broder." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://lespointsrebelles.netlify.app/" />
     <meta property="og:image" content="https://lespointsrebelles.netlify.app/logolps.png?v=4" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Les Points Rebelles | Broderies impertinentes" />
-    <meta name="twitter:description" content="Kits DIY sarcastiques, broderies finies et box mensuelle. Fait main en France." />
+    <meta name="twitter:description" content="Broderie et kits DIY faits main en France — un peu d’impertinence, beaucoup de plaisir à broder." />
     <meta name="twitter:image" content="https://lespointsrebelles.netlify.app/logolps.png?v=4" />
     <link rel="icon" type="image/png" sizes="32x32" href="./logolps.png?v=4" />
     <link rel="icon" type="image/png" sizes="192x192" href="./logolps.png?v=4" />
@@ -44,7 +44,7 @@
         "@type": "OnlineStore",
         "name": "Les Points Rebelles",
         "url": "https://lespointsrebelles.netlify.app/",
-        "description": "Kits de broderie DIY, broderies finies personnalisables et box mensuelle, faits main en France.",
+        "description": "Kits DIY et box broderie faits main en France, entre humour et belle matière — personnalisation possible.",
         "inLanguage": "fr-FR",
         "image": "https://lespointsrebelles.netlify.app/logolps.png?v=4"
       }
@@ -63,7 +63,7 @@
         <nav aria-label="Navigation principale">
           <ul class="nav-links" role="list">
             <li><a href="#produits">Produits</a></li>
-            <li><a href="#box">Box</a></li>
+            <li><a href="#abonnement">La box</a></li>
             <li>
               <button type="button" class="nav-link-btn js-open-gift-card" id="open-gift-card-modal">🎁 Carte cadeau</button>
             </li>
@@ -80,28 +80,69 @@
     <main id="main-content" tabindex="-1">
 
       <!-- ── HERO ── -->
-      <section class="hero container" aria-labelledby="hero-title">
-        <h1 id="hero-title" class="hero-h1 reveal">
-          <span class="hero-brand-name">Les Points Rebelles</span>
-          <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
-        </h1>
-        <p class="badge reveal">✦ Fait main en France ✦</p>
-        <div class="hero-mark reveal" aria-hidden="true">
-          <img src="./logolps.png?v=4" alt="Les Points Rebelles — logo" class="hero-logo-subtle" width="80" height="80" decoding="async" />
+      <section class="hero hero--compact container" aria-labelledby="hero-title">
+        <div class="hero-top reveal">
+          <h1 id="hero-title" class="hero-h1">
+            <span class="hero-brand-name">Les Points Rebelles</span>
+            <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
+          </h1>
+          <p class="badge hero-badge-inline">✦ Fait main en France ✦</p>
         </div>
         <p class="hero-text reveal">
-          Des kits DIY passif-agressifs, des broderies personnalisables avec vos chats ou
-          vos phrases préférées, et des abonnements pour les amateur·ices de second degré.
-          Parce que parfois, les mots ont besoin d'être brodés.
+          Bienvenue sur mon site ! Ici, on brode 100% artisanal pour tous les goûts : <strong>kits DIY</strong> ou broderies finies. 
+		  Et pour les passionné·es de broderie, la <strong>box broderie</strong> est là pour vous accompagner.
         </p>
         <div class="hero-actions reveal">
-          <a class="btn btn-primary" href="#produits">La boutique</a>
-          <a class="btn btn-ghost" href="#box">La box mensuelle</a>
-          <a class="btn btn-outline" href="#marches">Voir mes dates de marché</a>
+          <a class="btn btn-primary" href="#abonnement">Découvrir la box</a>
+          <a class="btn btn-ghost" href="#produits">Les collections</a>
+          <button type="button" class="btn btn-outline js-open-gift-card">🎁 Carte cadeau</button>
         </div>
         <p class="trust-inline reveal">
           <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé avec PayPal
         </p>
+      </section>
+
+      <section id="abonnement" class="section section-box container" aria-labelledby="abo-title">
+        <div class="section-box-inner reveal">
+          <div class="section-header section-header--box">
+            <div class="section-header-row">
+              <h2 id="abo-title">La box</h2>
+              <button type="button" class="btn btn-ghost btn-sm" id="open-subscription-manage-top">Gérer mon abonnement</button>
+            </div>
+            <p class="section-sub section-sub--tight">
+				Un nouveau motif chaque mois ou un mois sur deux, les accessoires inclus, livré chez vous (livraison incluse).
+				Pour les addict·es qui veulent toujours un projet en cours.
+            </p>
+          </div>
+
+          <div class="cards pricing pricing--two" role="list">
+            <article class="card pricing-card reveal" role="listitem" id="box">
+              <div class="card-tag">Abonnement</div>
+              <div class="price" id="box-price-monthly">19,50 <sup>€</sup><span class="price-period"> / box</span></div>
+              <p class="price-detail" id="box-price-monthly-detail">Livraison incluse</p>
+              <ul class="price-features" aria-label="Inclus dans l'abonnement box">
+                <li>Chacun son rythme : chaque mois ou tous les deux mois</li>
+                <li>Fils, tambour, aiguille et notice inclus</li>
+                <li>Résiliable à tout moment</li>
+              </ul>
+              <button class="btn btn-primary btn-full" type="button" data-box-flow="subscribe">M'abonner</button>
+              <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
+            </article>
+
+            <article class="card pricing-card pricing-card--featured reveal" role="listitem">
+              <div class="card-tag card-tag--featured">Le plus populaire — 3 mois</div>
+              <div class="price" id="box-price-3mois">49,50 <sup>€</sup></div>
+              <p class="price-detail" id="box-price-3mois-detail">16,50€ / box (livraison incluse)</p>
+              <ul class="price-features" aria-label="Inclus dans l'offre cadeau 3 mois">
+                <li>3 kits complets, un par mois</li>
+                <li>Un seul paiement sans renouvellement</li>
+                <li>Cadeau idéal</li>
+              </ul>
+              <button class="btn btn-outline btn-full" type="button" data-box-flow="once">Choisir le coffret</button>
+              <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <!-- ── PRODUITS ── -->
@@ -294,77 +335,6 @@
         </p>
       </section>
 
-      <section id="abonnement" class="section container" aria-labelledby="abo-title">
-        <div class="section-header reveal">
-          <div class="section-header-row">
-            <h2 id="abo-title">La box mensuelle</h2>
-            <button type="button" class="btn btn-ghost btn-sm" id="open-subscription-manage-top">Gérer mon abonnement</button>
-          </div>
-          <p class="section-sub">Un nouveau motif chaque mois, les accessoires inclus, livré chez vous (livraison incluse).<br />Pour les addict·es qui veulent toujours un projet en cours.</p>
-        </div>
-
-        <div class="cards pricing" role="list">
-          <article class="card pricing-card reveal" role="listitem" id="box">
-            <div class="card-tag">Mensuel</div>
-            <div class="price" id="box-price-monthly">19,50 <sup>€</sup><span class="price-period"> / box</span></div>
-            <p class="price-detail" id="box-price-monthly-detail">Livraison incluse</p>
-            <ul class="price-features" aria-label="Inclus dans la box mensuelle">
-              <li>1 kit complet par mois</li>
-              <li>Motif exclusif</li>
-              <li>Fils, tambour, aiguille</li>
-              <li>Résiliable à tout moment</li>
-            </ul>
-            <button class="btn btn-primary btn-full" type="button" data-open-box-modal="aboMensuel" aria-label="S'abonner à la box mensuelle à 19,50 euros par box">M'abonner →</button>
-            <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
-          </article>
-
-          <article class="card pricing-card pricing-card--featured reveal" role="listitem">
-            <div class="card-tag card-tag--featured">⭐ Le plus populaire - 3 mois</div>
-            <div class="price" id="box-price-3mois">49,50 <sup>€</sup></div>
-            <p class="price-detail" id="box-price-3mois-detail">16,50€ / box (livraison incluse)</p>
-            <ul class="price-features" aria-label="Inclus dans la box 3 mois">
-              <li>3 kits complets</li>
-              <li>Motifs exclusifs</li>
-              <li>Un nouveau kit chaque mois</li>
-              <li>Cadeau idéal</li>
-            </ul>
-            <button class="btn btn-outline btn-full" type="button" data-open-box-modal="abo3Mois">Choisir cette box</button>
-            <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
-          </article>
-
-          <article class="card pricing-card reveal" role="listitem">
-            <div class="card-tag">Un an de broderie</div>
-            <div class="price" id="box-price-annee">195 <sup>€</sup></div>
-            <p class="price-detail"> 2 box offertes ! (livraison incluse)</p>
-            <ul class="price-features" aria-label="Inclus dans la box annuelle">
-              <li>12 kits complets</li>
-              <li>Motifs exclusifs toute l'année</li>
-              <li>Priorité sur les nouveautés</li>
-              <li>Un projet broderie toute l'année</li>
-            </ul>
-            <button class="btn btn-outline btn-full" type="button" data-open-box-modal="aboAnnee">Choisir cette box</button>
-            <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="marches" class="section section-alt" aria-labelledby="marches-title">
-        <div class="container">
-          <div class="section-header reveal">
-            <h2 id="marches-title">Prochaines dates de marché</h2>
-            <p class="section-sub">Retrouvez-moi sur place pour des prix préférentiels au stand.</p>
-          </div>
-          <div class="market-list reveal">
-            <article class="market-item">
-              <p class="market-date">Marché de créateur·rices 1000 Moustaches · La Chevrolière</p>
-              <p class="market-place">Samedi 25 avril 2026 · 11h–19h</p>
-              <p class="market-place">Dimanche 26 avril 2026 · 10h–18h</p>
-              <p class="market-place"><a href="https://infolocale.ouest-france.fr/associations/organisme-1000-moustaches-586157/evenement-la-chevroliere-acheter-chiner-marche-de-createurs-8789829" target="_blank" rel="noreferrer noopener">Voir l'événement (Infolocale)</a></p>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section id="a-propos" class="section section-alt" aria-labelledby="about-title">
         <div class="container">
           <div class="about-merged-grid reveal">
@@ -505,11 +475,9 @@
         <nav class="footer-sitemap" aria-label="Accès rapide">
           <a href="#produits">Boutique</a>
           <span class="footer-sitemap-sep" aria-hidden="true">·</span>
-          <a href="#box">Box</a>
+          <a href="#abonnement">La box</a>
           <span class="footer-sitemap-sep" aria-hidden="true">·</span>
           <button type="button" class="footer-sitemap-link js-open-gift-card">Carte cadeau</button>
-          <span class="footer-sitemap-sep" aria-hidden="true">·</span>
-          <a href="#marches">Marchés</a>
           <span class="footer-sitemap-sep" aria-hidden="true">·</span>
           <a href="#a-propos">À propos</a>
           <span class="footer-sitemap-sep" aria-hidden="true">·</span>

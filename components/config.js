@@ -31,8 +31,12 @@ const PAYPAL_BOX_LINKS = {
     kind: "subscribe",
     url: "https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-6U9022504A2672356NHOSYVA",
   },
+  /** Abonnement bi-mensuel : même prix par box — plan PayPal distinct à configurer */
+  aboBiMensuel: {
+    kind: "subscribe",
+    url: "#",
+  },
   abo3Mois: { kind: "once", url: "#" },
-  aboAnnee: { kind: "once", url: "#" },
 };
 
 const CONTACT_EMAIL = "lespointsrebelles@gmail.com";
@@ -44,8 +48,9 @@ const PRODUCT_LABELS = {
   grand: "Grand mot",
   chat: "Petit chat qui dort",
   "gift-card": "Carte cadeau",
-  abo3Mois: "Box broderie 3 mois",
-  aboAnnee: "Box broderie 1 an",
+  abo3Mois: "Box broderie — 3 mois · paiement unique (cadeau)",
+  aboBiMensuel: "Abonnement box — 1 box tous les 2 mois",
+  aboMensuel: "Abonnement box — 1 box par mois",
   "oreilles-chat": "Cercle oreilles de chat",
   "stand-triangle": "Stand triangle",
 };
@@ -58,9 +63,10 @@ const FORMAT_LABELS = {
 const PHRASES_PETIT = ["Merde", "Putain", "Ba super"];
 const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
+/** Prix affiché de la box mensuelle (réglable via Supabase price_key box.aboMensuel) */
+let BOX_MONTHLY_EUR = 19.5;
 const BOX_ONE_SHOT_EUR = {
-  abo3Mois: 49.9,
-  aboAnnee: 195,
+  abo3Mois: 49.5,
 };
 const ACCESSORY_PRODUCTS = {
   "oreilles-chat": { label: "Cercle oreilles de chat (PLA)", price: 5.0 },
@@ -81,6 +87,7 @@ let activePromoCode = null;
 const BASELINE_PRICING = {
   PRODUCT_BASE_EUR: JSON.parse(JSON.stringify(PRODUCT_BASE_EUR)),
   OPTION_FEES: JSON.parse(JSON.stringify(OPTION_FEES)),
+  BOX_MONTHLY_EUR,
   BOX_ONE_SHOT_EUR: JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR)),
   ACCESSORY_PRODUCTS: {
     "oreilles-chat": ACCESSORY_PRODUCTS["oreilles-chat"]?.price ?? 5,
@@ -94,6 +101,7 @@ function resetPricingToBaseline() {
   Object.assign(PRODUCT_BASE_EUR.grand, BASELINE_PRICING.PRODUCT_BASE_EUR.grand);
   Object.assign(PRODUCT_BASE_EUR.chat, BASELINE_PRICING.PRODUCT_BASE_EUR.chat);
   Object.assign(OPTION_FEES, BASELINE_PRICING.OPTION_FEES);
+  BOX_MONTHLY_EUR = BASELINE_PRICING.BOX_MONTHLY_EUR;
   Object.assign(BOX_ONE_SHOT_EUR, BASELINE_PRICING.BOX_ONE_SHOT_EUR);
   if (ACCESSORY_PRODUCTS["oreilles-chat"]) ACCESSORY_PRODUCTS["oreilles-chat"].price = BASELINE_PRICING.ACCESSORY_PRODUCTS["oreilles-chat"];
   if (ACCESSORY_PRODUCTS["stand-triangle"]) ACCESSORY_PRODUCTS["stand-triangle"].price = BASELINE_PRICING.ACCESSORY_PRODUCTS["stand-triangle"];
@@ -111,8 +119,8 @@ function applyPriceRule(priceKey, amount) {
   if (priceKey === "option.bicolore.fini") return void (OPTION_FEES.bicoloreFini = n);
   if (priceKey === "option.prenom.kit") return void (OPTION_FEES.prenomKit = n);
   if (priceKey === "option.prenom.fini") return void (OPTION_FEES.prenomFini = n);
+  if (priceKey === "box.aboMensuel") return void (BOX_MONTHLY_EUR = n);
   if (priceKey === "box.abo3Mois") return void (BOX_ONE_SHOT_EUR.abo3Mois = n);
-  if (priceKey === "box.aboAnnee") return void (BOX_ONE_SHOT_EUR.aboAnnee = n);
   if (priceKey === "accessory.oreilles-chat" && ACCESSORY_PRODUCTS["oreilles-chat"]) {
     ACCESSORY_PRODUCTS["oreilles-chat"].price = n;
     return;
@@ -145,6 +153,7 @@ async function loadPricingFromSupabase() {
     applyPriceRules(data || []);
     BASELINE_PRICING.PRODUCT_BASE_EUR = JSON.parse(JSON.stringify(PRODUCT_BASE_EUR));
     BASELINE_PRICING.OPTION_FEES = JSON.parse(JSON.stringify(OPTION_FEES));
+    BASELINE_PRICING.BOX_MONTHLY_EUR = BOX_MONTHLY_EUR;
     BASELINE_PRICING.BOX_ONE_SHOT_EUR = JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR));
     BASELINE_PRICING.ACCESSORY_PRODUCTS = {
       "oreilles-chat": ACCESSORY_PRODUCTS["oreilles-chat"]?.price ?? 5,

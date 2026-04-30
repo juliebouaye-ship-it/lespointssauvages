@@ -360,18 +360,28 @@ const LPS_MODALS_HTML = `
     <div class="modal-backdrop" id="box-modal" aria-hidden="true">
       <section class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="box-modal-title">
         <button type="button" class="modal-close" id="close-box-modal" aria-label="Fermer">×</button>
-        <h2 id="box-modal-title">Choisir ma box</h2>
+        <h2 id="box-modal-title">La box — quelques infos</h2>
         <form id="box-form" class="order-form" novalidate>
           <div class="form-row">
             <div class="box-plan-grid">
-              <label for="box-plan">Offre <span class="required" aria-hidden="true">*</span></label>
-              <select id="box-plan" required>
-                <option value="aboMensuel">Mensuelle — 19,50 € / box</option>
-                <option value="abo3Mois">3 mois — 49,50 €</option>
-                <option value="aboAnnee">1 an — 195 €</option>
-              </select>
-              <span class="box-intent-label">Cette box est faite pour</span>
-              <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Pour moi ou pour offrir">
+              <input type="hidden" id="box-plan" name="box-plan" value="aboMensuel" />
+              <div id="box-subscribe-panel">
+                <span class="box-intent-label">Rythme d’envoi <span class="required" aria-hidden="true">*</span></span>
+                <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Fréquence de la box">
+                  <input class="pill-toggle-input" type="radio" name="box-cadence" id="box-cadence-monthly" value="monthly" checked />
+                  <label class="pill-toggle-label" for="box-cadence-monthly">1 box / mois</label>
+                  <input class="pill-toggle-input" type="radio" name="box-cadence" id="box-cadence-bimonthly" value="bimonthly" />
+                  <label class="pill-toggle-label" for="box-cadence-bimonthly">1 box / 2 mois</label>
+                </div>
+                <p class="muted" id="box-subscribe-price-hint">
+                  À chaque fois, <span id="box-subscribe-unit-price">19,50</span>&nbsp;€ par box — livraison comprise.
+                </p>
+              </div>
+              <p class="helper" id="box-once-summary" hidden>
+                <strong>Coffret trois mois</strong> : trois kits à ouvrir au fil des semaines, <strong>une livraison par mois</strong>,
+              </p>
+              <span class="box-intent-label">Pour qui ?</span>
+              <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Pour soi ou à offrir">
                 <input class="pill-toggle-input" type="radio" name="box-intent" id="box-intent-self" value="self" checked />
                 <label class="pill-toggle-label" for="box-intent-self">Moi</label>
                 <input class="pill-toggle-input" type="radio" name="box-intent" id="box-intent-gift" value="gift" />
@@ -380,7 +390,7 @@ const LPS_MODALS_HTML = `
             </div>
           </div>
           <div class="form-row">
-            <label for="box-buyer-email">Mon email <span class="required" aria-hidden="true">*</span></label>
+            <label for="box-buyer-email">Votre email <span class="required" aria-hidden="true">*</span></label>
             <input id="box-buyer-email" type="email" required placeholder="vous@email.com" />
           </div>
           <div class="form-row" id="box-row-recipient-name" hidden>
@@ -416,13 +426,13 @@ const LPS_MODALS_HTML = `
           <button type="submit" class="btn btn-primary">Continuer</button>
         </form>
         <div id="box-paypal-step" class="order-summary" hidden>
-          <p><strong>Dernière étape avant PayPal</strong></p>
-          <p id="box-paypal-step-intro" class="muted">Votre demande est prête. Vous allez être redirigée vers PayPal pour confirmer l'abonnement mensuel.</p>
+          <p><strong>Presque là</strong></p>
+          <p id="box-paypal-step-intro" class="muted">Redirection vers PayPal pour confirmer l'abonnement — une minute, et c’est bouclé.</p>
           <p id="box-paypal-step-recap" class="muted"></p>
-          <p class="muted">Après validation sur PayPal, vous recevrez votre confirmation habituelle par email.</p>
+          <p class="muted">Après validation, la confirmation habituelle arrive par email.</p>
           <div class="order-cart-actions">
             <button type="button" class="btn btn-primary" id="box-paypal-continue-btn">Continuer vers PayPal</button>
-            <button type="button" class="btn btn-ghost" id="box-paypal-back-btn">Modifier mes infos</button>
+            <button type="button" class="btn btn-ghost" id="box-paypal-back-btn">Modifier les infos</button>
           </div>
         </div>
       </section>

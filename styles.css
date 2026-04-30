@@ -15,7 +15,6 @@
   --rose-soft: #f3e4e3;
   --green:     #5a7356;
   --gold:      #b8924a;
-  --featured:  #2a1e18;
   --shadow-sm: 0 2px 12px -4px rgba(42, 30, 24, 0.12);
   --shadow:    0 14px 40px -20px rgba(42, 30, 24, 0.22);
   --shadow-lg: 0 24px 60px -24px rgba(42, 30, 24, 0.30);
@@ -337,26 +336,6 @@ ul { margin: 0; padding: 0; list-style: none; }
   margin-bottom: 1rem;
 }
 
-.hero-mark {
-  display: flex;
-  justify-content: center;
-  margin: 0.85rem 0 0.25rem;
-}
-
-.hero-logo-subtle {
-  width: clamp(56px, 12vw, 80px);
-  height: auto;
-  object-fit: contain;
-  opacity: 0.88;
-  filter: drop-shadow(0 6px 14px rgba(42, 30, 24, 0.1));
-  transition: transform 0.35s ease, opacity 0.25s ease;
-}
-
-.hero-mark:hover .hero-logo-subtle {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
 .badge {
   display: inline-block;
   margin: 0;
@@ -407,7 +386,82 @@ h1 em {
 
 .trust-icon { font-size: 1rem; }
 
-/* ── Bandeau marché ── */
+/* ── Hero compact (moins de hauteur, pas de logo dupliqué) ── */
+.hero--compact {
+  padding: 1.15rem 0 1.25rem;
+}
+
+.hero--compact .hero-top {
+  margin-bottom: 0.5rem;
+}
+
+.hero--compact .hero-h1 {
+  margin: 0 0 0.35rem;
+}
+
+.hero--compact .hero-brand-name {
+  margin-bottom: 0.3rem;
+}
+
+.hero-badge-inline {
+  margin-top: 0.25rem;
+}
+
+.hero--compact .hero-text {
+  font-size: 0.97rem;
+  line-height: 1.58;
+  margin: 0 auto 1rem;
+  max-width: 54ch;
+}
+
+.hero--compact .hero-actions {
+  margin-bottom: 0.75rem;
+}
+
+.hero--compact .trust-inline {
+  margin-bottom: 0;
+}
+
+/* Section box : séparation légère en haut, sans carte encadrée */
+.section.section-box {
+  padding-top: 1.35rem;
+  padding-bottom: 2.1rem;
+}
+
+.section-box-inner {
+  position: relative;
+  padding: 1.15rem 0 1.5rem;
+}
+
+.section-box-inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(10rem, 42%);
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 88%, var(--ink)), transparent);
+  opacity: 0.9;
+}
+
+@media (min-width: 720px) {
+  .section-box-inner {
+    padding: 1.25rem 0 1.75rem;
+  }
+}
+
+.section-header--box {
+  margin-bottom: 1.25rem;
+}
+
+.section-sub--tight {
+  max-width: 52rem;
+  line-height: 1.58;
+  font-size: 0.97rem;
+}
+
 /* ── Sections ── */
 .section { padding: 2.6rem 0; }
 
@@ -558,7 +612,6 @@ h1 em {
 .section-sub {
   color: var(--muted);
   font-size: 1rem;
-  max-width: 60ch;
   margin-bottom: 0;
 }
 
@@ -737,12 +790,6 @@ h1 em {
   background: #fdf3d9;
 }
 
-.card-icon {
-  font-size: 2rem;
-  margin-bottom: 0.6rem;
-  display: block;
-}
-
 .card h3 {
   font-size: 1.25rem;
   margin-bottom: 0.35rem;
@@ -835,11 +882,6 @@ h1 em {
   line-height: 1.5;
 }
 
-.helper-accent {
-  color: var(--rose);
-  font-weight: 500;
-}
-
 .format-toggle {
   display: flex;
   flex-wrap: wrap;
@@ -921,6 +963,12 @@ h1 em {
   align-items: start;
 }
 
+.pricing.pricing--two {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
 .pricing-card {
   display: flex;
   flex-direction: column;
@@ -933,14 +981,6 @@ h1 em {
   border-color: var(--gold);
   background: linear-gradient(160deg, #fff 60%, #fdf8ee);
   box-shadow: 0 20px 50px -20px rgba(184, 146, 74, 0.3);
-}
-
-.price-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 .price {
@@ -976,8 +1016,7 @@ h1 em {
   flex-grow: 1;
 }
 
-.pricing-card .card-tag,
-.pricing-card .price-label {
+.pricing-card .card-tag {
   align-self: center;
   text-align: center;
 }
@@ -1015,29 +1054,6 @@ h1 em {
   color: var(--green);
   font-weight: 700;
   flex-shrink: 0;
-}
-
-.market-list {
-  display: grid;
-  gap: 0.8rem;
-}
-
-.market-item {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
-  padding: 0.8rem 0.9rem;
-}
-
-.market-date {
-  font-weight: 700;
-  color: var(--ink);
-  margin: 0 0 0.2rem;
-}
-
-.market-place {
-  margin: 0;
-  color: var(--muted);
 }
 
 /* ── About ── */
@@ -2131,7 +2147,12 @@ input[type="number"]::-webkit-inner-spin-button {
 @media (max-width: 640px) {
   .nav-links li:nth-child(-n + 2) { display: none; }
 
-  .hero { padding-top: 2rem; }
+  .hero:not(.hero--compact) { padding-top: 2rem; }
+
+  .hero--compact {
+    padding-top: 0.85rem;
+    padding-bottom: 1rem;
+  }
   .brand-logo { width: 24px; height: 24px; }
 
   h1 { font-size: 2rem; }

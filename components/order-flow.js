@@ -55,7 +55,7 @@ function computeLineSubtotal(line) {
     const v = Number(line.giftAmount ?? line.subtotal ?? 0);
     return Math.round(v * 100) / 100;
   }
-  if (line.product === "abo3Mois" || line.product === "aboAnnee") {
+  if (line.product && Object.prototype.hasOwnProperty.call(BOX_ONE_SHOT_EUR, line.product)) {
     return Math.round((BOX_ONE_SHOT_EUR[line.product] || 0) * 100) / 100;
   }
   if (line.product === "oreilles-chat" || line.product === "stand-triangle") {
@@ -242,8 +242,9 @@ function lineDetail(line) {
     if (line.commentaire) details.push(`Précisions: ${line.commentaire}`);
     details.push("Code → email de la commande (souvent sous 24 h)");
   }
-  if (line.product === "abo3Mois" || line.product === "aboAnnee") {
-    details.push("Paiement one shot");
+  if (line.product && Object.prototype.hasOwnProperty.call(BOX_ONE_SHOT_EUR, line.product)) {
+    details.push("Paiement unique");
+    if (line.product === "abo3Mois") details.push("3 box sur 3 mois · 1 par mois");
     if (line.comment) details.push(line.comment);
     if (line.shippingCity) details.push(`Livraison: ${line.shippingPostal || ""} ${line.shippingCity}`.trim());
   }
@@ -262,7 +263,7 @@ function lineDetail(line) {
 }
 
 function buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping) {
-  if (plan === "aboMensuel") {
+  if (plan === "aboMensuel" || plan === "aboBiMensuel") {
     return null;
   }
   const subtotal = BOX_ONE_SHOT_EUR[plan];
@@ -327,10 +328,11 @@ function computeCartSubtotal() {
 }
 
 function hasOnlySubscriptionLines() {
+  const subProducts = new Set(["aboMensuel", "abo3Mois", "aboBiMensuel"]);
   return (
     Array.isArray(orderCart) &&
     orderCart.length > 0 &&
-    orderCart.every((line) => line?.product === "aboMensuel" || line?.product === "abo3Mois" || line?.product === "aboAnnee")
+    orderCart.every((line) => subProducts.has(line?.product))
   );
 }
 

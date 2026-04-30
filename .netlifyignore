@@ -1,0 +1,7 @@
+# Ne pas packager (upload / introspection) — surtout si outils installés localement
+node_modules
+package-lock.json
+
+# Déploiement
+.netlify
+.git
