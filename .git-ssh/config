@@ -1,0 +1,8 @@
+# Utilise par Git (core.sshCommand) pour l'alias Host "github-lps" du remote.
+# Mettez votre cle PRIVEE sous %USERPROFILE%\.ssh\ (un seul des deux noms suffit).
+Host github-lps
+	HostName github.com
+	User git
+	IdentitiesOnly yes
+	IdentityFile ~/.ssh/id_ed25519_lps
+	IdentityFile ~/.ssh/id_ed25519
