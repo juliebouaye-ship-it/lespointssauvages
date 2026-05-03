@@ -1,6 +1,6 @@
 /* ────────────────────────────────────────────
    Les Points Rebelles — styles.css
-   Mobile-first, artisanal, accessible
+   Responsive (breakpoints max-width), artisanal, accessible
 ───────────────────────────────────────────── */
 
 /* ── Tokens ── */
@@ -2170,6 +2170,12 @@ input[type="number"]::-webkit-inner-spin-button {
   .format-toggle { flex-direction: column; }
   .format-toggle .btn { width: 100%; }
 
+  /* Même spécificité que .pricing.pricing--two pour empiler les cartes (sinon 2× minmax(260px) reste actif). */
+  .pricing.pricing--two {
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
+
   .pricing { grid-template-columns: 1fr; }
   .contact-layout { grid-template-columns: 1fr; }
   .about-merged-grid { grid-template-columns: 1fr; }
@@ -2179,7 +2185,8 @@ input[type="number"]::-webkit-inner-spin-button {
     align-items: flex-start;
   }
 
-  .reassurance-grid { grid-template-columns: 1fr 1fr; }
+  /* Une colonne : textes plus lisibles que 2×2 serré sur téléphone. */
+  .reassurance-grid { grid-template-columns: 1fr; }
 
   .form-footer { width: 100%; }
   .form-footer .btn-lg { width: 100%; }
@@ -2280,8 +2287,6 @@ input[type="number"]::-webkit-inner-spin-button {
     font-size: 0.9rem;
     line-height: 1.4;
   }
-
-  .reassurance-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
