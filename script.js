@@ -6,8 +6,6 @@
 
 /* Constantes déplacées dans components/config.js */
 
-let supabaseClient = null;
-
 function formatEuro(amount) {
   return `${Number(amount).toFixed(2).replace(".", ",")} €`;
 }
@@ -59,11 +57,13 @@ function syncDisplayedPrices() {
 }
 
 function getSupabaseClient() {
-  if (supabaseClient) return supabaseClient;
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
   if (!window.supabase?.createClient) return null;
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return supabaseClient;
+  const existing = window.__LPS_SUPABASE_CLIENT__;
+  if (existing) return existing;
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__LPS_SUPABASE_CLIENT__ = client;
+  return client;
 }
 
 async function insertSupabase(table, payload) {
@@ -288,36 +288,6 @@ function saveOrderCart() {
 
 /* ── Box PayPal (abonnement mensuel ou liens paiement unique) ───────────────── */
 
-function wirePayPalBoxButtons() {
-  document.querySelectorAll("[data-paypal]").forEach((btn) => {
-    const key = btn.getAttribute("data-paypal");
-    const entry = PAYPAL_BOX_LINKS[key];
-
-    if (!entry?.url || entry.url === "#") {
-      btn.setAttribute("aria-disabled", "true");
-      btn.setAttribute("title", "Lien PayPal à configurer");
-      btn.style.opacity = "0.55";
-      btn.style.cursor = "not-allowed";
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const msg =
-          entry?.kind === "once"
-            ? "Lien de paiement PayPal (offre 3 mois) à coller dans config.js — PayPal → boutons / lien 🔧"
-            : "Lien PayPal à configurer dans script.js 🔧";
-        showToast(msg);
-      });
-      return;
-    }
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (/^https?:\/\//i.test(entry.url)) {
-        window.open(entry.url, "_blank", "noopener,noreferrer");
-      }
-    });
-  });
-}
-
 /* Fonctions commande/panier deplacees dans components/order-flow.js */
 
 function setupBoxModal() {
@@ -383,14 +353,14 @@ function setupBoxModal() {
       setBoxPromoFeedback("Code promo invalide ou expiré.", true);
       return { ok: false, reason: promoRes?.reason || "invalid_code" };
     }
-    if (!["abo3Mois", "aboAnnee"].includes(plan) && promoRes.add1Month) {
-      setBoxPromoFeedback("Ce code +1 mois est valable uniquement sur box 3 mois ou 1 an.", true);
+    if (plan !== "abo3Mois" && promoRes.add1Month) {
+      setBoxPromoFeedback("Ce code est valable uniquement sur les box 3 mois.", true);
       return { ok: false, reason: "plan_not_eligible" };
     }
     boxPromoState = { code: promoRes.code, add1Month: Boolean(promoRes.add1Month) };
     if (promoCodeEl) promoCodeEl.value = promoRes.code;
     if (boxPromoState.add1Month) {
-      setBoxPromoFeedback("Code promo bien enregistré, vous aurez un mois de plus.");
+      setBoxPromoFeedback("Code promo enregistré, un mois de plus pour vous et votre parrain !");
     } else {
       setBoxPromoFeedback(`Code ${promoRes.code} appliqué ✅`);
     }

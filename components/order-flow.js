@@ -308,7 +308,7 @@ function computeSubscriptionPeriod(plan, add1Month, fromDate = new Date()) {
     start.setMonth(start.getMonth() + 1);
   }
   const end = new Date(start);
-  const baseMonths = plan === "aboAnnee" ? 12 : 3;
+  const baseMonths = 3;
   end.setMonth(end.getMonth() + baseMonths - 1 + (add1Month ? 1 : 0));
   const toDateString = (d) => {
     const year = d.getFullYear();
@@ -347,7 +347,7 @@ async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName
 }
 
 async function saveSubscriptionRequestsFromPaidLines(lines) {
-  const boxLines = (lines || []).filter((line) => line?.product === "abo3Mois" || line?.product === "aboAnnee");
+  const boxLines = (lines || []).filter((line) => line?.product === "abo3Mois");
   for (const line of boxLines) {
     await saveSubscriptionRequest({
       plan: line.product,
@@ -482,24 +482,6 @@ function buildPayPalDescription(state) {
     s += ` — ${state.phrase}`;
   }
   return s.slice(0, 120);
-}
-
-function buildPayPalItemDetail(state) {
-  const parts = [];
-  if (state.product === "petit" || state.product === "grand") {
-    if (state.phrase) parts.push(`Phrase : ${state.phrase}`);
-  }
-  if (state.product === "chat") {
-    const fur = FOURRURE_LABELS[state.fourrure] || state.fourrure;
-    if (fur) parts.push(`Fourrure : ${fur}`);
-    if (state.bicolore && state.bicoloreDetail) parts.push(`Bicolore : ${state.bicoloreDetail}`);
-    if (state.prenomAddon && state.prenom) parts.push(`Prénom : ${state.prenom}`);
-    if (state.photoLink) parts.push(`Photo : ${state.photoLink}`);
-  }
-  if (state.commentaire) parts.push(`Note : ${state.commentaire}`);
-  let s = parts.join(" · ");
-  if (s.length > 127) s = `${s.slice(0, 124)}…`;
-  return s;
 }
 
 function buildPayPalCustomId(state) {
@@ -1030,7 +1012,7 @@ function setupOrderModal() {
       setDrawerPromoFeedback("Code invalide ou expiré.", true);
       return;
     }
-    const hasEligibleBox = orderCart.some((line) => line?.product === "abo3Mois" || line?.product === "aboAnnee");
+    const hasEligibleBox = orderCart.some((line) => line?.product === "abo3Mois");
     const message =
       res.add1Month && hasEligibleBox
         ? "Code promo bien enregistré, vous aurez un mois de plus."

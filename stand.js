@@ -1,4 +1,3 @@
-let standSupabaseClient = null;
 const STAND_SHIPPING_EUR = 3.5;
 const STAND_TOKEN_KEY = "lps-stand-dashboard-token";
 
@@ -27,10 +26,12 @@ function num(elId) {
 }
 
 function getStandClient() {
-  if (standSupabaseClient) return standSupabaseClient;
   if (!window.supabase?.createClient || !SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
-  standSupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return standSupabaseClient;
+  const existing = window.__LPS_SUPABASE_CLIENT__;
+  if (existing) return existing;
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__LPS_SUPABASE_CLIENT__ = client;
+  return client;
 }
 
 function renderRows(rows) {

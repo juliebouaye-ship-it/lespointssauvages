@@ -378,9 +378,9 @@ const LPS_MODALS_HTML = `
                 </p>
               </div>
               <p class="helper" id="box-once-summary" hidden>
-                <strong>Coffret trois mois</strong> : trois kits à ouvrir au fil des semaines, <strong>une livraison par mois</strong>,
+                <strong>Coffret trois mois</strong> : trois kits à ouvrir au fil des semaines, <strong>une livraison par mois</strong>
               </p>
-              <span class="box-intent-label">Pour qui ?</span>
+              <span class="box-intent-label">Pour qui ?</spa	n>
               <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Pour soi ou à offrir">
                 <input class="pill-toggle-input" type="radio" name="box-intent" id="box-intent-self" value="self" checked />
                 <label class="pill-toggle-label" for="box-intent-self">Moi</label>

@@ -136,10 +136,19 @@ function applyPriceRules(rows) {
   (rows || []).forEach((row) => applyPriceRule(row.price_key, row.amount_eur));
 }
 
+function getSharedSupabaseClient() {
+  if (!window.supabase?.createClient || !SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+  const existing = window.__LPS_SUPABASE_CLIENT__;
+  if (existing) return existing;
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  window.__LPS_SUPABASE_CLIENT__ = client;
+  return client;
+}
+
 async function loadPricingFromSupabase() {
-  if (!window.supabase?.createClient || !SUPABASE_URL || !SUPABASE_ANON_KEY) return { ok: false, reason: "missing_supabase" };
+  const client = getSharedSupabaseClient();
+  if (!client) return { ok: false, reason: "missing_supabase" };
   try {
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data, error } = await client
       .from("price_rules")
       .select("price_key,amount_eur")
@@ -166,9 +175,9 @@ async function loadPricingFromSupabase() {
 async function applyPromoCode(codeRaw) {
   const code = (codeRaw || "").trim().toUpperCase();
   if (!code) return { ok: false, reason: "empty_code" };
-  if (!window.supabase?.createClient || !SUPABASE_URL || !SUPABASE_ANON_KEY) return { ok: false, reason: "missing_supabase" };
+  const client = getSharedSupabaseClient();
+  if (!client) return { ok: false, reason: "missing_supabase" };
   try {
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: promo, error } = await client
       .from("promo_codes")
       .select("code,is_active,add1_month,starts_at,ends_at")

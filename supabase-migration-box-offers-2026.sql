@@ -10,7 +10,6 @@ delete from public.price_rules
 where scope = 'site'
   and scope_id = 'default'
   and price_key in (
-    'box.aboAnnee',
     'box.aboBiMensuel',
     'box.aboPack6Mois3'
   );
