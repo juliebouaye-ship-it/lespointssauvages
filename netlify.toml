@@ -38,7 +38,7 @@ for = "/*"
   Referrer-Policy = "strict-origin-when-cross-origin"
   Permissions-Policy = "camera=(), microphone=(), geolocation=()"
   # Cloudflare Web Analytics + PayPal SDK/checkout + Supabase + jsDelivr + Google Fonts
-  Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://www.paypal.com https://www.paypalobjects.com https://c.paypal.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com https://www.paypal.com https://api.paypal.com https://api.sandbox.paypal.com https://c.paypal.com https://*.paypal.com; frame-src https://www.paypal.com https://c.paypal.com https://*.paypal.com; form-action 'self' https://www.paypal.com https://*.paypal.com"
+  Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://www.paypal.com https://www.paypalobjects.com https://c.paypal.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com https://www.paypal.com https://api.paypal.com https://api.sandbox.paypal.com https://c.paypal.com https://*.paypal.com; frame-src https://www.paypal.com https://c.paypal.com https://*.paypal.com; form-action 'self' https://www.paypal.com https://*.paypal.com"
 
 [[headers]]
 for = "/*.css"

@@ -422,6 +422,16 @@ const LPS_MODALS_HTML = `
           <div class="form-row">
             <label for="box-message">Message / notes <span class="label-hint">(optionnel)</span></label>
             <textarea id="box-message" rows="2" placeholder="Message cadeau, date souhaitée, infos utiles..."></textarea>
+            <p class="form-note">Toute commande validée après le 15 du mois démarre le mois suivant.</p>
+          </div>
+          <div class="form-row">
+            <label for="box-promo-code">Code promo <span class="label-hint">(optionnel)</span></label>
+            <div class="promo-inline">
+              <input id="box-promo-code" type="text" placeholder="Votre code promo" />
+              <button type="button" class="btn btn-outline" id="box-promo-apply-btn">Appliquer</button>
+              <button type="button" class="btn btn-ghost" id="box-promo-clear-btn">Retirer</button>
+            </div>
+            <p class="form-note" id="box-promo-feedback"></p>
           </div>
           <button type="submit" class="btn btn-primary">Continuer</button>
         </form>

@@ -337,12 +337,17 @@ function setupBoxModal() {
   const recipientEmailRow = document.getElementById("box-row-recipient-email");
   const recipientNameEl = document.getElementById("box-recipient-name");
   const recipientEmailEl = document.getElementById("box-recipient-email");
+  const promoCodeEl = document.getElementById("box-promo-code");
+  const promoApplyBtn = document.getElementById("box-promo-apply-btn");
+  const promoClearBtn = document.getElementById("box-promo-clear-btn");
+  const promoFeedbackEl = document.getElementById("box-promo-feedback");
   const shippingFullNameEl = document.getElementById("box-shipping-fullname");
   const shippingAddressEl = document.getElementById("box-shipping-address1");
   const shippingPostalEl = document.getElementById("box-shipping-postal");
   const shippingCityEl = document.getElementById("box-shipping-city");
   if (!modal || !form || !planEl || !buyerEmailEl) return;
   let pendingMonthlyPayPalUrl = "";
+  let boxPromoState = { code: "", add1Month: false };
 
   function syncPlanFromCadence() {
     const cadence = document.querySelector('input[name="box-cadence"]:checked')?.value || "monthly";
@@ -354,6 +359,42 @@ function setupBoxModal() {
     form.hidden = false;
     if (paypalStep) paypalStep.hidden = true;
     if (paypalStepRecap) paypalStepRecap.textContent = "";
+  }
+
+  function setBoxPromoFeedback(message, isError = false) {
+    if (!promoFeedbackEl) return;
+    promoFeedbackEl.textContent = message || "";
+    promoFeedbackEl.style.color = isError ? "#a2362b" : "";
+  }
+
+  async function applyBoxPromoFromInput() {
+    const plan = planEl.value;
+    const promoCodeRaw = promoCodeEl?.value.trim() || "";
+    if (!promoCodeRaw) {
+      setBoxPromoFeedback("Entre un code promo.", true);
+      return { ok: false, reason: "empty_code" };
+    }
+    if (typeof window.applyPromoCode !== "function") {
+      setBoxPromoFeedback("Promo indisponible pour le moment.", true);
+      return { ok: false, reason: "missing_fn" };
+    }
+    const promoRes = await window.applyPromoCode(promoCodeRaw);
+    if (!promoRes?.ok) {
+      setBoxPromoFeedback("Code promo invalide ou expiré.", true);
+      return { ok: false, reason: promoRes?.reason || "invalid_code" };
+    }
+    if (!["abo3Mois", "aboAnnee"].includes(plan) && promoRes.add1Month) {
+      setBoxPromoFeedback("Ce code +1 mois est valable uniquement sur box 3 mois ou 1 an.", true);
+      return { ok: false, reason: "plan_not_eligible" };
+    }
+    boxPromoState = { code: promoRes.code, add1Month: Boolean(promoRes.add1Month) };
+    if (promoCodeEl) promoCodeEl.value = promoRes.code;
+    if (boxPromoState.add1Month) {
+      setBoxPromoFeedback("Code promo bien enregistré, vous aurez un mois de plus.");
+    } else {
+      setBoxPromoFeedback(`Code ${promoRes.code} appliqué ✅`);
+    }
+    return { ok: true, ...boxPromoState };
   }
 
   function syncIntentFields() {
@@ -391,6 +432,9 @@ function setupBoxModal() {
     if (shippingPostalEl) shippingPostalEl.value = "";
     if (shippingCityEl) shippingCityEl.value = "";
     if (messageEl) messageEl.value = "";
+    if (promoCodeEl) promoCodeEl.value = "";
+    boxPromoState = { code: "", add1Month: false };
+    setBoxPromoFeedback("");
     syncIntentFields();
     resetBoxSteps();
     setModalState(modal, true);
@@ -442,6 +486,14 @@ function setupBoxModal() {
       showToast("Merci de renseigner le nom du destinataire.");
       return;
     }
+    const promoCodeRaw = promoCodeEl?.value.trim() || "";
+    if (promoCodeRaw) {
+      const promoCheck = await applyBoxPromoFromInput();
+      if (!promoCheck.ok) {
+        showToast("Code promo invalide ou non éligible.");
+        return;
+      }
+    }
 
     if (plan === "aboMensuel" || plan === "aboBiMensuel") {
       const entry = PAYPAL_BOX_LINKS[plan];
@@ -470,10 +522,16 @@ function setupBoxModal() {
       }
       return;
     }
-
-    await saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping });
-
-    const line = buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping);
+    const line = buildBoxLineFromPlan(
+      plan,
+      intent,
+      message,
+      recipientName,
+      recipientEmail,
+      shipping,
+      boxPromoState.code,
+      boxPromoState.add1Month,
+    );
     if (!line) {
       showToast("Impossible de préparer cette box.");
       return;
@@ -481,7 +539,17 @@ function setupBoxModal() {
     CartStore.add(line);
     renderOrderCart();
     closeBoxModal();
-    showToast("Box ajoutée au panier.");
+    showToast(line.add1Month ? "Box ajoutée au panier. +1 mois sera appliqué après paiement." : "Box ajoutée au panier.");
+  });
+
+  promoApplyBtn?.addEventListener("click", async () => {
+    await applyBoxPromoFromInput();
+  });
+
+  promoClearBtn?.addEventListener("click", () => {
+    boxPromoState = { code: "", add1Month: false };
+    if (promoCodeEl) promoCodeEl.value = "";
+    setBoxPromoFeedback("Code promo retiré.");
   });
 
   paypalContinueBtn?.addEventListener("click", () => {
@@ -655,6 +723,9 @@ function setupGiftCardButtons() {
 /* ── Init ───────────────────────────────────── */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  if (typeof window.loadPayPalClientIdFromNetlify === "function") {
+    await window.loadPayPalClientIdFromNetlify();
+  }
   if (typeof window.loadPricingFromSupabase === "function") {
     await window.loadPricingFromSupabase();
   }

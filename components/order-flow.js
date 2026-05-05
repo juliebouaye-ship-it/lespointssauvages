@@ -245,6 +245,8 @@ function lineDetail(line) {
   if (line.product && Object.prototype.hasOwnProperty.call(BOX_ONE_SHOT_EUR, line.product)) {
     details.push("Paiement unique");
     if (line.product === "abo3Mois") details.push("3 box sur 3 mois · 1 par mois");
+    if (line.codePromo) details.push(`Code promo: ${line.codePromo}`);
+    if (line.add1Month) details.push("+1 mois après paiement");
     if (line.comment) details.push(line.comment);
     if (line.shippingCity) details.push(`Livraison: ${line.shippingPostal || ""} ${line.shippingCity}`.trim());
   }
@@ -262,7 +264,7 @@ function lineDetail(line) {
   return details.join(" · ");
 }
 
-function buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping) {
+function buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEmail, shipping, promoCode, add1Month) {
   if (plan === "aboMensuel" || plan === "aboBiMensuel") {
     return null;
   }
@@ -280,6 +282,8 @@ function buildBoxLineFromPlan(plan, intent, message, recipientName, recipientEma
     shippingPostal: shipping.postalCode || "",
     shippingCity: shipping.city || "",
     shippingEmail: shipping.email || "",
+    codePromo: promoCode || "",
+    add1Month: Boolean(add1Month),
     commentaire: message || "",
   };
 }
@@ -298,14 +302,39 @@ function validateBoxShippingState(state) {
   return Boolean(state.fullName && state.address1 && state.postalCode && state.city && state.email);
 }
 
-async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping }) {
+function computeSubscriptionPeriod(plan, add1Month, fromDate = new Date()) {
+  const start = new Date(fromDate);
+  if (start.getDate() > 15) {
+    start.setMonth(start.getMonth() + 1);
+  }
+  const end = new Date(start);
+  const baseMonths = plan === "aboAnnee" ? 12 : 3;
+  end.setMonth(end.getMonth() + baseMonths - 1 + (add1Month ? 1 : 0));
+  const toDateString = (d) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  return {
+    startAbo: toDateString(start),
+    endAbo: toDateString(end),
+  };
+}
+
+async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName, recipientEmail, message, shipping, codePromo, add1Month }) {
   const requestType = intent === "gift" ? "info" : "info";
+  const period = computeSubscriptionPeriod(plan, add1Month);
   return insertSupabase("subscription_requests", {
     type: requestType,
     email: buyerEmail,
+    code_promo: codePromo || null,
+    start_abo: period.startAbo,
+    end_abo: period.endAbo,
     message: [
       `Plan: ${plan}`,
       `Intent: ${intent}`,
+      `Promo add1_month: ${add1Month ? "oui" : "non"}`,
       shipping?.fullName ? `Livraison nom: ${shipping.fullName}` : "",
       shipping?.address1 ? `Livraison adresse: ${shipping.address1}` : "",
       shipping?.postalCode ? `Livraison CP: ${shipping.postalCode}` : "",
@@ -315,6 +344,28 @@ async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName
       message || "",
     ].filter(Boolean).join("\n"),
   });
+}
+
+async function saveSubscriptionRequestsFromPaidLines(lines) {
+  const boxLines = (lines || []).filter((line) => line?.product === "abo3Mois" || line?.product === "aboAnnee");
+  for (const line of boxLines) {
+    await saveSubscriptionRequest({
+      plan: line.product,
+      intent: line.comment === "Cadeau" ? "gift" : "self",
+      buyerEmail: line.shippingEmail || "",
+      recipientName: line.recipientName || "",
+      recipientEmail: line.recipientEmail || "",
+      message: line.commentaire || "",
+      shipping: {
+        fullName: line.shippingName || "",
+        address1: line.shippingAddress || "",
+        postalCode: line.shippingPostal || "",
+        city: line.shippingCity || "",
+      },
+      codePromo: line.codePromo || "",
+      add1Month: Boolean(line.add1Month),
+    });
+  }
 }
 
 function computeCartTotal(shippingFee = SHIPPING_EUR) {
@@ -485,6 +536,20 @@ async function schedulePayPalRender() {
   orderPaypalRenderTimer = setTimeout(() => renderOrderPayPalIfPossible(), 280);
 }
 
+async function capturePayPalOrderViaNetlify(orderID) {
+  const response = await fetch("/.netlify/functions/paypal-capture", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ orderID }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || !payload?.ok || !payload?.capture) {
+    const detail = payload?.details?.message || payload?.message || payload?.error || "capture_failed";
+    throw new Error(`Capture serveur impossible (${detail})`);
+  }
+  return payload.capture;
+}
+
 async function renderOrderPayPalIfPossible() {
   destroyOrderPaypalButtons();
   const state = getOrderState();
@@ -497,10 +562,14 @@ async function renderOrderPayPalIfPossible() {
   const hint = document.getElementById("order-paypal-hint");
   const wrap = document.getElementById("order-paypal-wrap");
 
+  if (!PAYPAL_CLIENT_ID && typeof window.getPayPalClientId === "function") {
+    PAYPAL_CLIENT_ID = window.getPayPalClientId();
+  }
+
   if (!PAYPAL_CLIENT_ID) {
     if (hint) {
       hint.textContent =
-        "Pour payer directement ici, ajoutez votre Client ID PayPal dans script.js (voir commentaire en tête du fichier).";
+        "Client ID PayPal manquant. Vérifiez la variable d'environnement Netlify LPS_PAYPAL_CLIENT_ID.";
     }
     return;
   }
@@ -559,13 +628,18 @@ async function renderOrderPayPalIfPossible() {
           ],
         });
       },
-      onApprove: async (_data, actions) => {
-        const capture = await actions.order.capture();
+      onApprove: async (data) => {
+        const orderID = data?.orderID;
+        if (!orderID) {
+          throw new Error("orderID manquant");
+        }
+        const capture = await capturePayPalOrderViaNetlify(orderID);
         const latestShipping = getShippingState();
         const captureTotal = hasCart
           ? computeCartTotal(getShippingFeeFromState(latestShipping))
           : computeTotalEur(state, getShippingFeeFromState(latestShipping));
         await persistOrderToSupabase(capture, lines, captureTotal, latestShipping);
+        await saveSubscriptionRequestsFromPaidLines(lines);
         showToast("Paiement reçu, merci ! Je prépare votre commande.");
         CartStore.clear();
         renderOrderCart();
@@ -718,6 +792,9 @@ function buildCartMailBody(total) {
   const shippingState = getShippingState();
   const shippingFee = getShippingFeeFromState(shippingState);
   const shippingLine = isPickupDelivery(shippingState) ? "Retrait atelier : gratuit" : `Livraison : ${shippingFee.toFixed(2)} €`;
+  const activeCode = typeof window.getActivePromoCode === "function" ? window.getActivePromoCode() : "";
+  const boxCodes = [...new Set(orderCart.map((line) => line?.codePromo).filter(Boolean))];
+  const promoSummary = boxCodes.length ? boxCodes.join(", ") : activeCode || "";
   return [
     "Bonjour,",
     "",
@@ -726,6 +803,7 @@ function buildCartMailBody(total) {
     ...orderCart.flatMap((line) => [`${lineLabel(line)} — ${Number(computeLineSubtotal(line) || 0).toFixed(2)} €`, lineDetail(line) || "Sans option", ""]),
     shippingLine,
     `Total : ${total != null ? `${total.toFixed(2)} €` : "(à confirmer)"}`,
+    promoSummary ? `Code promo : ${promoSummary}` : "",
     "",
     "Merci !",
   ].join("\n");
@@ -788,6 +866,10 @@ function openCartDrawer(drawer, drawerBackdrop) {
 
 function closeCartDrawer(drawer, drawerBackdrop) {
   if (!drawer || !drawerBackdrop) return;
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && drawer.contains(active)) {
+    active.blur();
+  }
   setModalState(drawer, false);
   setModalState(drawerBackdrop, false);
 }
@@ -948,8 +1030,13 @@ function setupOrderModal() {
       setDrawerPromoFeedback("Code invalide ou expiré.", true);
       return;
     }
-    setPromoFeedback(`Code ${res.code} appliqué ✅`);
-    setDrawerPromoFeedback(`Code ${res.code} appliqué ✅`);
+    const hasEligibleBox = orderCart.some((line) => line?.product === "abo3Mois" || line?.product === "aboAnnee");
+    const message =
+      res.add1Month && hasEligibleBox
+        ? "Code promo bien enregistré, vous aurez un mois de plus."
+        : `Code ${res.code} appliqué ✅`;
+    setPromoFeedback(message);
+    setDrawerPromoFeedback(message);
     if (promoInput) promoInput.value = res.code;
     if (drawerPromoInput) drawerPromoInput.value = res.code;
     renderOrderCart();

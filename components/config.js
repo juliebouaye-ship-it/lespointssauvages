@@ -1,9 +1,7 @@
 /* ── Configuration partagée ─────────────────── */
 
-const PAYPAL_CLIENT_ID_FALLBACK =
-  "AT6mRRcUsZXuZtJBYpnyVTTQieUpW7kUboKftgVS_0bBH2VU14BlOaH-fzqIyeKLYwa8NQk-DZxvxlsm";
-const PAYPAL_CLIENT_ID =
-  (typeof window !== "undefined" && window.__LPS_PAYPAL_CLIENT_ID__) || PAYPAL_CLIENT_ID_FALLBACK;
+let PAYPAL_CLIENT_ID =
+  (typeof window !== "undefined" && window.__LPS_PAYPAL_CLIENT_ID__) || "";
 
 const PRODUCT_BASE_EUR = {
   petit: { kit: 10, fini: 18 },
@@ -173,7 +171,7 @@ async function applyPromoCode(codeRaw) {
     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: promo, error } = await client
       .from("promo_codes")
-      .select("code,is_active,starts_at,ends_at")
+      .select("code,is_active,add1_month,starts_at,ends_at")
       .eq("code", code)
       .maybeSingle();
     if (error) return { ok: false, reason: error.message };
@@ -190,7 +188,7 @@ async function applyPromoCode(codeRaw) {
     resetPricingToBaseline();
     applyPriceRules(rules || []);
     activePromoCode = code;
-    return { ok: true, code };
+    return { ok: true, code, add1Month: Boolean(promo.add1_month), hasPricingRules: (rules || []).length > 0 };
   } catch (err) {
     return { ok: false, reason: err?.message || "promo_apply_failed" };
   }
@@ -206,9 +204,33 @@ function getActivePromoCode() {
   return activePromoCode;
 }
 
+function getPayPalClientId() {
+  return PAYPAL_CLIENT_ID || "";
+}
+
+async function loadPayPalClientIdFromNetlify() {
+  if (PAYPAL_CLIENT_ID) return { ok: true, source: "window", clientId: PAYPAL_CLIENT_ID };
+  try {
+    const response = await fetch("/.netlify/functions/runtime-config", { method: "GET" });
+    if (!response.ok) return { ok: false, reason: "runtime_config_http_error" };
+    const data = await response.json();
+    const clientId = String(data?.paypalClientId || "").trim();
+    if (!clientId) return { ok: false, reason: "runtime_config_empty" };
+    PAYPAL_CLIENT_ID = clientId;
+    if (typeof window !== "undefined") {
+      window.__LPS_PAYPAL_CLIENT_ID__ = clientId;
+    }
+    return { ok: true, source: "runtime_function", clientId };
+  } catch (err) {
+    return { ok: false, reason: err?.message || "runtime_config_fetch_failed" };
+  }
+}
+
 if (typeof window !== "undefined") {
   window.loadPricingFromSupabase = loadPricingFromSupabase;
   window.applyPromoCode = applyPromoCode;
   window.clearPromoCode = clearPromoCode;
   window.getActivePromoCode = getActivePromoCode;
+  window.getPayPalClientId = getPayPalClientId;
+  window.loadPayPalClientIdFromNetlify = loadPayPalClientIdFromNetlify;
 }
