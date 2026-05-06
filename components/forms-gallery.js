@@ -18,6 +18,13 @@ function setupContactForm() {
       message,
     });
     if (result.ok) {
+      if (typeof notifyAdmin === "function") {
+        await notifyAdmin("contact_request_created", "Nouvelle demande de contact", {
+          name: name || "",
+          email,
+          message_preview: message.slice(0, 180),
+        });
+      }
       form.reset();
       showToast("Message envoyé. Merci !");
       return;
@@ -64,6 +71,13 @@ function setupSubscriptionRequests() {
     }
     const result = await insertSupabase("subscription_requests", { type, email, message });
     if (result.ok) {
+      if (typeof notifyAdmin === "function") {
+        await notifyAdmin("subscription_request_created", "Nouvelle demande abonnement", {
+          type,
+          email,
+          message_preview: message.slice(0, 180),
+        });
+      }
       form.reset();
       setModalState(modal, false);
       document.body.style.overflow = "";
@@ -125,6 +139,13 @@ function setupCustomRequestModal() {
       message: composedMessage,
     });
     if (result.ok) {
+      if (typeof notifyAdmin === "function") {
+        await notifyAdmin("contact_request_created", "Nouvelle demande personnalisée", {
+          name: name || "",
+          email,
+          message_preview: composedMessage.slice(0, 180),
+        });
+      }
       form.reset();
       closeModal();
       showToast("Demande envoyée. Je vous réponds rapidement.");

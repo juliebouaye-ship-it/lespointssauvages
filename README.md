@@ -36,6 +36,23 @@ Ou utilisez directement:
 Le site est deploye via Netlify.
 Les deploiements automatiques se font depuis la branche `main` du repository GitHub.
 
+## Notifications email automatiques
+
+Le site envoie maintenant un email d'alerte admin pour:
+
+- nouvelle commande payee
+- nouvelle demande de contact
+- nouvelle demande abonnement (et intention d'abonnement mensuel/bi-mensuel avant redirection PayPal)
+
+Variables Netlify a definir:
+
+- `LPS_SMTP_USER` : ton Gmail (ex: `lespointsrebelles@gmail.com`)
+- `LPS_SMTP_APP_PASSWORD` : mot de passe d'application Google (16 caracteres)
+- `LPS_NOTIFY_TO_EMAIL` (optionnel) : boite qui recoit les alertes, sinon `LPS_SMTP_USER`
+- `LPS_NOTIFY_FROM_EMAIL` (optionnel) : expediteur affiche, sinon `LPS_SMTP_USER`
+
+La fonction utilisee est `/.netlify/functions/notify-admin`.
+
 ### Preview CLI (alias fixe `preview`)
 
 Depuis ce dossier `Netlify`. Reference complete : **`../brief-agent-extra-site.md`** (section « Deploiement Netlify »).

@@ -74,6 +74,23 @@ async function insertSupabase(table, payload) {
   return { ok: true };
 }
 
+async function notifyAdmin(eventType, title, details = {}) {
+  try {
+    const response = await fetch("/.netlify/functions/notify-admin", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ eventType, title, details }),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      console.warn("notify-admin failed", payload);
+    }
+  } catch (err) {
+    console.warn("notify-admin network error", err?.message || err);
+    /* Ne bloque pas le parcours client si l'email échoue */
+  }
+}
+
 function getShippingState() {
   const deliveryMethod = getSelectedDeliveryMethod();
   return {
@@ -169,7 +186,18 @@ async function persistOrderToSupabase(capture, lines, total, shipping) {
       : shipping.notes || null,
     cart_lines: lines,
   };
-  return insertSupabase("orders", payload);
+  const result = await insertSupabase("orders", payload);
+  if (result.ok) {
+    await notifyAdmin("order_created", "Nouvelle commande", {
+      paypal_order_id: payload.paypal_order_id || "",
+      payer_email: payload.payer_email || "",
+      amount_total: payload.amount_total || 0,
+      shipping_full_name: payload.shipping_full_name || "",
+      shipping_city: payload.shipping_city || "",
+      lines_count: Array.isArray(lines) ? lines.length : 0,
+    });
+  }
+  return result;
 }
 
 function setModalState(element, isOpen) {
@@ -466,6 +494,15 @@ function setupBoxModal() {
     }
 
     if (plan === "aboMensuel" || plan === "aboBiMensuel") {
+      await notifyAdmin("subscription_checkout_started", "Nouvelle intention d'abonnement", {
+        plan,
+        intent,
+        buyer_email: buyerEmail,
+        shipping_full_name: shipping.fullName || "",
+        shipping_city: shipping.city || "",
+        recipient_name: recipientName || "",
+        recipient_email: recipientEmail || "",
+      });
       const entry = PAYPAL_BOX_LINKS[plan];
       if (entry?.url && entry.url !== "#") {
         pendingMonthlyPayPalUrl = entry.url;
