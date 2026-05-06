@@ -1,5 +1,5 @@
 -- Run in Supabase SQL editor
--- Table dédiée aux commandes prises au stand (mobile / POS)
+-- Table dediee aux commandes prises au stand (mobile / POS)
 
 create table if not exists public.stand_orders (
   id bigint generated always as identity primary key,

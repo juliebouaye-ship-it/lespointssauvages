@@ -1,5 +1,5 @@
 -- Offres box 2026 : abonnement (prix / box) + paiement unique 3 mois.
--- À exécuter dans Supabase SQL.
+-- A executer dans Supabase SQL.
 
 insert into public.price_rules (scope, scope_id, price_key, amount_eur) values
 ('site','default','box.aboMensuel',19.50),

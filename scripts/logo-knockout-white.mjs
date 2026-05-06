@@ -9,7 +9,7 @@ import { PNG } from "pngjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
-const target = path.join(root, "logolps.png");
+const target = path.join(root, "images", "logolps.png");
 
 const buf = fs.readFileSync(target);
 const png = PNG.sync.read(buf);

@@ -77,3 +77,9 @@ npx --yes netlify-cli deploy --no-build --dir . --prod
 4. Laisser Netlify redeployer automatiquement.
 
 Pour tester avant merge vers `main`, utiliser la commande preview ci‑dessus avec `--alias preview`.
+
+## Organisation des fichiers
+
+- Migrations Supabase: `supabase/migrations/`
+- Fonctions Netlify: `netlify/functions/`
+- Assets images du site: `images/`
