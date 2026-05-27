@@ -462,6 +462,17 @@ h1 em {
   font-size: 0.97rem;
 }
 
+.box-motifs-preview {
+  margin-top: 1.1rem;
+}
+
+.box-motifs-preview-lead {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  max-width: 44rem;
+}
+
 /* ── Sections ── */
 .section { padding: 2.6rem 0; }
 

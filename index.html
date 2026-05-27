@@ -142,6 +142,24 @@
               <p class="paypal-redirect-note">Paiement sécurisé avec PayPal.</p>
             </article>
           </div>
+
+          <aside class="box-motifs-preview reveal" id="box-motifs-preview" hidden>
+            <p class="box-motifs-preview-lead muted">
+              Vous souhaitez savoir ce qui vous attend ?
+              <button
+                type="button"
+                class="btn-text-link-inline"
+                id="box-motifs-preview-btn"
+                data-open-gallery
+                data-gallery-title-from-caption
+                data-gallery-images=""
+                data-gallery-alts=""
+                data-gallery-rotations=""
+              >
+                Voir les photos des autres box
+              </button>
+            </p>
+          </aside>
         </div>
       </section>
 
@@ -511,6 +529,7 @@
     -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./components/config.js"></script>
+    <script src="./components/box-gallery.js"></script>
     <script src="./components/ui-common.js"></script>
     <script src="./components/order-flow.js"></script>
     <script src="./components/forms-gallery.js"></script>

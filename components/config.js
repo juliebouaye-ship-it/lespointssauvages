@@ -62,6 +62,7 @@ const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
 /** Prix affiché de la box mensuelle (réglable via Supabase price_key box.aboMensuel) */
 let BOX_MONTHLY_EUR = 19.5;
+
 const BOX_ONE_SHOT_EUR = {
   abo3Mois: 49.5,
 };

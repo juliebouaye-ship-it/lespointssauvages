@@ -78,6 +78,25 @@ npx --yes netlify-cli deploy --no-build --dir . --prod
 
 Pour tester avant merge vers `main`, utiliser la commande preview ci‑dessus avec `--alias preview`.
 
+## Supabase (plan gratuit) : éviter la mise en pause
+
+Le projet Supabase « sleep » après une période sans activité. Un workflow GitHub
+`.github/workflows/supabase-keepalive.yml` appelle l’API **deux fois par semaine**
+(lecture `stand_orders`, déjà autorisée pour `anon`).
+
+**Configuration une fois** (dépôt GitHub → **Settings** → **Secrets and variables**
+→ **Actions** → **New repository secret**) :
+
+| Nom du secret        | Valeur |
+|---------------------|--------|
+| `SUPABASE_URL`      | URL du projet, ex. `https://xxxx.supabase.co` (sans `/` final) |
+| `SUPABASE_ANON_KEY` | Clé **anon** / public (Project API keys dans Supabase) |
+
+Vérification manuelle : onglet **Actions** → workflow **Supabase keepalive** → **Run workflow**.
+
+Si tu renommes la table ou retires la policy `anon` en lecture, mets à jour l’URL
+dans le workflow (étape « Ping REST »).
+
 ## Organisation des fichiers
 
 - Migrations Supabase: `supabase/migrations/`

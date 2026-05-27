@@ -175,6 +175,7 @@ function setupProductGalleryModal() {
   let galleryItems = [];
   let galleryIndex = 0;
   let imageFallbackActive = false;
+  let titleFromCaption = false;
 
   const resolveImageFallback = (src) => {
     if (!src) return null;
@@ -205,7 +206,13 @@ function setupProductGalleryModal() {
     imageEl.src = current.src;
     imageEl.alt = current.alt;
     imageEl.style.setProperty("--gallery-rotation", `${current.rotation || 0}deg`);
-    captionEl.textContent = `${current.alt} (${galleryIndex + 1}/${galleryItems.length})`;
+    if (titleFromCaption) {
+      titleEl.textContent = current.alt;
+      captionEl.textContent =
+        galleryItems.length > 1 ? `${galleryIndex + 1} / ${galleryItems.length}` : "";
+    } else {
+      captionEl.textContent = `${current.alt} (${galleryIndex + 1}/${galleryItems.length})`;
+    }
     prevBtn.disabled = galleryItems.length <= 1;
     nextBtn.disabled = galleryItems.length <= 1;
   };
@@ -238,6 +245,7 @@ function setupProductGalleryModal() {
       const rawAlts = btn.getAttribute("data-gallery-alts") || "";
       const rawRotations = btn.getAttribute("data-gallery-rotations") || "";
       const title = btn.getAttribute("data-gallery-title") || "Photos produit";
+      titleFromCaption = btn.hasAttribute("data-gallery-title-from-caption");
       const images = rawImages.split("|").map((value) => value.trim()).filter(Boolean);
       const alts = rawAlts.split("|").map((value) => value.trim());
       const rotations = rawRotations
@@ -251,7 +259,9 @@ function setupProductGalleryModal() {
         rotation: rotations[index] || 0,
       }));
       galleryIndex = 0;
-      titleEl.textContent = `Photos - ${title}`;
+      if (!titleFromCaption) {
+        titleEl.textContent = `Photos - ${title}`;
+      }
       renderCurrent();
       setModalState(modal, true);
       document.body.style.overflow = "hidden";

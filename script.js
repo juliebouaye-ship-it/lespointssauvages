@@ -737,6 +737,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await window.loadPricingFromSupabase();
   }
   syncDisplayedPrices();
+  if (typeof window.loadBoxMotifGallery === "function") {
+    await window.loadBoxMotifGallery();
+  }
   orderCart = CartStore.load();
   setupBoxModal();
   setupAccessoryAddToCartButtons();
