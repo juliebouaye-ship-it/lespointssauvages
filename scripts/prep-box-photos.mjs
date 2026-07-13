@@ -1,7 +1,7 @@
 // Prepare box gallery photos for upload to Supabase Storage (bucket box-motifs).
-// 1) Depose tes photos brutes dans box-photos/incoming/
+// 1) Depose tes photos brutes dans images/box-photos/incoming/
 // 2) npm run box-photos:prep
-// 3) Uploade les fichiers generes dans box-photos/ready/ sur Supabase Storage.
+// 3) Uploade les fichiers generes dans images/box-photos/ready/ sur Supabase Storage.
 
 import { mkdirSync, readdirSync, statSync, writeFileSync, renameSync } from "node:fs";
 import { join } from "node:path";
@@ -9,8 +9,8 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const INCOMING_DIR = join(ROOT, "box-photos", "incoming");
-const READY_DIR = join(ROOT, "box-photos", "ready");
+const INCOMING_DIR = join(ROOT, "images", "box-photos", "incoming");
+const READY_DIR = join(ROOT, "images", "box-photos", "ready");
 const MAX_EDGE = 1200;
 const JPEG_QUALITY = 82;
 

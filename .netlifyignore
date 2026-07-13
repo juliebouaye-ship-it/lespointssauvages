@@ -2,6 +2,9 @@
 node_modules
 package-lock.json
 
+# Photos de box brutes/prêtes à uploader sur Supabase (jamais servies par le site)
+images/box-photos
+
 # Déploiement
 .netlify
 .git

@@ -13,4 +13,4 @@ qa-lighthouse.json
 !.env.example
 
 # Photos de box a uploader sur Supabase (jamais dans le repo, voir README)
-box-photos/
+images/box-photos/
