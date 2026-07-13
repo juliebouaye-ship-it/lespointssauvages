@@ -388,7 +388,7 @@ h1 em {
 
 /* ── Hero compact (moins de hauteur, pas de logo dupliqué) ── */
 .hero--compact {
-  padding: 1.15rem 0 1.25rem;
+  padding: 0.85rem 0 1rem;
 }
 
 .hero--compact .hero-top {
@@ -443,7 +443,7 @@ h1 em {
   display: block;
   width: auto;
   max-width: 100%;
-  height: min(50vh, 420px);
+  height: min(64vh, 580px);
   aspect-ratio: 3 / 4;
   object-fit: cover;
   border-radius: var(--radius);
