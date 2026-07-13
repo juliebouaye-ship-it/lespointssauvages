@@ -16,9 +16,9 @@ if (!src || !out) {
 }
 
 const cxPct = Number(cxArg ?? 48);
-const cyPct = Number(cyArg ?? 50);
+const cyPct = Number(cyArg ?? 53);
 const rxPct = Number(rxArg ?? 36);
-const ryPct = Number(ryArg ?? 40);
+const ryPct = Number(ryArg ?? 44);
 const featherPct = Number(featherArg ?? 1.0);
 
 const img = sharp(src);
