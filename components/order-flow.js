@@ -577,6 +577,7 @@ async function renderOrderPayPalIfPossible() {
       unit_amount: { currency_code: "EUR", value: Number(computeLineSubtotal(line) || 0).toFixed(2) },
     }));
 
+    let shippingValidationFailed = false;
     orderPaypalButtons = paypal.Buttons({
       style: { layout: "vertical", shape: "rect", label: "pay" },
       createOrder: (_data, actions) => {
@@ -586,9 +587,11 @@ async function renderOrderPayPalIfPossible() {
         const freshShippingFee = getShippingFeeFromState(freshShippingState);
         const freshTotal = hasCart ? computeCartTotal(freshShippingFee) : computeTotalEur(state, freshShippingFee);
         if (!validateShippingState(freshShippingState)) {
+          shippingValidationFailed = true;
           showToast("Merci de compléter vos coordonnées de livraison avant paiement.");
           throw new Error("Shipping fields missing");
         }
+        shippingValidationFailed = false;
         return actions.order.create({
           application_context: {
             shipping_preference: isPickupDelivery(freshShippingState) ? "NO_SHIPPING" : "SET_PROVIDED_ADDRESS",
@@ -668,6 +671,12 @@ async function renderOrderPayPalIfPossible() {
         showToast(msg);
       },
       onError: (err) => {
+        if (shippingValidationFailed) {
+          // Le vrai message ("Merci de compléter vos coordonnées...") a déjà été affiché
+          // dans createOrder ; on évite que l'erreur générique PayPal ne l'écrase.
+          shippingValidationFailed = false;
+          return;
+        }
         const msg =
           typeof err === "string"
             ? err
