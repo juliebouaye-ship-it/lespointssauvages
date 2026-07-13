@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="./styles.css" />
     <!-- LCP : logo + photo hero (prix kits alignés sur PRODUCT_BASE_EUR dans components/config.js) -->
     <link rel="preload" as="image" href="./images/logolps.png?v=5" />
-    <link rel="preload" as="image" href="./images/hero-box-juin-oval.png" />
+    <link rel="preload" as="image" href="./images/hero-photo.jpg" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -85,7 +85,10 @@
           <div class="hero-top reveal">
             <h1 id="hero-title" class="hero-h1">
               <span class="hero-brand-name">Les Points Rebelles</span>
-              <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
+              <span class="hero-tagline-row">
+                <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
+                <img class="hero-logo-mark reveal" src="./images/logolps.png?v=5" alt="" aria-hidden="true" width="72" height="74" decoding="async" />
+              </span>
             </h1>
             <p class="badge hero-badge-inline">✦ Fait main en France ✦</p>
           </div>
@@ -102,9 +105,11 @@
             <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé avec PayPal
           </p>
         </div>
-        <img class="hero-logo-mark reveal" src="./images/logolps.png?v=5" alt="" aria-hidden="true" width="72" height="74" decoding="async" />
         <div class="hero-split-photo reveal">
-          <img src="./images/hero-box-juin-oval.png" alt="Broderie de la box du mois : silhouette en robe au vent, chapeau et cheveux dorés" width="1242" height="1800" loading="eager" decoding="async" fetchpriority="high" />
+          <div class="oval-frame">
+            <img class="oval-photo" src="./images/hero-photo.jpg" alt="Broderie de la box du mois : silhouette en robe au vent, chapeau et cheveux dorés" width="927" height="1400" loading="eager" decoding="async" fetchpriority="high" />
+            <img class="bramble-overlay" src="./images/bramble-frame.svg" alt="" aria-hidden="true" width="258" height="400" />
+          </div>
         </div>
       </section>
 
