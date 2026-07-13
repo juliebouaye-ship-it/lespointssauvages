@@ -519,55 +519,22 @@ h1 em {
   padding-bottom: 2.1rem;
 }
 
-.section-box-inner {
-  position: relative;
-  padding: 1.15rem 0 1.5rem;
-}
-
-.section-box-inner::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(10rem, 42%);
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 88%, var(--ink)), transparent);
-  opacity: 0.9;
-}
-
-.section-box-inner::after {
-  content: "";
-  position: absolute;
-  top: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
-  background: var(--bg) var(--rose-flourish-svg) center / 15px no-repeat;
-}
-
-/* ── Petite rose decorative, reutilisable en transition entre sections ── */
+/* ── Petite rose decorative, reutilisable en transition entre sections.
+   Toujours premier enfant direct d'une .section : le padding-top de la
+   section est reduit d'autant (regle ci-dessous) pour ne pas cumuler
+   les deux espacements. ── */
 .rose-divider {
   width: min(10rem, 42%);
   height: 20px;
-  margin: 0 auto 1rem;
+  margin: 0 auto 1.25rem;
   background:
     var(--rose-flourish-svg) center / 15px no-repeat,
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 88%, var(--ink)), transparent) center / 100% 2px no-repeat;
   opacity: 0.9;
 }
 
-/* Remonte la fleur dans le padding du bloc plutot que de l'ajouter en plus */
-.section > .rose-divider:first-child {
-  margin-top: -1.4rem;
-}
-
-@media (min-width: 720px) {
-  .section-box-inner {
-    padding: 1.25rem 0 1.75rem;
-  }
+.section:not(.section-box):has(> .rose-divider:first-child) {
+  padding-top: 1.5rem;
 }
 
 .section-header--box {
@@ -715,6 +682,12 @@ h1 em {
 .gift-card-note {
   min-height: 2.45rem;
   resize: vertical;
+}
+
+.section-alt {
+  background: linear-gradient(180deg, #fff 0%, #f5ede6 100%);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
 .section-header {
