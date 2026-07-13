@@ -540,7 +540,9 @@ async function capturePayPalOrderViaNetlify(orderID) {
       payload?.message ||
       payload?.error ||
       "capture_failed";
-    throw new Error(`Capture serveur impossible (${detail})`);
+    const error = new Error(`Capture serveur impossible (${detail})`);
+    error.code = issue?.issue || null;
+    throw error;
   }
   return payload.capture;
 }
@@ -628,7 +630,7 @@ async function renderOrderPayPalIfPossible() {
           ],
         });
       },
-      onApprove: async (data) => {
+      onApprove: async (data, actions) => {
         const orderID = data?.orderID;
         if (!orderID) {
           throw new Error("orderID manquant");
@@ -637,6 +639,16 @@ async function renderOrderPayPalIfPossible() {
         try {
           capture = await capturePayPalOrderViaNetlify(orderID);
         } catch (err) {
+          if (err?.code === "INSTRUMENT_DECLINED") {
+            // Moyen de paiement refusé par PayPal (compte non vérifié, fonds insuffisants, etc.) :
+            // on laisse le client choisir un autre moyen de paiement sans recréer toute la
+            // commande, au lieu de le renvoyer vers un support manuel — ça peut arriver à
+            // n'importe quel client, pas seulement au sien.
+            const msg = "Ce moyen de paiement a été refusé. Merci d'en choisir un autre pour finaliser votre paiement.";
+            showToast(msg, 8000);
+            if (hint) hint.textContent = msg;
+            return actions.restart();
+          }
           // Le paiement a pu être validé côté banque/PayPal même si cette confirmation
           // réseau échoue ; on ne peut pas le savoir ici, donc on ne vide pas le panier
           // et on donne une référence claire pour un suivi manuel.
