@@ -35,9 +35,9 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
-    <!-- LCP : logo + première vignette produit (prix kits alignés sur PRODUCT_BASE_EUR dans components/config.js) -->
+    <!-- LCP : logo + photo hero (prix kits alignés sur PRODUCT_BASE_EUR dans components/config.js) -->
     <link rel="preload" as="image" href="./images/logolps.png?v=5" />
-    <link rel="preload" as="image" href="./images/embroidery-petit-mot.jpg" />
+    <link rel="preload" as="image" href="./images/hero-box-juin.jpg" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -80,26 +80,32 @@
     <main id="main-content" tabindex="-1">
 
       <!-- ── HERO ── -->
-      <section class="hero hero--compact container" aria-labelledby="hero-title">
-        <div class="hero-top reveal">
-          <h1 id="hero-title" class="hero-h1">
-            <span class="hero-brand-name">Les Points Rebelles</span>
-            <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
-          </h1>
-          <p class="badge hero-badge-inline">✦ Fait main en France ✦</p>
+      <section class="hero hero--compact hero--split container" aria-labelledby="hero-title">
+        <div class="hero-split-text">
+          <img class="hero-logo-mark reveal" src="./images/logolps.png?v=5" alt="" aria-hidden="true" width="72" height="74" decoding="async" />
+          <div class="hero-top reveal">
+            <h1 id="hero-title" class="hero-h1">
+              <span class="hero-brand-name">Les Points Rebelles</span>
+              <span class="hero-brand-tagline">Broderie libre <br /><em>et impertinente</em></span>
+            </h1>
+            <p class="badge hero-badge-inline">✦ Fait main en France ✦</p>
+          </div>
+          <p class="hero-text reveal">
+            Bienvenue sur mon site ! Ici, on brode 100% artisanal pour tous les goûts : <strong>kits DIY</strong> ou broderies finies.
+            Et pour les passionné·es de broderie, la <strong>box broderie</strong> est là pour vous accompagner.
+          </p>
+          <div class="hero-actions reveal">
+            <a class="btn btn-primary" href="#abonnement">Découvrir la box</a>
+            <a class="btn btn-ghost" href="#produits">Les collections</a>
+            <button type="button" class="btn btn-outline js-open-gift-card">🎁 Carte cadeau</button>
+          </div>
+          <p class="trust-inline reveal">
+            <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé avec PayPal
+          </p>
         </div>
-        <p class="hero-text reveal">
-          Bienvenue sur mon site ! Ici, on brode 100% artisanal pour tous les goûts : <strong>kits DIY</strong> ou broderies finies. 
-		  Et pour les passionné·es de broderie, la <strong>box broderie</strong> est là pour vous accompagner.
-        </p>
-        <div class="hero-actions reveal">
-          <a class="btn btn-primary" href="#abonnement">Découvrir la box</a>
-          <a class="btn btn-ghost" href="#produits">Les collections</a>
-          <button type="button" class="btn btn-outline js-open-gift-card">🎁 Carte cadeau</button>
+        <div class="hero-split-photo reveal">
+          <img src="./images/hero-box-juin.jpg" alt="Broderie de la box du mois : silhouette en robe au vent, chapeau et cheveux dorés" width="750" height="1000" loading="eager" decoding="async" fetchpriority="high" />
         </div>
-        <p class="trust-inline reveal">
-          <span class="trust-icon" aria-hidden="true">🔒</span> Paiement sécurisé avec PayPal
-        </p>
       </section>
 
       <section id="abonnement" class="section section-box container" aria-labelledby="abo-title">
@@ -176,7 +182,7 @@
           <article class="card reveal" role="listitem">
             <div class="card-tag"><span aria-hidden="true">⭐</span> Bestseller</div>
             <div class="card-thumb-wrap">
-              <img class="card-thumb" src="./images/embroidery-petit-mot.jpg" alt="Broderie petit mot" loading="eager" decoding="async" fetchpriority="high" />
+              <img class="card-thumb" src="./images/embroidery-petit-mot.jpg" alt="Broderie petit mot" loading="lazy" decoding="async" />
               <button
                 type="button"
                 class="card-photo-btn"

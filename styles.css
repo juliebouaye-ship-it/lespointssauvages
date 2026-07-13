@@ -407,6 +407,62 @@ h1 em {
   margin-top: 0.25rem;
 }
 
+/* ── Hero split (texte + photo) ── */
+.hero--split {
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.hero--split .hero-text {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.hero--split .hero-actions,
+.hero--split .trust-inline {
+  justify-content: flex-start;
+}
+
+.hero-logo-mark {
+  display: block;
+  width: 4.5rem;
+  height: auto;
+  margin-bottom: 0.9rem;
+  filter: drop-shadow(0 8px 18px rgba(42, 30, 24, 0.18));
+}
+
+.hero-split-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 760px) {
+  .hero--split {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero--split .hero-split-photo {
+    order: -1;
+    margin: 0 auto 1.25rem;
+  }
+  .hero--split .hero-actions,
+  .hero--split .trust-inline {
+    justify-content: center;
+  }
+  .hero-logo-mark {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .hero--compact .hero-text {
   font-size: 0.97rem;
   line-height: 1.58;
