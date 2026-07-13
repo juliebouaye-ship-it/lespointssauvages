@@ -15,11 +15,11 @@ if (!src || !out) {
   process.exit(1);
 }
 
-const cxPct = Number(cxArg ?? 48);
-const cyPct = Number(cyArg ?? 53);
+const cxPct = Number(cxArg ?? 50);
+const cyPct = Number(cyArg ?? 50);
 const rxPct = Number(rxArg ?? 39);
-const ryPct = Number(ryArg ?? 45);
-const featherPct = Number(featherArg ?? 1.0);
+const ryPct = Number(ryArg ?? 43);
+const featherPct = Number(featherArg ?? 1.2);
 
 const img = sharp(src);
 const { width, height } = await img.metadata();
@@ -36,7 +36,7 @@ const maskBuffer = await sharp(Buffer.from(svgMask)).blur(feather).toColourspace
 const masked = await img.ensureAlpha().composite([{ input: maskBuffer, blend: "dest-in" }]).png().toBuffer();
 
 const finalBuf = await sharp(masked)
-  .resize({ height: 1000, withoutEnlargement: true })
+  .resize({ height: 1800, withoutEnlargement: true })
   .trim()
   .png({ palette: true, quality: 90, compressionLevel: 9 })
   .toBuffer();
