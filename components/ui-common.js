@@ -29,7 +29,7 @@ function setupReveal() {
   items.forEach((el) => io.observe(el));
 }
 
-function showToast(message) {
+function showToast(message, durationMs = 3200) {
   let toast = document.getElementById("toast");
   if (!toast) {
     toast = document.createElement("div");
@@ -46,7 +46,7 @@ function showToast(message) {
   toast.classList.add("show");
 
   clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove("show"), 3200);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), durationMs);
 }
 
 function setFooterYear() {

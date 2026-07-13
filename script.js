@@ -160,6 +160,25 @@ function buildPayPalShippingAddress(state) {
   };
 }
 
+function buildPayPalPayerFromShipping(state) {
+  if (!validateShippingState(state) || isPickupDelivery(state)) return null;
+  const [givenName, ...rest] = state.fullName.split(/\s+/);
+  return {
+    name: {
+      given_name: givenName || state.fullName,
+      surname: rest.join(" ") || givenName || state.fullName,
+    },
+    email_address: state.email || undefined,
+    address: {
+      address_line_1: state.address1,
+      address_line_2: state.address2 || undefined,
+      admin_area_2: state.city,
+      postal_code: state.postalCode,
+      country_code: "FR",
+    },
+  };
+}
+
 async function persistOrderToSupabase(capture, lines, total, shipping) {
   const shippingFee = getShippingFeeFromState(shipping);
   const pickup = isPickupDelivery(shipping);
@@ -187,16 +206,29 @@ async function persistOrderToSupabase(capture, lines, total, shipping) {
     cart_lines: lines,
   };
   const result = await insertSupabase("orders", payload);
-  if (result.ok) {
-    await notifyAdmin("order_created", "Nouvelle commande", {
+  // Le paiement PayPal est déjà capturé (argent débité) à ce stade : même si l'insert
+  // Supabase échoue, l'admin doit être alerté pour pouvoir traiter la commande à la main.
+  await notifyAdmin(
+    result.ok ? "order_created" : "order_save_failed",
+    result.ok ? "Nouvelle commande" : "⚠️ Commande payée mais NON enregistrée dans Supabase",
+    {
       paypal_order_id: payload.paypal_order_id || "",
       payer_email: payload.payer_email || "",
       amount_total: payload.amount_total || 0,
       shipping_full_name: payload.shipping_full_name || "",
+      shipping_address_1: payload.shipping_address_1 || "",
+      shipping_postal_code: payload.shipping_postal_code || "",
       shipping_city: payload.shipping_city || "",
+      shipping_phone: payload.shipping_phone || "",
       lines_count: Array.isArray(lines) ? lines.length : 0,
-    });
-  }
+      cart_lines: lines,
+      supabase_error: result.ok
+        ? ""
+        : result.missingConfig
+        ? "missing_config"
+        : String(result.error?.message || result.error || "unknown_error"),
+    }
+  );
   return result;
 }
 

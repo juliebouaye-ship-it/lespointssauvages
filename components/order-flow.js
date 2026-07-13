@@ -582,6 +582,7 @@ async function renderOrderPayPalIfPossible() {
       createOrder: (_data, actions) => {
         const freshShippingState = getShippingState();
         const paypalShipping = buildPayPalShippingAddress(freshShippingState);
+        const paypalPayer = buildPayPalPayerFromShipping(freshShippingState);
         const freshShippingFee = getShippingFeeFromState(freshShippingState);
         const freshTotal = hasCart ? computeCartTotal(freshShippingFee) : computeTotalEur(state, freshShippingFee);
         if (!validateShippingState(freshShippingState)) {
@@ -592,6 +593,7 @@ async function renderOrderPayPalIfPossible() {
           application_context: {
             shipping_preference: isPickupDelivery(freshShippingState) ? "NO_SHIPPING" : "SET_PROVIDED_ADDRESS",
           },
+          payer: paypalPayer || undefined,
           purchase_units: [
             {
               amount: {
@@ -615,13 +617,43 @@ async function renderOrderPayPalIfPossible() {
         if (!orderID) {
           throw new Error("orderID manquant");
         }
-        const capture = await capturePayPalOrderViaNetlify(orderID);
+        let capture;
+        try {
+          capture = await capturePayPalOrderViaNetlify(orderID);
+        } catch (err) {
+          // Le paiement a pu être validé côté banque/PayPal même si cette confirmation
+          // réseau échoue ; on ne peut pas le savoir ici, donc on ne vide pas le panier
+          // et on donne une référence claire pour un suivi manuel.
+          showToast(
+            `Le paiement a peut-être été débité mais la confirmation a échoué (réf. commande ${orderID}). ` +
+              "Contactez-nous avec ce numéro, sans repasser commande.",
+            12000
+          );
+          if (hint) hint.textContent = "Erreur de confirmation du paiement. Contactez-nous, ne repayez pas.";
+          await notifyAdmin("order_capture_failed", "⚠️ Capture PayPal en échec après approbation", {
+            paypal_order_id: orderID,
+            error: err?.message || String(err),
+          });
+          return;
+        }
         const latestShipping = getShippingState();
         const captureTotal = hasCart
           ? computeCartTotal(getShippingFeeFromState(latestShipping))
           : computeTotalEur(state, getShippingFeeFromState(latestShipping));
-        await persistOrderToSupabase(capture, lines, captureTotal, latestShipping);
+        const persistResult = await persistOrderToSupabase(capture, lines, captureTotal, latestShipping);
         await saveSubscriptionRequestsFromPaidLines(lines);
+        if (!persistResult.ok) {
+          // L'argent est bien débité (capture PayPal réussie) mais l'enregistrement de la
+          // commande a échoué : on le dit clairement au lieu d'afficher un faux succès, et on
+          // garde le panier pour ne pas perdre le détail de la commande.
+          showToast(
+            `Paiement reçu (réf. ${capture?.id || orderID}) mais un problème technique empêche l'enregistrement ` +
+              "de votre commande. Contactez-nous avec cette référence, nous la traiterons à la main.",
+            12000
+          );
+          if (hint) hint.textContent = "Paiement reçu, mais erreur d'enregistrement — contactez-nous.";
+          return;
+        }
         showToast("Paiement reçu, merci ! Je prépare votre commande.");
         CartStore.clear();
         renderOrderCart();
