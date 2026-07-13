@@ -552,11 +552,16 @@ h1 em {
 .rose-divider {
   width: min(10rem, 42%);
   height: 20px;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1rem;
   background:
     var(--rose-flourish-svg) center / 15px no-repeat,
     linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 88%, var(--ink)), transparent) center / 100% 2px no-repeat;
   opacity: 0.9;
+}
+
+/* Remonte la fleur dans le padding du bloc plutot que de l'ajouter en plus */
+.section > .rose-divider:first-child {
+  margin-top: -1.4rem;
 }
 
 @media (min-width: 720px) {
@@ -710,12 +715,6 @@ h1 em {
 .gift-card-note {
   min-height: 2.45rem;
   resize: vertical;
-}
-
-.section-alt {
-  background: linear-gradient(180deg, #fff 0%, #f5ede6 100%);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
 }
 
 .section-header {
