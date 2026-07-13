@@ -1550,6 +1550,9 @@ h1 em {
   border-radius: 0.75rem;
   border: 1px solid var(--line-soft);
   background: #fff;
+}
+
+.photo-gallery-frame img.is-rotated {
   transform: rotate(var(--gallery-rotation, 0deg));
 }
 

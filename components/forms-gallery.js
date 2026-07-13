@@ -205,7 +205,14 @@ function setupProductGalleryModal() {
     imageFallbackActive = false;
     imageEl.src = current.src;
     imageEl.alt = current.alt;
-    imageEl.style.setProperty("--gallery-rotation", `${current.rotation || 0}deg`);
+    const rotation = Number(current.rotation) || 0;
+    if (rotation) {
+      imageEl.style.setProperty("--gallery-rotation", `${rotation}deg`);
+      imageEl.classList.add("is-rotated");
+    } else {
+      imageEl.style.removeProperty("--gallery-rotation");
+      imageEl.classList.remove("is-rotated");
+    }
     if (titleFromCaption) {
       titleEl.textContent = current.alt;
       captionEl.textContent =
