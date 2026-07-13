@@ -444,8 +444,7 @@ h1 em {
   width: auto;
   max-width: 100%;
   height: min(64vh, 580px);
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(42, 30, 24, 0.12));
 }
 
 @media (max-width: 760px) {

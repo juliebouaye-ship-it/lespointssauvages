@@ -1,25 +1,25 @@
-// Detoure une photo en ovale, fondue directement dans une couleur de fond
-// (au lieu d'une transparence : evite l'effet "halo sale" quand un fond sombre
-// s'estompe en semi-transparence sur une page claire).
-// Usage : node scripts/oval-cutout.mjs <source.jpg> <sortie.jpg> [bgColor] [cx%] [cy%] [rx%] [ry%] [feather%]
-// Defauts calibres pour un cerceau a broder centre dans le cadre, bg = --bg du site.
+// Detoure une photo en ovale, bord doux (anti-alias court) vers la transparence.
+// PNG avec alpha reel (pas de fond fige) : le CSS `filter: drop-shadow` sur le
+// site suit alors la vraie silhouette ovale plutot qu'un rectangle invisible.
+// Usage : node scripts/oval-cutout.mjs <source.jpg> <sortie.png> [cx%] [cy%] [rx%] [ry%] [feather%]
+// Defauts calibres pour un cerceau a broder centre dans le cadre, resserres
+// pour rester dans les zones claires (tissu/cerceau) et eviter le fond sombre.
 
 import sharp from "sharp";
 import { writeFileSync } from "node:fs";
 
-const [, , src, out, bgArg, cxArg, cyArg, rxArg, ryArg, featherArg] = process.argv;
+const [, , src, out, cxArg, cyArg, rxArg, ryArg, featherArg] = process.argv;
 
 if (!src || !out) {
-  console.log("Usage: node scripts/oval-cutout.mjs <source.jpg> <sortie.jpg> [bgColor] [cx%] [cy%] [rx%] [ry%] [feather%]");
+  console.log("Usage: node scripts/oval-cutout.mjs <source.jpg> <sortie.png> [cx%] [cy%] [rx%] [ry%] [feather%]");
   process.exit(1);
 }
 
-const bgColor = bgArg || "#f9f5f2";
-const cxPct = Number(cxArg ?? 50);
-const cyPct = Number(cyArg ?? 51);
-const rxPct = Number(rxArg ?? 41);
-const ryPct = Number(ryArg ?? 45);
-const featherPct = Number(featherArg ?? 1.6);
+const cxPct = Number(cxArg ?? 48);
+const cyPct = Number(cyArg ?? 50);
+const rxPct = Number(rxArg ?? 36);
+const ryPct = Number(ryArg ?? 40);
+const featherPct = Number(featherArg ?? 1.0);
 
 const img = sharp(src);
 const { width, height } = await img.metadata();
@@ -35,15 +35,10 @@ const maskBuffer = await sharp(Buffer.from(svgMask)).blur(feather).toColourspace
 
 const masked = await img.ensureAlpha().composite([{ input: maskBuffer, blend: "dest-in" }]).png().toBuffer();
 
-// Fusionne directement sur la couleur de fond reelle -- a alpha=0 le pixel EST
-// deja la couleur de la page, donc plus aucune zone "trouble" en transparence.
-const flattened = await sharp(masked)
-  .flatten({ background: bgColor })
-  .toBuffer();
-
-const finalBuf = await sharp(flattened)
+const finalBuf = await sharp(masked)
   .resize({ height: 1000, withoutEnlargement: true })
-  .jpeg({ quality: 88, mozjpeg: true })
+  .trim()
+  .png({ palette: true, quality: 90, compressionLevel: 9 })
   .toBuffer();
 
 writeFileSync(out, finalBuf);
