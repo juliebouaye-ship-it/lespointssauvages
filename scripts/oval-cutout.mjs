@@ -16,10 +16,10 @@ if (!src || !out) {
 
 const bgColor = bgArg || "#f9f5f2";
 const cxPct = Number(cxArg ?? 50);
-const cyPct = Number(cyArg ?? 51.5);
-const rxPct = Number(rxArg ?? 47.5);
-const ryPct = Number(ryArg ?? 50.5);
-const featherPct = Number(featherArg ?? 3.8);
+const cyPct = Number(cyArg ?? 51);
+const rxPct = Number(rxArg ?? 41);
+const ryPct = Number(ryArg ?? 45);
+const featherPct = Number(featherArg ?? 1.6);
 
 const img = sharp(src);
 const { width, height } = await img.metadata();
