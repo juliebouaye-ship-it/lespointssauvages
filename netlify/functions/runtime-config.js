@@ -1,4 +1,4 @@
-exports.handler = async () => {
+export const handler = async () => {
   const paypalClientId = String(process.env.LPS_PAYPAL_CLIENT_ID || "").trim();
 
   return {

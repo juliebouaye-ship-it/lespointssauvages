@@ -8,7 +8,7 @@
  * - STAND_ADMIN_TOKEN (secret fort choisi par vous)
  */
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const jsonHeaders = {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
