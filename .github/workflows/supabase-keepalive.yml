@@ -25,20 +25,23 @@ jobs:
             exit 1
           fi
 
-      - name: Ping REST (lecture anonyme stand_orders)
+      - name: Ping REST (ecriture anonyme keepalive)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           set -e
-          URL="${SUPABASE_URL%/}/rest/v1/stand_orders?select=id&limit=1"
+          URL="${SUPABASE_URL%/}/rest/v1/keepalive"
           code=$(curl -sS -o /tmp/body -w "%{http_code}" \
+            -X POST \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
             "$URL")
           echo "HTTP $code"
-          if [ "$code" != "200" ]; then
-            echo "::error::Réponse inattendue (attendu 200). Corps:"
+          if [ "$code" != "201" ]; then
+            echo "::error::Réponse inattendue (attendu 201). Corps:"
             cat /tmp/body || true
             exit 1
           fi

@@ -82,7 +82,12 @@ Pour tester avant merge vers `main`, utiliser la commande preview ci‑dessus av
 
 Le projet Supabase « sleep » après une période sans activité. Un workflow GitHub
 `.github/workflows/supabase-keepalive.yml` appelle l’API **deux fois par semaine**
-(lecture `stand_orders`, déjà autorisée pour `anon`).
+(écriture dans une table dédiée `public.keepalive`, insert seul autorisé pour `anon`
+via `supabase/migrations/keepalive.sql` — à exécuter une fois dans Supabase SQL editor).
+
+Une écriture réelle est utilisée plutôt qu'une lecture : une lecture peut renvoyer
+0 ligne selon les policies RLS de la table lue et compter comme un signal
+d'activité plus faible côté Supabase.
 
 **Configuration une fois** (dépôt GitHub → **Settings** → **Secrets and variables**
 → **Actions** → **New repository secret**) :
@@ -94,8 +99,8 @@ Le projet Supabase « sleep » après une période sans activité. Un workflow G
 
 Vérification manuelle : onglet **Actions** → workflow **Supabase keepalive** → **Run workflow**.
 
-Si tu renommes la table ou retires la policy `anon` en lecture, mets à jour l’URL
-dans le workflow (étape « Ping REST »).
+Si tu renommes la table `keepalive` ou retires sa policy `anon` en insertion, mets à
+jour l’URL dans le workflow (étape « Ping REST »).
 
 ## Organisation des fichiers
 
