@@ -348,8 +348,9 @@ async function saveSubscriptionRequest({ plan, intent, buyerEmail, recipientName
 
 async function saveSubscriptionRequestsFromPaidLines(lines) {
   const boxLines = (lines || []).filter((line) => line?.product === "abo3Mois");
+  const failures = [];
   for (const line of boxLines) {
-    await saveSubscriptionRequest({
+    const result = await saveSubscriptionRequest({
       plan: line.product,
       intent: line.comment === "Cadeau" ? "gift" : "self",
       buyerEmail: line.shippingEmail || "",
@@ -365,7 +366,11 @@ async function saveSubscriptionRequestsFromPaidLines(lines) {
       codePromo: line.codePromo || "",
       add1Month: Boolean(line.add1Month),
     });
+    if (!result.ok) {
+      failures.push({ buyerEmail: line.shippingEmail || "", plan: line.product });
+    }
   }
+  return { ok: failures.length === 0, failures };
 }
 
 function computeCartTotal(shippingFee = SHIPPING_EUR) {
@@ -644,7 +649,16 @@ async function renderOrderPayPalIfPossible() {
           ? computeCartTotal(getShippingFeeFromState(latestShipping))
           : computeTotalEur(state, getShippingFeeFromState(latestShipping));
         const persistResult = await persistOrderToSupabase(capture, lines, captureTotal, latestShipping);
-        await saveSubscriptionRequestsFromPaidLines(lines);
+        const subscriptionResult = await saveSubscriptionRequestsFromPaidLines(lines);
+        if (!subscriptionResult.ok) {
+          // La commande/le paiement sont bien enregistrés ; seule la mise en place de
+          // l'abonnement box a échoué côté Supabase. On alerte pour un suivi manuel au
+          // lieu de laisser passer une box payée mais jamais programmée.
+          await notifyAdmin("subscription_request_failed", "⚠️ Box payée mais demande d'abonnement non enregistrée", {
+            paypal_order_id: capture?.id || orderID,
+            failures: subscriptionResult.failures,
+          });
+        }
         if (!persistResult.ok) {
           // L'argent est bien débité (capture PayPal réussie) mais l'enregistrement de la
           // commande a échoué : on le dit clairement au lieu d'afficher un faux succès, et on
