@@ -411,9 +411,13 @@ h1 em {
 .hero--split {
   text-align: left;
   display: grid;
-  grid-template-columns: 1.05fr auto 0.95fr;
+  grid-template-columns: minmax(0, max-content) auto 1fr;
   gap: 0.85rem;
   align-items: center;
+}
+
+.hero-split-text {
+  max-width: 34rem;
 }
 
 .hero--split .hero-text {
