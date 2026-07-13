@@ -536,6 +536,17 @@ h1 em {
   opacity: 0.9;
 }
 
+.section-box-inner::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='translate(20 20)'%3E%3Cg transform='rotate(0)'%3E%3Cellipse cx='0' cy='-11' rx='8' ry='11' fill='%23b8706b'/%3E%3C/g%3E%3Cg transform='rotate(72)'%3E%3Cellipse cx='0' cy='-11' rx='8' ry='11' fill='%23a85f5a'/%3E%3C/g%3E%3Cg transform='rotate(144)'%3E%3Cellipse cx='0' cy='-11' rx='8' ry='11' fill='%23b8706b'/%3E%3C/g%3E%3Cg transform='rotate(216)'%3E%3Cellipse cx='0' cy='-11' rx='8' ry='11' fill='%23a85f5a'/%3E%3C/g%3E%3Cg transform='rotate(288)'%3E%3Cellipse cx='0' cy='-11' rx='8' ry='11' fill='%23b8706b'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='6' fill='%23b8924a'/%3E%3C/g%3E%3C/svg%3E") center / 15px no-repeat;
+}
+
 @media (min-width: 720px) {
   .section-box-inner {
     padding: 1.25rem 0 1.75rem;
