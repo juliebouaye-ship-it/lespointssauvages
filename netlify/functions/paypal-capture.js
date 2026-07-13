@@ -72,6 +72,7 @@ export const handler = async (event) => {
     }
 
     if (!captureResponse.ok) {
+      console.error("PayPal capture failed", { orderId, baseUrl, status: captureResponse.status, body: json });
       return {
         statusCode: captureResponse.status,
         headers: { "content-type": "application/json; charset=utf-8" },
@@ -92,6 +93,7 @@ export const handler = async (event) => {
       }),
     };
   } catch (err) {
+    console.error("PayPal capture request threw", { orderId, baseUrl, error: err?.message || String(err) });
     return {
       statusCode: 500,
       headers: { "content-type": "application/json; charset=utf-8" },

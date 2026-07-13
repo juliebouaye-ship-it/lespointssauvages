@@ -531,7 +531,15 @@ async function capturePayPalOrderViaNetlify(orderID) {
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || !payload?.ok || !payload?.capture) {
-    const detail = payload?.details?.message || payload?.message || payload?.error || "capture_failed";
+    const issue = payload?.details?.details?.[0];
+    const detail =
+      issue?.description ||
+      issue?.issue ||
+      payload?.details?.error_description ||
+      payload?.details?.message ||
+      payload?.message ||
+      payload?.error ||
+      "capture_failed";
     throw new Error(`Capture serveur impossible (${detail})`);
   }
   return payload.capture;
