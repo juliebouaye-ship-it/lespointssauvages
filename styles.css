@@ -443,7 +443,7 @@ h1 em {
   display: block;
   width: auto;
   max-width: 100%;
-  height: min(64vh, 580px);
+  height: min(72vh, 660px);
   filter: drop-shadow(0 10px 18px rgba(42, 30, 24, 0.12));
 }
 
