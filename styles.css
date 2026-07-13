@@ -407,12 +407,12 @@ h1 em {
   margin-top: 0.25rem;
 }
 
-/* ── Hero split (texte + photo) ── */
+/* ── Hero split (texte + logo + photo) ── */
 .hero--split {
   text-align: left;
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 2.5rem;
+  grid-template-columns: 1.05fr auto 0.95fr;
+  gap: 1.75rem;
   align-items: center;
 }
 
@@ -430,7 +430,7 @@ h1 em {
   display: block;
   width: 4.5rem;
   height: auto;
-  margin-bottom: 0.9rem;
+  justify-self: center;
   filter: drop-shadow(0 8px 18px rgba(42, 30, 24, 0.18));
 }
 
@@ -453,8 +453,8 @@ h1 em {
     text-align: center;
   }
   .hero--split .hero-split-photo {
-    order: -1;
-    margin: 0 auto 1.25rem;
+    order: -2;
+    margin: 0 auto 1rem;
   }
   .hero-split-photo img {
     height: min(36vh, 320px);
@@ -464,8 +464,8 @@ h1 em {
     justify-content: center;
   }
   .hero-logo-mark {
-    margin-left: auto;
-    margin-right: auto;
+    order: -1;
+    margin: 0 auto 1rem;
   }
 }
 
