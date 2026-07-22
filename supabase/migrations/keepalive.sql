@@ -1,9 +1,15 @@
 -- Run in Supabase SQL editor
--- Table dediee au ping de garde (empeche la mise en pause du projet gratuit
--- apres 7 jours d'inactivite). Le workflow GitHub Actions "Supabase keepalive"
--- y insere une ligne a intervalle regulier : une ecriture reelle est un signal
--- d'activite plus fiable qu'une simple lecture (qui peut ne renvoyer aucune
--- ligne selon les policies RLS de la table lue).
+-- Table dediee au ping de garde (empeche la mise en pause du projet gratuit).
+--
+-- Supabase ne demande pas « un appel dans les 7 jours » mais « quelques requetes
+-- base par jour sur la semaine ecoulee ». Deux planificateurs independants y
+-- ecrivent plusieurs fois par jour :
+--   - .github/workflows/supabase-keepalive.yml  (cle anon, insert + select)
+--   - netlify/functions/supabase-keepalive.js   (cle service_role, + purge)
+--
+-- `anon` ne peut qu'inserer : ni lecture ni suppression exposees publiquement.
+-- La purge des vieux pings passe par la cle service_role, qui contourne RLS,
+-- donc aucune policy DELETE n'est necessaire ici.
 
 create table if not exists public.keepalive (
   id bigint generated always as identity primary key,

@@ -1,14 +1,26 @@
 # Réveille le projet Supabase gratuit (réinitialise le délai d’inactivité).
 # À configurer une fois : secrets GitHub SUPABASE_URL et SUPABASE_ANON_KEY
 # (Settings → Secrets and variables → Actions), valeurs = onglet API du dashboard Supabase.
+#
+# Supabase ne demande pas « au moins un appel dans les 7 jours » mais « quelques
+# requêtes par jour sur la semaine écoulée ». D'où 3 passages quotidiens, chacun
+# faisant une écriture + une lecture. Un doublon existe côté Netlify
+# (netlify/functions/supabase-keepalive.js) au cas où GitHub saute un cron.
 
 name: Supabase keepalive
 
 on:
   schedule:
-    # Lundi et jeudi 08:00 UTC (~pas d’activité côté site suffit souvent à dépasser 7 jours)
-    - cron: "0 8 * * 1,4"
+    # Minutes volontairement décalées : les crons à l'heure pile sont les plus
+    # retardés côté GitHub (files d'attente partagées).
+    - cron: "19 6 * * *"
+    - cron: "37 12 * * *"
+    - cron: "41 18 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
 
 jobs:
   ping:
@@ -25,23 +37,46 @@ jobs:
             exit 1
           fi
 
-      - name: Ping REST (ecriture anonyme keepalive)
+      - name: Ping REST (écriture + lecture)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          set -e
-          URL="${SUPABASE_URL%/}/rest/v1/keepalive"
-          code=$(curl -sS -o /tmp/body -w "%{http_code}" \
+          set -uo pipefail
+          BASE="${SUPABASE_URL%/}/rest/v1"
+
+          call() {
+            local label="$1" expected="$2"
+            shift 2
+            local attempt code
+            for attempt in 1 2 3; do
+              # `|| code=000` : sans ça, `set -e` (shell par défaut des steps)
+              # ferait sortir le script sur un échec réseau au lieu de réessayer.
+              code=$(curl -sS --max-time 20 -o /tmp/body -w "%{http_code}" \
+                -H "apikey: ${SUPABASE_ANON_KEY}" \
+                -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+                "$@") || code="000"
+              if [ "$code" = "$expected" ]; then
+                echo "OK   $label (HTTP $code)"
+                return 0
+              fi
+              echo "WARN $label → HTTP $code (tentative $attempt/3)"
+              cat /tmp/body || true
+              sleep $((attempt * 5))
+            done
+            echo "::error::$label a échoué après 3 tentatives (dernier code HTTP $code)."
+            return 1
+          }
+
+          # Écriture : signal d'activité le plus net côté Supabase.
+          call "insert keepalive" 201 \
             -X POST \
-            -H "apikey: ${SUPABASE_ANON_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
             -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
             -d '{}' \
-            "$URL")
-          echo "HTTP $code"
-          if [ "$code" != "201" ]; then
-            echo "::error::Réponse inattendue (attendu 201). Corps:"
-            cat /tmp/body || true
-            exit 1
-          fi
+            "$BASE/keepalive"
+
+          # Lecture : requête supplémentaire sur la base. `anon` n'a pas de policy
+          # SELECT, la réponse est donc `[]` — la requête atteint quand même Postgres.
+          call "select keepalive" 200 \
+            "$BASE/keepalive?select=id,pinged_at&order=pinged_at.desc&limit=1"

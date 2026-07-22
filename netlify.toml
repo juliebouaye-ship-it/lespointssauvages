@@ -5,6 +5,11 @@ plugins = []
 
   [functions."*"]
 
+  # Keep-alive Supabase, en doublon du workflow GitHub Actions (voir README).
+  # Décalé de quelques heures par rapport aux crons GitHub pour étaler l'activité.
+  [functions."supabase-keepalive"]
+  schedule = "23 3,15 * * *"
+
 [build]
 # Ne jamais sauter le build côté Netlify : code de sortie ≠ 0 → le déploiement part (toutes les étapes s’enchaînent).
 # (Code 0 sur cette commande = « annuler le build » selon la doc Netlify.)

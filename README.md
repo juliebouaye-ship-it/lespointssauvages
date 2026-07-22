@@ -80,14 +80,27 @@ Pour tester avant merge vers `main`, utiliser la commande preview ci‑dessus av
 
 ## Supabase (plan gratuit) : éviter la mise en pause
 
-Le projet Supabase « sleep » après une période sans activité. Un workflow GitHub
-`.github/workflows/supabase-keepalive.yml` appelle l’API **deux fois par semaine**
-(écriture dans une table dédiée `public.keepalive`, insert seul autorisé pour `anon`
-via `supabase/migrations/keepalive.sql` — à exécuter une fois dans Supabase SQL editor).
+Le projet Supabase « sleep » après une période sans activité. Attention au critère
+exact : Supabase ne demande **pas** « au moins un appel dans les 7 jours » mais
+« quelques requêtes base **par jour** sur la semaine écoulée ». Un ping hebdomadaire
+écrit bien en base tout en restant classé « low activity » → mail d’avertissement.
 
-Une écriture réelle est utilisée plutôt qu'une lecture : une lecture peut renvoyer
-0 ligne selon les policies RLS de la table lue et compter comme un signal
-d'activité plus faible côté Supabase.
+Deux planificateurs **indépendants** tapent donc la base plusieurs fois par jour :
+
+| Où | Fréquence (UTC) | Clé | Requêtes |
+|----|-----------------|-----|----------|
+| `.github/workflows/supabase-keepalive.yml` | 06:19, 12:37, 18:41 | `anon` | insert + select |
+| `netlify/functions/supabase-keepalive.js` (planifiée via `netlify.toml`) | 03:23, 15:23 | `service_role` | insert + select + purge > 30 j |
+
+Le doublon n’est pas du zèle : les crons GitHub gratuits sont parfois retardés ou
+sautés, et GitHub **désactive automatiquement les workflows planifiés après 60 jours
+sans commit** sur le dépôt. Si le site ne bouge pas pendant deux mois, seul le cron
+Netlify continue.
+
+La table dédiée `public.keepalive` (insert seul autorisé pour `anon`) vient de
+`supabase/migrations/keepalive.sql` — à exécuter une fois dans le SQL editor.
+Une écriture est privilégiée à une simple lecture : elle laisse une trace datée,
+directement vérifiable dans le Table editor.
 
 **Configuration une fois** (dépôt GitHub → **Settings** → **Secrets and variables**
 → **Actions** → **New repository secret**) :
@@ -97,10 +110,18 @@ d'activité plus faible côté Supabase.
 | `SUPABASE_URL`      | URL du projet, ex. `https://xxxx.supabase.co` (sans `/` final) |
 | `SUPABASE_ANON_KEY` | Clé **anon** / public (Project API keys dans Supabase) |
 
-Vérification manuelle : onglet **Actions** → workflow **Supabase keepalive** → **Run workflow**.
+Côté Netlify, la fonction réutilise `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY`,
+déjà définies pour `stand-orders-list` — rien à ajouter.
+
+**Vérifications :**
+
+- GitHub : onglet **Actions** → workflow **Supabase keepalive** → **Run workflow**.
+- Netlify : **Logs** → **Functions** → `supabase-keepalive` (les fonctions planifiées
+  ne sont pas appelables en HTTP public).
+- Supabase : Table editor → `keepalive`, contrôler que `pinged_at` avance chaque jour.
 
 Si tu renommes la table `keepalive` ou retires sa policy `anon` en insertion, mets à
-jour l’URL dans le workflow (étape « Ping REST »).
+jour l’URL dans le workflow **et** dans la fonction Netlify.
 
 ## Organisation des fichiers
 
