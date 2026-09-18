@@ -57,7 +57,7 @@ const FORMAT_LABELS = {
   fini: "Broderie finie",
 };
 
-const PHRASES_PETIT = ["Merde", "Putain", "Ba super"];
+const PHRASES_PETIT = ["Ba super", "Zut alors", "Tant pis"];
 const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
 /** Prix affiché de la box mensuelle (réglable via Supabase price_key box.aboMensuel) */
