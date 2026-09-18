@@ -123,8 +123,63 @@ déjà définies pour `stand-orders-list` — rien à ajouter.
 Si tu renommes la table `keepalive` ou retires sa policy `anon` en insertion, mets à
 jour l’URL dans le workflow **et** dans la fonction Netlify.
 
+## Mini backoffice merceries (`/mercerie`)
+
+Page privée (`noindex`, absente du menu) où chaque mercerie partenaire note les kits
+qu'elle a vendus. Une seule chose à retenir côté mercerie : **son mot de passe**.
+C'est lui qui identifie la boutique — pas de compte, pas d'email, pas d'inscription.
+
+- Saisie : date, quantité par kit (boutons + / −), prix unitaire prérempli, remarque libre.
+- Récapitulatif du mois : total par kit, total kits, chiffre d'affaires, et suppression
+  d'une ligne saisie par erreur.
+- Mot de passe **admin** (optionnel) : même page, mais vue lecture seule sur **toutes**
+  les merceries, avec filtre par boutique.
+
+### Sécurité
+
+Les tables `merceries` et `mercerie_sales` n'ont **aucune policy RLS** : la clé `anon`
+du site est publique (`components/config.js`), donc tout ce qu'elle peut lire est
+lisible par n'importe quel visiteur. Tout passe par la fonction
+`netlify/functions/mercerie-api.js`, qui utilise `SUPABASE_SERVICE_ROLE_KEY` côté serveur.
+
+Les mots de passe sont stockés hachés (PBKDF2-SHA256, 150 000 itérations, sel par
+boutique) — jamais en clair. Après connexion, la page reçoit un jeton signé (HMAC-SHA256)
+valable 12 h, gardé en `sessionStorage`.
+
+### Variables Netlify à définir
+
+| Nom | Rôle |
+|-----|------|
+| `SUPABASE_URL` | déjà définie (partagée avec `stand-orders-list`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | déjà définie (secret) |
+| `LPS_MERCERIE_SESSION_SECRET` | secret fort, signe les jetons de session (ex. `openssl rand -hex 32`) |
+| `LPS_MERCERIE_ADMIN_TOKEN` | optionnel : mot de passe admin (vue toutes merceries) |
+
+### Mise en place
+
+1. Exécuter `supabase/migrations/merceries.sql` dans le SQL editor Supabase.
+2. Définir les variables ci-dessus dans Netlify, puis redéployer.
+3. Créer une mercerie :
+
+   ```bash
+   node scripts/mercerie-password.mjs "Mercerie du Coin" "motdepasse" "Nantes"
+   ```
+
+   Le script affiche le mot de passe (à transmettre à la mercerie) et la ligne
+   `insert into public.merceries ...` à coller dans Supabase. Il n'écrit rien lui-même.
+4. Donner l'adresse `https://…/mercerie` et le mot de passe à la boutique.
+
+**Chaque mercerie doit avoir un mot de passe différent** : la connexion se fait par mot
+de passe seul, donc deux boutiques avec le même mot de passe seraient confondues.
+Pour désactiver une boutique : `update public.merceries set is_active = false where id = …;`
+(ses ventes déjà notées restent visibles côté admin).
+
+Pour ajouter un kit au catalogue, une ligne suffit dans la constante `CATALOG` de
+`netlify/functions/mercerie-api.js` (le serveur refuse tout produit hors catalogue).
+
 ## Organisation des fichiers
 
 - Migrations Supabase: `supabase/migrations/`
 - Fonctions Netlify: `netlify/functions/`
+- Espace mercerie: `mercerie.html` + `mercerie.js`
 - Assets images du site: `images/`

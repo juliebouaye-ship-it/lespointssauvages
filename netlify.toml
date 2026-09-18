@@ -67,3 +67,8 @@ for = "/*.png"
 from = "/stand"
 to = "/stand.html"
 status = 200
+
+[[redirects]]
+from = "/mercerie"
+to = "/mercerie.html"
+status = 200

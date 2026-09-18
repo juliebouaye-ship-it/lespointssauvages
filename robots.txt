@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /mercerie
+Disallow: /mercerie.html
 
 Sitemap: https://lespointsrebelles.netlify.app/sitemap.xml

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Les Points Rebelles | Espace mercerie</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/logolps.png?v=5" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./images/logolps.png?v=5" />
+    <link rel="shortcut icon" href="./images/logolps.png?v=5" />
+    <link rel="apple-touch-icon" href="./images/logolps.png?v=5" />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .merc-shell {
+        width: min(760px, 94vw);
+        margin: 1.2rem auto 2.5rem;
+        display: grid;
+        /* minmax(0, …) : sinon le tableau du récapitulatif élargit la colonne
+           de grille et fait déborder la page sur mobile. */
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+      }
+      .merc-card {
+        min-width: 0;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 1rem;
+      }
+      .merc-kicker {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0;
+      }
+      .merc-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+      }
+      .merc-title-row h1,
+      .merc-title-row h2 {
+        margin: 0.15rem 0 0;
+        font-size: clamp(1.4rem, 4.2vw, 1.9rem);
+      }
+      .merc-login-form {
+        display: grid;
+        gap: 0.7rem;
+        max-width: 22rem;
+        margin-top: 0.9rem;
+      }
+      .merc-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.7rem;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--line-soft);
+        flex-wrap: wrap;
+      }
+      .merc-line:last-of-type {
+        border-bottom: 0;
+      }
+      .merc-line-label {
+        font-weight: 600;
+      }
+      .merc-line-price {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .merc-line-price input {
+        width: 5rem;
+        padding: 0.3rem 0.4rem;
+        font-size: 0.9rem;
+      }
+      .merc-stepper {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+      .merc-stepper button {
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #fff;
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .merc-stepper input {
+        width: 3.6rem;
+        text-align: center;
+        padding: 0.4rem;
+        font-size: 1rem;
+      }
+      .merc-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.9rem;
+      }
+      .merc-total {
+        margin-top: 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 0.7rem;
+        background: var(--line-soft);
+        padding: 0.7rem 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 0.8rem;
+        font-size: 1rem;
+      }
+      .merc-filters {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin: 0.6rem 0 0.9rem;
+      }
+      .merc-filters .form-row {
+        margin: 0;
+      }
+      .merc-recap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 0.9rem;
+      }
+      .merc-recap-tile {
+        border: 1px solid var(--line);
+        border-radius: 0.7rem;
+        padding: 0.6rem 0.7rem;
+        background: #fff;
+      }
+      .merc-recap-tile span {
+        display: block;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .merc-recap-tile strong {
+        font-size: 1.25rem;
+      }
+      .merc-table-wrap {
+        max-width: 100%;
+        /* position: relative → le libellé .sr-only du bouton « supprimer »
+           reste dans le cadre du tableau au lieu d'élargir la page. */
+        position: relative;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 0.7rem;
+        background: #fff;
+      }
+      .merc-table {
+        width: 100%;
+        min-width: 560px;
+        border-collapse: collapse;
+      }
+      .merc-table th,
+      .merc-table td {
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 0.9rem;
+      }
+      .merc-table th {
+        background: var(--line-soft);
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .merc-row-delete {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 999px;
+        width: 1.9rem;
+        height: 1.9rem;
+        font-size: 1rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .merc-feedback[data-state="error"] {
+        color: #a2362b;
+      }
+      @media (max-width: 560px) {
+        .merc-line {
+          align-items: flex-start;
+        }
+        .merc-table {
+          min-width: 480px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="merc-shell">
+      <section class="merc-card" id="mercerie-login">
+        <p class="merc-kicker">Les Points Rebelles</p>
+        <h1>Espace mercerie</h1>
+        <p class="form-note">Entrez le mot de passe de votre mercerie pour noter les kits vendus.</p>
+        <form class="merc-login-form" id="mercerie-login-form" novalidate>
+          <div class="form-row">
+            <label for="mercerie-password">Mot de passe</label>
+            <input id="mercerie-password" type="password" autocomplete="current-password" required />
+          </div>
+          <button class="btn btn-primary" type="submit">Entrer</button>
+          <p class="form-note merc-feedback" id="mercerie-login-feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="merc-card" id="mercerie-header" hidden>
+        <div class="merc-title-row">
+          <div>
+            <p class="merc-kicker">Espace mercerie</p>
+            <h1 id="mercerie-identity">—</h1>
+          </div>
+          <button class="btn btn-outline" id="mercerie-logout" type="button">Se déconnecter</button>
+        </div>
+      </section>
+
+      <section class="merc-card" id="mercerie-entry" hidden>
+        <h2 style="margin: 0">Kits vendus</h2>
+        <form id="mercerie-sale-form" novalidate>
+          <div class="form-row" style="max-width: 14rem; margin-top: 0.8rem">
+            <label for="mercerie-sold-on">Date de vente</label>
+            <input id="mercerie-sold-on" type="date" required />
+          </div>
+          <div id="mercerie-catalog"></div>
+          <div class="form-row">
+            <label for="mercerie-note">Remarque (optionnel)</label>
+            <input id="mercerie-note" maxlength="500" placeholder="Ex : vendus pendant l'atelier du samedi" />
+          </div>
+          <div class="merc-total">
+            <span>Total de la saisie</span>
+            <strong id="mercerie-form-total">0,00 €</strong>
+          </div>
+          <div class="merc-actions">
+            <button class="btn btn-primary" type="submit" id="mercerie-save">Enregistrer</button>
+            <button class="btn btn-outline" type="button" id="mercerie-reset">Remettre à zéro</button>
+          </div>
+          <p class="form-note merc-feedback" id="mercerie-sale-feedback" role="status"></p>
+        </form>
+      </section>
+
+      <section class="merc-card" id="mercerie-history" hidden>
+        <div class="merc-title-row">
+          <div>
+            <p class="merc-kicker">Récapitulatif</p>
+            <h2 id="mercerie-history-title">Ce mois-ci</h2>
+          </div>
+          <button class="btn btn-outline" id="mercerie-reload" type="button">Rafraîchir</button>
+        </div>
+        <div class="merc-filters">
+          <div class="form-row">
+            <label for="mercerie-month">Mois</label>
+            <input id="mercerie-month" type="month" />
+          </div>
+          <div class="form-row" id="mercerie-shop-filter-row" hidden>
+            <label for="mercerie-shop-filter">Mercerie</label>
+            <select id="mercerie-shop-filter">
+              <option value="">Toutes</option>
+            </select>
+          </div>
+        </div>
+        <div class="merc-recap" id="mercerie-recap"></div>
+        <div class="merc-table-wrap">
+          <table class="merc-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th id="mercerie-col-shop" hidden>Mercerie</th>
+                <th>Kit</th>
+                <th>Qté</th>
+                <th>Total</th>
+                <th>Remarque</th>
+                <th><span class="sr-only">Supprimer</span></th>
+              </tr>
+            </thead>
+            <tbody id="mercerie-rows">
+              <tr>
+                <td colspan="7">Chargement...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="form-note merc-feedback" id="mercerie-history-feedback" role="status"></p>
+      </section>
+    </main>
+
+    <script src="./mercerie.js"></script>
+  </body>
+</html>
