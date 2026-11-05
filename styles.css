@@ -2737,29 +2737,67 @@ input[type="number"]::-webkit-inner-spin-button {
   color: var(--rose);
 }
 
-/* Encart « Questions sur la box » (replié par défaut) */
+/* Section box : offres à gauche, infos (exemples, questions, gestion) à droite */
+.box-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.box-layout .pricing.pricing--two {
+  max-width: none;
+  margin: 0;
+}
+
+.box-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.box-side .box-motifs-preview {
+  margin: 0;
+}
+
+.box-side .box-motifs-preview-lead {
+  margin: 0;
+}
+
 .box-faq {
-  max-width: 56rem;
-  margin: 1.2rem auto 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--paper);
-  padding: 0.2rem 1.1rem;
+  padding: 0.9rem 1.1rem 0.4rem;
 }
 
-.box-faq > summary {
-  cursor: pointer;
-  font-weight: 600;
-  padding: 0.75rem 0;
-  color: var(--ink);
+.box-faq-title {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
 }
 
-.box-faq[open] > summary {
-  border-bottom: 1px solid var(--line-soft);
+.box-faq .faq-item summary {
+  font-size: var(--text-sm);
 }
 
-.box-faq-body {
-  padding-bottom: 0.4rem;
+.box-manage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.2rem 0.2rem 0;
+}
+
+.box-manage-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 1000px) {
+  .box-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Prix non chargé : message discret plutôt qu'en très grand */

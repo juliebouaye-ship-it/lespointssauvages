@@ -117,16 +117,14 @@
         <div class="rose-divider reveal" aria-hidden="true"></div>
         <div class="section-box-inner reveal">
           <div class="section-header section-header--box">
-            <div class="section-header-row">
-              <h2 id="abo-title">La box</h2>
-              <button type="button" class="btn btn-ghost btn-sm" id="open-subscription-manage-top">Gérer mon abonnement</button>
-            </div>
+            <h2 id="abo-title">La box</h2>
             <p class="section-sub section-sub--tight">
 				Un nouveau motif chaque mois ou un mois sur deux, les accessoires inclus, livré chez vous (livraison incluse).
 				Pour les addict·es qui veulent toujours un projet en cours.
             </p>
           </div>
 
+          <div class="box-layout">
           <div class="cards pricing pricing--two" role="list">
             <article class="card pricing-card reveal" role="listitem" id="box">
               <div class="card-tag">Abonnement</div>
@@ -155,7 +153,8 @@
             </article>
           </div>
 
-          <aside class="box-motifs-preview reveal" id="box-motifs-preview" hidden>
+          <aside class="box-side reveal" aria-label="Infos box">
+          <div class="box-motifs-preview" id="box-motifs-preview" hidden>
             <p class="box-motifs-preview-lead muted">
               Vous souhaitez savoir ce qui vous attend ?
               <button
@@ -171,10 +170,10 @@
                 Voir des exemples de box
               </button>
             </p>
-          </aside>
+          </div>
 
-          <details class="box-faq reveal">
-            <summary>Questions sur la box</summary>
+          <div class="box-faq">
+            <h3 class="box-faq-title">Questions sur la box</h3>
             <div class="box-faq-body">
               <details class="faq-item">
                 <summary>Que contient une box ?</summary>
@@ -197,7 +196,14 @@
                 <p>Oui ! Choisissez « Offrir » au moment de commander et indiquez le nom de la personne. Le coffret 3 mois est fait pour ça : un seul paiement, pas de renouvellement. Vous pouvez aussi offrir une <button type="button" class="btn-text-link-inline js-open-gift-card">carte cadeau</button>.</p>
               </details>
             </div>
-          </details>
+          </div>
+
+          <div class="box-manage">
+            <p class="box-manage-text">Déjà abonné·e ?</p>
+            <button type="button" class="btn btn-ghost btn-sm" id="open-subscription-manage-top">Gérer mon abonnement</button>
+          </div>
+          </aside>
+          </div>
         </div>
       </section>
 
