@@ -159,6 +159,7 @@
   /* ── Vignettes de collection (mosaïque de photos) ── */
 
   function collectionPhotos(c) {
+    if (Array.isArray(c.cover) && c.cover.length) return c.cover.slice(0, 4);
     const photos = [];
     (c.products || []).forEach((id) => {
       const p = products[id];
@@ -187,7 +188,7 @@
           .map(
             (ph) =>
               `<span class="collection-mosaic-cell"><img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async"${
-                Number(ph.rotation) ? ` style="--rot:${Number(ph.rotation)}deg" class="is-rotated"` : ""
+                ph.position ? ` style="object-position:${esc(ph.position)}"` : ""
               } /></span>`
           )
           .join("")}</div>`

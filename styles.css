@@ -2452,10 +2452,6 @@ input[type="number"]::-webkit-inner-spin-button {
   display: block;
 }
 
-/* Photos enregistrées couchées : redressées (agrandies pour remplir la case) */
-.collection-mosaic img.is-rotated {
-  transform: rotate(var(--rot)) scale(1.5);
-}
 
 .collection-mosaic--1 { grid-template-columns: 1fr; }
 .collection-mosaic--2 { grid-template-columns: 1fr 1fr; }

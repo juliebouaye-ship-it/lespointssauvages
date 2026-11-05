@@ -13,6 +13,9 @@
    • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
+   • cover : photos de la vignette de collection (1 à 4, la 1re en grand).
+     `position` règle le cadrage si le produit n'est pas au centre
+     (ex. "center 80%" = vers le bas). Sans cover : photos des produits.
    ═══════════════════════════════════════════════ */
 
 const LPS_COLOR_SWATCHES = {
@@ -32,6 +35,11 @@ const LPS_CATALOG = {
   collections: [
     {
       id: "mots-piquants",
+      cover: [
+        { src: "./images/grand-mot-fleur-01.jpg" },
+        { src: "./images/embroidery-petit-mot.jpg" },
+        { src: "./images/embroidery-grand-mot.jpg" },
+      ],
       title: "Les mots piquants",
       icon: "✂️",
       intro: "Petit coup de gueule élégant.",
@@ -41,6 +49,11 @@ const LPS_CATALOG = {
     },
     {
       id: "motifs-atelier",
+      cover: [
+        { src: "./images/accessoire-oreilles-chat.jpg" },
+        { src: "./images/embroidery-petit-chat.jpg" },
+        { src: "./images/accessoire-stand-triangle.jpg", position: "center 40%" },
+      ],
       title: "Les motifs de l'atelier",
       icon: "🎨",
       intro: "Des motifs originaux, introuvables ailleurs. De nouveaux arrivent régulièrement.",
@@ -59,6 +72,11 @@ const LPS_CATALOG = {
     },
     {
       id: "accessoires",
+      cover: [
+        { src: "./images/accessoire-oreilles-detail.jpg" },
+        { src: "./images/stand-derriere.jpg", position: "0% 100%" },
+        { src: "./images/chat-cercle-noir.jpg" },
+      ],
       title: "Accessoires PLA",
       icon: "🧵",
       intro: "Cercles à broder et supports imprimés à l'atelier en PLA, plusieurs couleurs disponibles.",
@@ -77,7 +95,7 @@ const LPS_CATALOG = {
       imageAlt: "Broderie petit mot",
       gallery: [
         { src: "./images/embroidery-petit-mot.jpg", alt: "Petit mot", rotation: 0 },
-        { src: "./images/produit-02.jpg", alt: "Contenu du kit Petit mot : tuto, tissu imprimé, cercle et fils", rotation: 90 },
+        { src: "./images/produit-02.jpg", alt: "Contenu du kit Petit mot : tuto, tissu imprimé, cercle et fils", rotation: 0 },
       ],
       description:
         "Un classique plein de caractère. Petit format, grand impact. Disponible en kit DIY ou en broderie finie.",
@@ -94,7 +112,7 @@ const LPS_CATALOG = {
       imageAlt: "Broderie grand mot",
       gallery: [
         { src: "./images/embroidery-grand-mot.jpg", alt: "Grand mot", rotation: 0 },
-        { src: "./images/grand-mot-fleur-01.jpg", alt: "Grand mot fleuri", rotation: 90 },
+        { src: "./images/grand-mot-fleur-01.jpg", alt: "Grand mot fleuri", rotation: 0 },
       ],
       description: "Pour tout ce qu'on n'ose pas dire en réunion. Grand format, petite politesse.",
       diameterCm: 16,
@@ -110,8 +128,8 @@ const LPS_CATALOG = {
       imageAlt: "Broderie petit chat personnalisable",
       gallery: [
         { src: "./images/embroidery-petit-chat.jpg", alt: "Petit chat qui dort", rotation: 0 },
-        { src: "./images/accessoire-stand-triangle.jpg", alt: "Petit chat roux brodé dans un cercle oreilles de chat blanc", rotation: 90 },
-        { src: "./images/accessoire-oreilles-chat.jpg", alt: "Quatre petits chats brodés, fourrures et cercles de couleurs différentes", rotation: 90 },
+        { src: "./images/accessoire-stand-triangle.jpg", alt: "Petit chat roux brodé dans un cercle oreilles de chat blanc", rotation: 0 },
+        { src: "./images/accessoire-oreilles-chat.jpg", alt: "Quatre petits chats brodés, fourrures et cercles de couleurs différentes", rotation: 0 },
       ],
       description: "Votre chat, votre style : prénom et couleurs de fourrure personnalisables.",
       diameterCm: 14,
@@ -137,8 +155,8 @@ const LPS_CATALOG = {
       icon: "🐾",
       description: "Un cercle à broder avec deux petites oreilles de chat.",
       gallery: [
-        { src: "./images/accessoire-oreilles-detail.jpg", alt: "Cercle oreilles de chat, détail", rotation: 90 },
-        { src: "./images/chat-cercle-noir.jpg", alt: "Cercle oreilles de chat noir", rotation: 90 },
+        { src: "./images/accessoire-oreilles-detail.jpg", alt: "Cercle oreilles de chat, détail", rotation: 0 },
+        { src: "./images/chat-cercle-noir.jpg", alt: "Cercle oreilles de chat noir", rotation: 0 },
       ],
       delays: "48 h ouvrées",
     },
@@ -149,7 +167,6 @@ const LPS_CATALOG = {
       icon: "🔺",
       description: "Support discret pour exposer vos broderies debout.",
       gallery: [
-        { src: "./images/stand-devant.jpg", alt: "Stand triangle, vue de face", rotation: 0 },
         { src: "./images/stand-derriere.jpg", alt: "Stand triangle, vue de dos", rotation: 0 },
       ],
       delays: "48 h ouvrées",
