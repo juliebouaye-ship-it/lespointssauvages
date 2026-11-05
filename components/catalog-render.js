@@ -95,37 +95,36 @@
       return `<input class="pill-toggle-input" type="radio" name="accessory-size-${esc(id)}" id="${esc(inputId)}" value="${esc(size)}"${i === 0 ? " checked" : ""} />
         <label class="pill-toggle-label" for="${esc(inputId)}">${esc(size)}</label>`;
     });
-    return `<article class="card" role="listitem">
+    /* 7 rangées fixes (même vides) : alignées d'une carte à l'autre via subgrid */
+    const customSize = p.customSizeHint
+      ? `<p class="micro-info accessory-size-hint">Autre taille ? <button type="button" class="btn-text-link-inline" data-open-custom-request data-custom-request-title="Demander une autre taille" data-custom-request-prefill="${esc(`Bonjour, je souhaiterais un ${p.label.toLowerCase()} de … cm, couleur …`)}">Demandez-moi</button></p>`
+      : "";
+    return `<article class="card card--accessory" role="listitem">
       <h3><span aria-hidden="true">${esc(p.icon || "")}</span> ${esc(p.label)}</h3>
       <div class="accessory-meta-row">
         <p class="meta" data-price-accessory="${esc(id)}">…</p>
         ${galleryButton(p, "accessory-photo-link", "🖼️ Voir les photos")}
       </div>
-      <p>${esc(p.description)}</p>
-      ${p.delays ? `<p class="micro-info">Expédition estimée : ${esc(p.delays)}.</p>` : ""}
-      <div class="accessory-controls">
-        ${
-          colors.length
-            ? `<div class="swatch-field">
-                <p class="swatch-caption">Couleur : <strong class="swatch-current">${esc(colorList[0])}</strong></p>
-                <div class="swatch-group" role="radiogroup" aria-label="Couleur — ${esc(p.label)}">${colors.join("")}</div>
-              </div>`
-            : ""
-        }
-        ${sizes.length ? `<div class="pill-toggle pill-toggle--compact" role="radiogroup" aria-label="Taille — ${esc(p.label)}">${sizes.join("")}</div>` : ""}
-        <div class="accessory-inline-row">
-          <div class="qty-stepper">
-            <button type="button" class="qty-step-btn" data-qty-step="-1" aria-label="Diminuer la quantité">-</button>
-            <input class="accessory-qty" type="number" min="1" value="1" aria-label="Quantité — ${esc(p.label)}" />
-            <button type="button" class="qty-step-btn" data-qty-step="1" aria-label="Augmenter la quantité">+</button>
-          </div>
-          <button class="btn btn-outline" type="button" data-add-accessory-card="${esc(id)}">Ajouter au panier</button>
+      <p class="accessory-desc">${esc(p.description)}</p>
+      <p class="micro-info accessory-delay">${p.delays ? `Expédition estimée : ${esc(p.delays)}.` : ""}</p>
+      <div class="swatch-field">${
+        colors.length
+          ? `<p class="swatch-caption">Couleur : <strong class="swatch-current">${esc(colorList[0])}</strong></p>
+             <div class="swatch-group" role="radiogroup" aria-label="Couleur — ${esc(p.label)}">${colors.join("")}</div>`
+          : ""
+      }</div>
+      <div class="accessory-sizes">${
+        sizes.length
+          ? `<div class="pill-toggle pill-toggle--compact" role="radiogroup" aria-label="Taille — ${esc(p.label)}">${sizes.join("")}</div>${customSize}`
+          : ""
+      }</div>
+      <div class="accessory-inline-row">
+        <div class="qty-stepper">
+          <button type="button" class="qty-step-btn" data-qty-step="-1" aria-label="Diminuer la quantité">-</button>
+          <input class="accessory-qty" type="number" min="1" value="1" aria-label="Quantité — ${esc(p.label)}" />
+          <button type="button" class="qty-step-btn" data-qty-step="1" aria-label="Augmenter la quantité">+</button>
         </div>
-        ${
-          p.customSizeHint
-            ? `<p class="micro-info">Autre taille ? <button type="button" class="btn-text-link-inline" data-open-custom-request data-custom-request-title="Demander une autre taille" data-custom-request-prefill="${esc(`Bonjour, je souhaiterais un ${p.label.toLowerCase()} de … cm, couleur …`)}">Demandez-moi</button></p>`
-            : ""
-        }
+        <button class="btn btn-outline" type="button" data-add-accessory-card="${esc(id)}">Ajouter au panier</button>
       </div>
     </article>`;
   }
@@ -146,7 +145,7 @@
   const plaNote = `<div class="accessory-note">
       <h3>Imprimés à l'atelier en PLA biosourcé</h3>
       <p>
-        Le PLA est un plastique fabriqué à partir de sucres végétaux. Chaque accessoire est imprimé à l'atelier, à la demande.
+        Le PLA est un plastique fabriqué à partir de sucres végétaux. Chaque accessoire est imprimé à l'atelier.
         Il craint la chaleur : pas de voiture en plein soleil.
         <a href="./pla.html">Tout savoir sur le PLA (sources à l'appui) →</a>
       </p>

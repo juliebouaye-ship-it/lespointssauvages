@@ -2686,3 +2686,42 @@ input[type="number"]::-webkit-inner-spin-button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Cartes accessoires : rangées alignées entre cartes voisines (subgrid) */
+.cards-3 > .card.card--accessory {
+  display: grid;
+  grid-row: span 7;
+  grid-template-rows: subgrid;
+  row-gap: 0.55rem;
+  align-content: start;
+}
+
+.card--accessory > * {
+  margin: 0;
+}
+
+.card--accessory .accessory-delay {
+  align-self: end;
+}
+
+.card--accessory .accessory-sizes {
+  display: grid;
+  gap: 0.4rem;
+  align-content: start;
+}
+
+.card--accessory .accessory-size-hint {
+  margin: 0;
+}
+
+.card--accessory .accessory-inline-row {
+  align-self: end;
+}
+
+/* Navigateurs sans subgrid : cartes indépendantes, contenu lisible */
+@supports not (grid-template-rows: subgrid) {
+  .cards-3 > .card.card--accessory {
+    grid-row: auto;
+    grid-template-rows: none;
+  }
+}
