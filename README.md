@@ -126,11 +126,18 @@ jour l’URL dans le workflow **et** dans la fonction Netlify.
 ## Boutique : ajouter un produit ou une collection
 
 Tout se passe dans `components/catalog.js` (collections, produits, couleurs,
-tailles, photos, prix par défaut). La page est générée par
-`components/catalog-render.js`, rien à toucher dans `index.html`.
+tailles, photos). La page est générée par `components/catalog-render.js`,
+rien à toucher dans `index.html`. Chaque collection a sa propre adresse
+(`/#noel`, `/#accessoires`…), utilisable dans un lien ou un QR code.
 
-Les prix restent modifiables sans déploiement via Supabase (`price_rules`) :
-`product.<id>.kit`, `product.<id>.fini`, `accessory.<id>`.
+**Les prix sont uniquement dans Supabase** (table `price_rules`, scope `site`,
+scope_id `default`) : `product.<id>.kit`, `product.<id>.fini`,
+`accessory.<id>`, `option.*`, `box.aboMensuel`, `box.abo3Mois`, `shipping`.
+Un produit sans prix s'affiche « Prix bientôt disponible » et ne peut pas être
+commandé ; si Supabase ne répond pas, aucune commande payante n'est possible.
+Les clés manquantes sont listées dans la console du navigateur.
+Nouveau produit → ajouter sa ligne de prix (voir
+`supabase/migrations/2026-11-prix-catalogue.sql`).
 
 ## Organisation des fichiers
 

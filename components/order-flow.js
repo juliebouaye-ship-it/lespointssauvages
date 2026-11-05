@@ -1,6 +1,26 @@
 /* ── Commande modale + calcul ───────────────── */
 let hasAddedToCartThisModalOpen = false;
 
+/* Garde-fous prix : les montants viennent uniquement de Supabase.
+   Sans prix chargé, on bloque plutôt que de risquer une commande à 0 €. */
+const PRICES_UNAVAILABLE_MSG =
+  "Les prix n'ont pas pu être chargés. Réessayez dans un instant, ou écrivez-moi via le formulaire de contact.";
+
+function ensurePricingReady() {
+  if (typeof isPricingReady === "function" && isPricingReady()) return true;
+  showToast(PRICES_UNAVAILABLE_MSG);
+  return false;
+}
+
+function isLinePriced(line) {
+  if (!line) return false;
+  if (line.product === "gift-card") return true;
+  if (Object.prototype.hasOwnProperty.call(BOX_ONE_SHOT_EUR, line.product)) return isPrice(BOX_ONE_SHOT_EUR[line.product]);
+  if (Object.prototype.hasOwnProperty.call(ACCESSORY_PRODUCTS, line.product)) return isPrice(ACCESSORY_PRODUCTS[line.product].price);
+  if (line.format) return computeSubtotalArticles({ ...line, quantity: 1 }) != null;
+  return false;
+}
+
 function getOrderState() {
   const product = document.getElementById("order-product")?.value || "";
   const format = document.getElementById("order-format")?.value || "";
@@ -30,14 +50,18 @@ function getOrderState() {
 
 function computeSubtotalArticles(state) {
   const base = PRODUCT_BASE_EUR[state.product]?.[state.format];
-  if (base == null) return null;
+  if (!isPrice(base)) return null;
   let unit = base;
   if (state.product === "chat") {
     if (state.bicolore) {
-      unit += state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
+      const fee = state.format === "fini" ? OPTION_FEES.bicoloreFini : OPTION_FEES.bicoloreKit;
+      if (!isPrice(fee)) return null;
+      unit += fee;
     }
     if (state.prenomAddon) {
-      unit += state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
+      const fee = state.format === "fini" ? OPTION_FEES.prenomFini : OPTION_FEES.prenomKit;
+      if (!isPrice(fee)) return null;
+      unit += fee;
     }
   }
   return Math.round(unit * state.quantity * 100) / 100;
@@ -102,9 +126,8 @@ function updatePillPriceHints() {
   const fmt = document.getElementById("order-format")?.value;
   const preHint = document.getElementById("order-prenom-price-hint");
   if (preHint) {
-    if (fmt === "fini") preHint.textContent = `(+${OPTION_FEES.prenomFini} €)`;
-    else if (fmt === "kit") preHint.textContent = `(+${OPTION_FEES.prenomKit} €)`;
-    else preHint.textContent = "";
+    const fee = fmt === "fini" ? OPTION_FEES.prenomFini : fmt === "kit" ? OPTION_FEES.prenomKit : null;
+    preHint.textContent = isPrice(fee) ? ` (+${formatEuro(fee)})` : "";
   }
 }
 
@@ -561,6 +584,12 @@ async function renderOrderPayPalIfPossible() {
   const hint = document.getElementById("order-paypal-hint");
   const wrap = document.getElementById("order-paypal-wrap");
 
+  const linesToPay = hasCart ? orderCart : [];
+  if (!isPricingReady() || linesToPay.some((line) => !isLinePriced(line))) {
+    if (hint) hint.textContent = PRICES_UNAVAILABLE_MSG;
+    return;
+  }
+
   if (!PAYPAL_CLIENT_ID && typeof window.getPayPalClientId === "function") {
     PAYPAL_CLIENT_ID = window.getPayPalClientId();
   }
@@ -782,6 +811,7 @@ function syncOrderFormatPills(formatValue) {
 function openOrderModal(presetProduct, presetFormat) {
   const modal = document.getElementById("order-modal");
   if (!modal) return;
+  if (!ensurePricingReady()) return;
   const productEl = document.getElementById("order-product");
   const formatEl = document.getElementById("order-format");
   const rowProduct = document.getElementById("order-row-product");

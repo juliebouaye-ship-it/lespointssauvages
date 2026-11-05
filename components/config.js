@@ -3,22 +3,31 @@
 let PAYPAL_CLIENT_ID =
   (typeof window !== "undefined" && window.__LPS_PAYPAL_CLIENT_ID__) || "";
 
-/* Produits, prix par défaut et phrases : définis dans components/catalog.js */
+/* Produits et phrases : components/catalog.js.
+   PRIX : uniquement dans Supabase (table price_rules, scope 'site' / 'default').
+   Tant qu'ils ne sont pas chargés, tous les montants valent null et aucune
+   commande payante n'est possible (voir isPricingReady). */
 const CATALOG_PRODUCTS = (typeof LPS_CATALOG !== "undefined" && LPS_CATALOG.products) || {};
 const catalogEntriesOfType = (type) => Object.entries(CATALOG_PRODUCTS).filter(([, p]) => p.type === type);
 
+/* { petit: { kit: null, fini: null }, … } — rempli par Supabase */
 const PRODUCT_BASE_EUR = Object.fromEntries(
-  catalogEntriesOfType("broderie").map(([id, p]) => [id, { ...p.prices }])
+  catalogEntriesOfType("broderie").map(([id, p]) => [
+    id,
+    Object.fromEntries((p.formats || ["kit", "fini"]).map((f) => [f, null])),
+  ])
 );
 
 const OPTION_FEES = {
-  bicoloreKit: 2,
-  bicoloreFini: 4,
-  prenomKit: 3,
-  prenomFini: 5,
+  bicoloreKit: null,
+  bicoloreFini: null,
+  prenomKit: null,
+  prenomFini: null,
 };
 
-let SHIPPING_EUR = 3.5;
+let SHIPPING_EUR = null;
+/** true une fois les prix Supabase chargés (et la livraison connue) */
+let PRICING_LOADED = false;
 const SHIPPING_METHODS = {
   ship: "ship",
   pickup: "pickup",
@@ -58,14 +67,14 @@ const FORMAT_LABELS = {
 const PHRASES_PETIT = CATALOG_PRODUCTS.petit?.phrases || [];
 const PHRASES_GRAND = CATALOG_PRODUCTS.grand?.phrases || [];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
-/** Prix affiché de la box mensuelle (réglable via Supabase price_key box.aboMensuel) */
-let BOX_MONTHLY_EUR = 19.5;
+/** Prix de la box mensuelle : Supabase price_key box.aboMensuel */
+let BOX_MONTHLY_EUR = null;
 
 const BOX_ONE_SHOT_EUR = {
-  abo3Mois: 49.5,
+  abo3Mois: null,
 };
 const ACCESSORY_PRODUCTS = Object.fromEntries(
-  catalogEntriesOfType("accessoire").map(([id, p]) => [id, { label: p.cartLabel || p.label, price: p.price }])
+  catalogEntriesOfType("accessoire").map(([id, p]) => [id, { label: p.cartLabel || p.label, price: null }])
 );
 const snapshotAccessoryPrices = () =>
   Object.fromEntries(Object.entries(ACCESSORY_PRODUCTS).map(([id, a]) => [id, a.price]));
@@ -122,9 +131,46 @@ function applyPriceRule(priceKey, amount) {
     return;
   }
   const parts = String(priceKey || "").split(".");
-  if (parts.length === 3 && parts[0] === "product" && PRODUCT_BASE_EUR[parts[1]] && PRODUCT_BASE_EUR[parts[1]][parts[2]] != null) {
+  if (
+    parts.length === 3 &&
+    parts[0] === "product" &&
+    PRODUCT_BASE_EUR[parts[1]] &&
+    Object.prototype.hasOwnProperty.call(PRODUCT_BASE_EUR[parts[1]], parts[2])
+  ) {
     PRODUCT_BASE_EUR[parts[1]][parts[2]] = n;
   }
+}
+
+const isPrice = (value) => typeof value === "number" && Number.isFinite(value);
+
+/** Prix chargés depuis Supabase : sinon, aucune commande payante. */
+function isPricingReady() {
+  return PRICING_LOADED && isPrice(SHIPPING_EUR);
+}
+
+/** Clés de prix attendues mais absentes de Supabase (affichées en console pour l'admin). */
+function listMissingPriceKeys() {
+  const missing = [];
+  Object.entries(PRODUCT_BASE_EUR).forEach(([id, formats]) => {
+    Object.entries(formats).forEach(([f, v]) => {
+      if (!isPrice(v)) missing.push(`product.${id}.${f}`);
+    });
+  });
+  Object.entries(ACCESSORY_PRODUCTS).forEach(([id, a]) => {
+    if (!isPrice(a.price)) missing.push(`accessory.${id}`);
+  });
+  [
+    ["option.bicolore.kit", OPTION_FEES.bicoloreKit],
+    ["option.bicolore.fini", OPTION_FEES.bicoloreFini],
+    ["option.prenom.kit", OPTION_FEES.prenomKit],
+    ["option.prenom.fini", OPTION_FEES.prenomFini],
+    ["box.aboMensuel", BOX_MONTHLY_EUR],
+    ["box.abo3Mois", BOX_ONE_SHOT_EUR.abo3Mois],
+    ["shipping", SHIPPING_EUR],
+  ].forEach(([key, v]) => {
+    if (!isPrice(v)) missing.push(key);
+  });
+  return missing;
 }
 
 function applyPriceRules(rows) {
@@ -158,7 +204,10 @@ async function loadPricingFromSupabase() {
     BASELINE_PRICING.BOX_ONE_SHOT_EUR = JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR));
     BASELINE_PRICING.ACCESSORY_PRODUCTS = snapshotAccessoryPrices();
     BASELINE_PRICING.SHIPPING_EUR = SHIPPING_EUR;
-    return { ok: true };
+    PRICING_LOADED = true;
+    const missing = listMissingPriceKeys();
+    if (missing.length) console.warn("Prix absents de Supabase (price_rules) :", missing.join(", "));
+    return { ok: true, missing };
   } catch (err) {
     return { ok: false, reason: err?.message || "pricing_load_failed" };
   }
@@ -229,6 +278,7 @@ async function loadPayPalClientIdFromNetlify() {
 
 if (typeof window !== "undefined") {
   window.loadPricingFromSupabase = loadPricingFromSupabase;
+  window.isPricingReady = isPricingReady;
   window.applyPromoCode = applyPromoCode;
   window.clearPromoCode = clearPromoCode;
   window.getActivePromoCode = getActivePromoCode;

@@ -15,35 +15,52 @@ function formatEuroPlain(amount) {
 }
 
 function syncDisplayedPrices() {
+  /* Les montants viennent uniquement de Supabase : sans prix, on l'affiche
+     clairement et on désactive la commande du produit concerné. */
+  const PRICE_MISSING = "Prix bientôt disponible";
+  const setPlain = (el, value) => {
+    if (el) el.textContent = isPrice(value) ? formatEuroPlain(value) : "…";
+  };
+
   document.querySelectorAll("[data-price-product]").forEach((el) => {
-    const prices = PRODUCT_BASE_EUR[el.getAttribute("data-price-product")];
-    if (!prices) return;
-    const from = Math.min(...Object.values(prices).map(Number).filter(Number.isFinite));
-    if (Number.isFinite(from)) el.textContent = `À partir de : ${formatEuro(from)}`;
+    const id = el.getAttribute("data-price-product");
+    const values = Object.values(PRODUCT_BASE_EUR[id] || {}).filter(isPrice);
+    el.textContent = values.length ? `À partir de : ${formatEuro(Math.min(...values))}` : PRICE_MISSING;
+    el.closest(".card")?.querySelectorAll("[data-open-order]").forEach((btn) => {
+      const price = PRODUCT_BASE_EUR[id]?.[btn.getAttribute("data-order-format")];
+      btn.disabled = !isPrice(price);
+    });
   });
 
   document.querySelectorAll("[data-price-accessory]").forEach((el) => {
     const accessory = ACCESSORY_PRODUCTS[el.getAttribute("data-price-accessory")];
-    if (accessory) el.textContent = `${formatEuro(accessory.price)} · PLA biosourcé`;
+    const priced = isPrice(accessory?.price);
+    el.textContent = priced ? `${formatEuro(accessory.price)} · PLA biosourcé` : `${PRICE_MISSING} · PLA biosourcé`;
+    el.closest(".card")?.querySelectorAll("[data-add-accessory-card]").forEach((btn) => {
+      btn.disabled = !priced;
+    });
+  });
+
+  document.querySelectorAll("[data-price-shipping]").forEach((el) => {
+    el.textContent = isPrice(SHIPPING_EUR) ? formatEuro(SHIPPING_EUR) : "…";
   });
 
   const pm = document.getElementById("box-price-monthly");
   if (pm) {
-    pm.innerHTML = `${formatEuroPlain(BOX_MONTHLY_EUR)} <sup>€</sup><span class="price-period"> / box</span>`;
+    pm.innerHTML = isPrice(BOX_MONTHLY_EUR)
+      ? `${formatEuroPlain(BOX_MONTHLY_EUR)} <sup>€</sup><span class="price-period"> / box</span>`
+      : PRICE_MISSING;
   }
+  const once = BOX_ONE_SHOT_EUR.abo3Mois;
   const p3 = document.getElementById("box-price-3mois");
-  if (p3) {
-    p3.innerHTML = `${formatEuroPlain(BOX_ONE_SHOT_EUR.abo3Mois)} <sup>€</sup>`;
+  if (p3) p3.innerHTML = isPrice(once) ? `${formatEuroPlain(once)} <sup>€</sup>` : PRICE_MISSING;
+  const p3Detail = document.getElementById("box-price-3mois-detail");
+  if (p3Detail) {
+    p3Detail.textContent = isPrice(once) ? `${formatEuroPlain(once / 3)} € / box (livraison incluse)` : "Livraison incluse";
   }
 
-  const unitSpan = document.getElementById("box-subscribe-unit-price");
-  if (unitSpan) {
-    unitSpan.textContent = formatEuroPlain(BOX_MONTHLY_EUR);
-  }
-  const onceTotal = document.getElementById("box-once-total-label");
-  if (onceTotal) {
-    onceTotal.textContent = formatEuroPlain(BOX_ONE_SHOT_EUR.abo3Mois);
-  }
+  setPlain(document.getElementById("box-subscribe-unit-price"), BOX_MONTHLY_EUR);
+  setPlain(document.getElementById("box-once-total-label"), once);
 }
 
 function getSupabaseClient() {
@@ -429,6 +446,7 @@ function setupBoxModal() {
   }
 
   function openBoxModal(flow) {
+    if (flow === "once" && (!ensurePricingReady() || !isPrice(BOX_ONE_SHOT_EUR.abo3Mois))) return;
     const selfRadio = document.getElementById("box-intent-self");
     const giftRadio = document.getElementById("box-intent-gift");
     const monthlyCadence = document.getElementById("box-cadence-monthly");
@@ -601,6 +619,11 @@ function setupAccessoryAddToCartButtons() {
       const key = btn.getAttribute("data-add-accessory-card");
       const accessory = ACCESSORY_PRODUCTS[key];
       if (!accessory) return;
+      if (!ensurePricingReady()) return;
+      if (!isPrice(accessory.price)) {
+        showToast("Cet article n'a pas encore de prix : écrivez-moi pour le commander.");
+        return;
+      }
 
       const card = btn.closest(".card");
       const color = card?.querySelector(`input[name="accessory-color-${key}"]:checked`)?.value || "Noir";

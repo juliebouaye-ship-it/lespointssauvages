@@ -3,12 +3,15 @@
 
    • Ajouter un produit : une entrée dans `products`, puis son id dans la
      liste `products` de sa collection.
-   • Ajouter une couleur de cercle : une ligne dans `colors` (+ sa teinte
-     dans COLOR_SWATCHES si c'est une nouvelle couleur).
-   • Les prix ci-dessous sont les prix par défaut. Ils restent modifiables
-     depuis Supabase (table price_rules) sans toucher à ce fichier :
+   • Ajouter une couleur : une ligne dans LPS_COLOR_SWATCHES (nom + teinte).
+   • Les PRIX ne sont pas ici : ils sont uniquement dans Supabase
+     (table price_rules, scope 'site' / scope_id 'default') :
        product.<id>.kit / product.<id>.fini  → broderies
        accessory.<id>                        → accessoires
+     Un produit sans prix dans Supabase s'affiche « Prix bientôt disponible »
+     et ne peut pas être commandé.
+   • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
+     s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
    ═══════════════════════════════════════════════ */
 
@@ -21,6 +24,9 @@ const LPS_COLOR_SWATCHES = {
   Doré: "#c9a227",
   Argenté: "#c4c7cc",
 };
+
+/* Bobines disponibles : ajouter une couleur ici l'ajoute à tous les accessoires */
+const LPS_ACCESSORY_COLORS = Object.keys(LPS_COLOR_SWATCHES);
 
 const LPS_CATALOG = {
   collections: [
@@ -77,7 +83,7 @@ const LPS_CATALOG = {
         "Un classique plein de caractère. Petit format, grand impact. Disponible en kit DIY ou en broderie finie.",
       diameterCm: 10,
       delays: "kit 48 h ouvrées · broderie finie 5 à 8 jours",
-      prices: { kit: 10, fini: 18 },
+      formats: ["kit", "fini"],
       phrases: ["Ba super", "Zut alors", "Tant pis"],
     },
     grand: {
@@ -93,7 +99,7 @@ const LPS_CATALOG = {
       description: "Pour tout ce qu'on n'ose pas dire en réunion. Grand format, petite politesse.",
       diameterCm: 16,
       delays: "kit 48 h ouvrées · broderie finie 5 à 8 jours",
-      prices: { kit: 20, fini: 32 },
+      formats: ["kit", "fini"],
       phrases: ["Sauf erreur de ma part", "Pas là pour plaire"],
     },
     chat: {
@@ -110,7 +116,7 @@ const LPS_CATALOG = {
       description: "Votre chat, votre style : prénom et couleurs de fourrure personnalisables.",
       diameterCm: 14,
       delays: "kit 3 à 5 jours · broderie finie 7 à 12 jours",
-      prices: { kit: 14, fini: 25 },
+      formats: ["kit", "fini"],
     },
 
     /* ── Accessoires (ajout direct au panier) ── */
@@ -119,8 +125,6 @@ const LPS_CATALOG = {
       label: "Cercle à broder de couleur",
       cartLabel: "Cercle à broder couleur (PLA)",
       icon: "⭕",
-      price: 5,
-      colors: ["Rouge", "Marron", "Vert clair", "Noir", "Blanc", "Doré", "Argenté"],
       sizes: ["10 cm", "14 cm", "16 cm"],
       description: "Le cercle à broder dans la couleur de votre choix, aux tailles des kits.",
       customSizeHint: true,
@@ -131,9 +135,7 @@ const LPS_CATALOG = {
       label: "Cercle à broder oreilles de chat",
       cartLabel: "Cercle oreilles de chat (PLA)",
       icon: "🐾",
-      price: 5,
-      colors: ["Noir", "Blanc"],
-      description: "Disponible en noir ou en blanc.",
+      description: "Un cercle à broder avec deux petites oreilles de chat.",
       gallery: [
         { src: "./images/accessoire-oreilles-detail.jpg", alt: "Cercle oreilles de chat, détail", rotation: 90 },
         { src: "./images/chat-cercle-noir.jpg", alt: "Cercle oreilles de chat noir", rotation: 90 },
@@ -145,8 +147,6 @@ const LPS_CATALOG = {
       label: "Stand triangle pour poser les broderies",
       cartLabel: "Stand triangle (PLA)",
       icon: "🔺",
-      price: 3,
-      colors: ["Noir", "Blanc"],
       description: "Support discret pour exposer vos broderies debout.",
       gallery: [
         { src: "./images/stand-devant.jpg", alt: "Stand triangle, vue de face", rotation: 0 },
@@ -159,5 +159,6 @@ const LPS_CATALOG = {
 
 if (typeof window !== "undefined") {
   window.LPS_CATALOG = LPS_CATALOG;
+  window.LPS_ACCESSORY_COLORS = LPS_ACCESSORY_COLORS;
   window.LPS_COLOR_SWATCHES = LPS_COLOR_SWATCHES;
 }

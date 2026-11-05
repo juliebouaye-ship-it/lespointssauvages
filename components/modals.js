@@ -96,7 +96,7 @@ const LPS_MODALS_HTML = `
                     <input class="pill-toggle-input" type="radio" name="order-prenom-addon" id="order-prenom-addon-no" value="0" checked />
                     <label class="pill-toggle-label" for="order-prenom-addon-no">Non</label>
                     <input class="pill-toggle-input" type="radio" name="order-prenom-addon" id="order-prenom-addon-yes" value="1" />
-                    <label class="pill-toggle-label" for="order-prenom-addon-yes">Oui<span class="label-hint" id="order-prenom-price-hint"> (+3 €)</span></label>
+                    <label class="pill-toggle-label" for="order-prenom-addon-yes">Oui<span class="label-hint" id="order-prenom-price-hint"></span></label>
                   </div>
                   <div class="form-row order-prenom-inline" id="order-row-prenom" hidden aria-label="Prénom">
                     <input id="order-prenom" type="text" placeholder="Ex. Miso, Noisette…" autocomplete="off" />
@@ -374,7 +374,7 @@ const LPS_MODALS_HTML = `
                   <label class="pill-toggle-label" for="box-cadence-bimonthly">1 box / 2 mois</label>
                 </div>
                 <p class="muted" id="box-subscribe-price-hint">
-                  À chaque fois, <span id="box-subscribe-unit-price">19,50</span>&nbsp;€ par box — livraison comprise.
+                  À chaque fois, <span id="box-subscribe-unit-price">…</span>&nbsp;€ par box — livraison comprise.
                 </p>
               </div>
               <p class="helper" id="box-once-summary" hidden>

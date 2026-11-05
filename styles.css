@@ -2394,50 +2394,172 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* ── Boutique par collections (générée depuis components/catalog.js) ── */
-.collection-nav {
+
+/* Accueil boutique : vignettes */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.1rem;
+  margin-bottom: 1.4rem;
+}
+
+.collection-grid[hidden] {
+  display: none;
+}
+
+.collection-tile {
   display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.2rem 0 0.6rem;
-  margin: 0 0 1.4rem;
-  scrollbar-width: thin;
-}
-
-.collection-chip {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  min-height: var(--control-h);
-  padding: 0 1rem;
-  border: 1.5px solid var(--line);
-  border-radius: 999px;
+  flex-direction: column;
   background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
   color: var(--ink);
-  font-weight: 600;
-  font-size: 0.92rem;
   text-decoration: none;
-  white-space: nowrap;
-  transition: border-color 0.2s, background 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.collection-chip:hover,
-.collection-chip:focus-visible {
+.collection-tile:hover,
+.collection-tile:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
   border-color: var(--rose);
+}
+
+.collection-tile:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+.collection-mosaic {
+  display: grid;
+  gap: 3px;
+  aspect-ratio: 1 / 1;
+  background: var(--line-soft);
+}
+
+.collection-mosaic-cell {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.collection-mosaic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Photos enregistrées couchées : redressées (agrandies pour remplir la case) */
+.collection-mosaic img.is-rotated {
+  transform: rotate(var(--rot)) scale(1.5);
+}
+
+.collection-mosaic--1 { grid-template-columns: 1fr; }
+.collection-mosaic--2 { grid-template-columns: 1fr 1fr; }
+.collection-mosaic--3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.collection-mosaic--3 .collection-mosaic-cell:first-child { grid-row: span 2; }
+.collection-mosaic--4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.collection-mosaic--empty {
+  place-items: center;
+  font-size: 3.2rem;
   background: var(--rose-soft);
 }
 
-.collection-chip-badge {
-  font-size: 0.72rem;
+.collection-tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 1rem 1rem;
+  flex: 1;
+}
+
+.collection-tile-title {
+  margin: 0;
+  font-size: 1.12rem;
+}
+
+.collection-tile-intro {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+.collection-tile-foot {
+  margin: auto 0 0;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.collection-tile-badge {
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--rose);
 }
 
+.collection-tile-cta {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+@media (max-width: 1000px) {
+  .collection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .collection-grid {
+    gap: 0.7rem;
+  }
+  .collection-tile-body {
+    padding: 0.7rem 0.75rem 0.8rem;
+  }
+  .collection-tile-intro {
+    display: none;
+  }
+}
+
+/* Vue d'une collection */
 .collection {
   scroll-margin-top: 5rem;
   margin-bottom: 1.6rem;
+}
+
+.collection[hidden] {
+  display: none;
+}
+
+.collection-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.collection-back:hover,
+.collection-back:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
 }
 
 .collection-head {
@@ -2446,7 +2568,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .collection-title {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
+}
+
+.collection-title:focus {
+  outline: none;
 }
 
 .collection-intro {
@@ -2480,10 +2606,31 @@ input[type="number"]::-webkit-inner-spin-button {
   font-size: var(--text-sm);
 }
 
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Couleurs : petites pastilles rondes + nom de la couleur choisie */
+.swatch-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.swatch-caption {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.swatch-caption strong {
+  color: var(--ink);
+}
+
 .swatch-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .swatch-input {
@@ -2497,22 +2644,22 @@ input[type="number"]::-webkit-inner-spin-button {
 .swatch-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  min-height: 2.2rem;
-  padding: 0 0.7rem 0 0.4rem;
-  border: 1.5px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--muted);
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.swatch-label:hover {
+  transform: scale(1.08);
 }
 
 .swatch-dot {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.4rem;
+  height: 1.4rem;
   border-radius: 50%;
   background: var(--swatch, #ccc);
   border: 1px solid rgba(42, 30, 24, 0.25);
@@ -2520,13 +2667,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .swatch-input:checked + .swatch-label {
   border-color: var(--ink);
-  color: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
 }
 
 .swatch-input:focus-visible + .swatch-label {
   outline: 2px solid var(--rose);
-  outline-offset: 2px;
+  outline-offset: 1px;
 }
 
 /* Une collection avec 1 ou 2 produits garde des cartes de taille normale */
