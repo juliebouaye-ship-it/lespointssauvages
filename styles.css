@@ -2392,3 +2392,156 @@ input[type="number"]::-webkit-inner-spin-button {
   *, *::before, *::after { transition: none !important; animation: none !important; }
   .reveal { opacity: 1 !important; transform: none !important; }
 }
+
+/* ── Boutique par collections (générée depuis components/catalog.js) ── */
+.collection-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.2rem 0 0.6rem;
+  margin: 0 0 1.4rem;
+  scrollbar-width: thin;
+}
+
+.collection-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--control-h);
+  padding: 0 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.collection-chip:hover,
+.collection-chip:focus-visible {
+  border-color: var(--rose);
+  background: var(--rose-soft);
+}
+
+.collection-chip-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rose);
+}
+
+.collection {
+  scroll-margin-top: 5rem;
+  margin-bottom: 1.6rem;
+}
+
+.collection-head {
+  margin-bottom: 0.9rem;
+}
+
+.collection-title {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.collection-intro {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.card--soon {
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.6rem;
+  border-style: dashed;
+  background: var(--bg);
+}
+
+.card-soon-icon {
+  font-size: 2.2rem;
+  margin: 0;
+}
+
+.card-thumb-wrap--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  margin: 0.2rem 0 0.7rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.75rem;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.swatch-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.swatch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+
+.swatch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.2rem;
+  padding: 0 0.7rem 0 0.4rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.swatch-dot {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  background: var(--swatch, #ccc);
+  border: 1px solid rgba(42, 30, 24, 0.25);
+}
+
+.swatch-input:checked + .swatch-label {
+  border-color: var(--ink);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.swatch-input:focus-visible + .swatch-label {
+  outline: 2px solid var(--rose);
+  outline-offset: 2px;
+}
+
+/* Une collection avec 1 ou 2 produits garde des cartes de taille normale */
+.collection .cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .collection .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .collection .cards {
+    grid-template-columns: 1fr;
+  }
+}

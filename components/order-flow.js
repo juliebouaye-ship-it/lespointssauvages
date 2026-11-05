@@ -58,7 +58,7 @@ function computeLineSubtotal(line) {
   if (line.product && Object.prototype.hasOwnProperty.call(BOX_ONE_SHOT_EUR, line.product)) {
     return Math.round((BOX_ONE_SHOT_EUR[line.product] || 0) * 100) / 100;
   }
-  if (line.product === "oreilles-chat" || line.product === "stand-triangle") {
+  if (line.product && Object.prototype.hasOwnProperty.call(ACCESSORY_PRODUCTS, line.product)) {
     const unit = ACCESSORY_PRODUCTS[line.product]?.price || 0;
     const qty = Math.max(1, Number.parseInt(line.quantity || "1", 10) || 1);
     return Math.round(unit * qty * 100) / 100;
@@ -94,7 +94,8 @@ function validateOrder(state) {
     if (state.prenomAddon && !state.prenom) return false;
     return true;
   }
-  return false;
+  /* Autres motifs du catalogue : le format suffit (commentaire libre optionnel) */
+  return Boolean(PRODUCT_BASE_EUR[state.product]);
 }
 
 function updatePillPriceHints() {
@@ -251,6 +252,7 @@ function lineDetail(line) {
     if (line.shippingCity) details.push(`Livraison: ${line.shippingPostal || ""} ${line.shippingCity}`.trim());
   }
   if (line.color) details.push(`Couleur: ${line.color}`);
+  if (line.size) details.push(`Taille: ${line.size}`);
   if (line.product === "petit" || line.product === "grand") {
     if (line.phrase) details.push(`Phrase: ${line.phrase}`);
   }

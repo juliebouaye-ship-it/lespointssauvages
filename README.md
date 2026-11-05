@@ -123,6 +123,15 @@ déjà définies pour `stand-orders-list` — rien à ajouter.
 Si tu renommes la table `keepalive` ou retires sa policy `anon` en insertion, mets à
 jour l’URL dans le workflow **et** dans la fonction Netlify.
 
+## Boutique : ajouter un produit ou une collection
+
+Tout se passe dans `components/catalog.js` (collections, produits, couleurs,
+tailles, photos, prix par défaut). La page est générée par
+`components/catalog-render.js`, rien à toucher dans `index.html`.
+
+Les prix restent modifiables sans déploiement via Supabase (`price_rules`) :
+`product.<id>.kit`, `product.<id>.fini`, `accessory.<id>`.
+
 ## Organisation des fichiers
 
 - Migrations Supabase: `supabase/migrations/`

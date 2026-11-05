@@ -3,11 +3,13 @@
 let PAYPAL_CLIENT_ID =
   (typeof window !== "undefined" && window.__LPS_PAYPAL_CLIENT_ID__) || "";
 
-const PRODUCT_BASE_EUR = {
-  petit: { kit: 10, fini: 18 },
-  grand: { kit: 20, fini: 32 },
-  chat: { kit: 14, fini: 25 },
-};
+/* Produits, prix par défaut et phrases : définis dans components/catalog.js */
+const CATALOG_PRODUCTS = (typeof LPS_CATALOG !== "undefined" && LPS_CATALOG.products) || {};
+const catalogEntriesOfType = (type) => Object.entries(CATALOG_PRODUCTS).filter(([, p]) => p.type === type);
+
+const PRODUCT_BASE_EUR = Object.fromEntries(
+  catalogEntriesOfType("broderie").map(([id, p]) => [id, { ...p.prices }])
+);
 
 const OPTION_FEES = {
   bicoloreKit: 2,
@@ -41,15 +43,11 @@ const SUPABASE_URL = "https://mjegipjdnwcseunsmoyu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_MI3d_8ZFg5eKhWAADfpyvA_6dnc9w8n";
 
 const PRODUCT_LABELS = {
-  petit: "Petit mot",
-  grand: "Grand mot",
-  chat: "Petit chat qui dort",
+  ...Object.fromEntries(Object.entries(CATALOG_PRODUCTS).map(([id, p]) => [id, p.cartLabel || p.label])),
   "gift-card": "Carte cadeau",
   abo3Mois: "Box broderie — 3 mois · paiement unique (cadeau)",
   aboBiMensuel: "Abonnement box — 1 box tous les 2 mois",
   aboMensuel: "Abonnement box — 1 box par mois",
-  "oreilles-chat": "Cercle oreilles de chat",
-  "stand-triangle": "Stand triangle",
 };
 
 const FORMAT_LABELS = {
@@ -57,8 +55,8 @@ const FORMAT_LABELS = {
   fini: "Broderie finie",
 };
 
-const PHRASES_PETIT = ["Ba super", "Zut alors", "Tant pis"];
-const PHRASES_GRAND = ["Sauf erreur de ma part", "Pas là pour plaire"];
+const PHRASES_PETIT = CATALOG_PRODUCTS.petit?.phrases || [];
+const PHRASES_GRAND = CATALOG_PRODUCTS.grand?.phrases || [];
 const ORDER_CART_STORAGE_KEY = "lps-order-cart-v1";
 /** Prix affiché de la box mensuelle (réglable via Supabase price_key box.aboMensuel) */
 let BOX_MONTHLY_EUR = 19.5;
@@ -66,10 +64,11 @@ let BOX_MONTHLY_EUR = 19.5;
 const BOX_ONE_SHOT_EUR = {
   abo3Mois: 49.5,
 };
-const ACCESSORY_PRODUCTS = {
-  "oreilles-chat": { label: "Cercle oreilles de chat (PLA)", price: 5.0 },
-  "stand-triangle": { label: "Stand triangle (PLA)", price: 3.0 },
-};
+const ACCESSORY_PRODUCTS = Object.fromEntries(
+  catalogEntriesOfType("accessoire").map(([id, p]) => [id, { label: p.cartLabel || p.label, price: p.price }])
+);
+const snapshotAccessoryPrices = () =>
+  Object.fromEntries(Object.entries(ACCESSORY_PRODUCTS).map(([id, a]) => [id, a.price]));
 
 const FOURRURE_LABELS = {
   noir: "Noir",
@@ -87,22 +86,20 @@ const BASELINE_PRICING = {
   OPTION_FEES: JSON.parse(JSON.stringify(OPTION_FEES)),
   BOX_MONTHLY_EUR,
   BOX_ONE_SHOT_EUR: JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR)),
-  ACCESSORY_PRODUCTS: {
-    "oreilles-chat": ACCESSORY_PRODUCTS["oreilles-chat"]?.price ?? 5,
-    "stand-triangle": ACCESSORY_PRODUCTS["stand-triangle"]?.price ?? 3,
-  },
+  ACCESSORY_PRODUCTS: snapshotAccessoryPrices(),
   SHIPPING_EUR,
 };
 
 function resetPricingToBaseline() {
-  Object.assign(PRODUCT_BASE_EUR.petit, BASELINE_PRICING.PRODUCT_BASE_EUR.petit);
-  Object.assign(PRODUCT_BASE_EUR.grand, BASELINE_PRICING.PRODUCT_BASE_EUR.grand);
-  Object.assign(PRODUCT_BASE_EUR.chat, BASELINE_PRICING.PRODUCT_BASE_EUR.chat);
+  Object.keys(PRODUCT_BASE_EUR).forEach((id) => {
+    Object.assign(PRODUCT_BASE_EUR[id], BASELINE_PRICING.PRODUCT_BASE_EUR[id]);
+  });
   Object.assign(OPTION_FEES, BASELINE_PRICING.OPTION_FEES);
   BOX_MONTHLY_EUR = BASELINE_PRICING.BOX_MONTHLY_EUR;
   Object.assign(BOX_ONE_SHOT_EUR, BASELINE_PRICING.BOX_ONE_SHOT_EUR);
-  if (ACCESSORY_PRODUCTS["oreilles-chat"]) ACCESSORY_PRODUCTS["oreilles-chat"].price = BASELINE_PRICING.ACCESSORY_PRODUCTS["oreilles-chat"];
-  if (ACCESSORY_PRODUCTS["stand-triangle"]) ACCESSORY_PRODUCTS["stand-triangle"].price = BASELINE_PRICING.ACCESSORY_PRODUCTS["stand-triangle"];
+  Object.entries(BASELINE_PRICING.ACCESSORY_PRODUCTS).forEach(([id, price]) => {
+    if (ACCESSORY_PRODUCTS[id]) ACCESSORY_PRODUCTS[id].price = price;
+  });
   SHIPPING_EUR = BASELINE_PRICING.SHIPPING_EUR;
 }
 
@@ -119,12 +116,9 @@ function applyPriceRule(priceKey, amount) {
   if (priceKey === "option.prenom.fini") return void (OPTION_FEES.prenomFini = n);
   if (priceKey === "box.aboMensuel") return void (BOX_MONTHLY_EUR = n);
   if (priceKey === "box.abo3Mois") return void (BOX_ONE_SHOT_EUR.abo3Mois = n);
-  if (priceKey === "accessory.oreilles-chat" && ACCESSORY_PRODUCTS["oreilles-chat"]) {
-    ACCESSORY_PRODUCTS["oreilles-chat"].price = n;
-    return;
-  }
-  if (priceKey === "accessory.stand-triangle" && ACCESSORY_PRODUCTS["stand-triangle"]) {
-    ACCESSORY_PRODUCTS["stand-triangle"].price = n;
+  if (String(priceKey).startsWith("accessory.")) {
+    const accessory = ACCESSORY_PRODUCTS[String(priceKey).slice("accessory.".length)];
+    if (accessory) accessory.price = n;
     return;
   }
   const parts = String(priceKey || "").split(".");
@@ -162,10 +156,7 @@ async function loadPricingFromSupabase() {
     BASELINE_PRICING.OPTION_FEES = JSON.parse(JSON.stringify(OPTION_FEES));
     BASELINE_PRICING.BOX_MONTHLY_EUR = BOX_MONTHLY_EUR;
     BASELINE_PRICING.BOX_ONE_SHOT_EUR = JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR));
-    BASELINE_PRICING.ACCESSORY_PRODUCTS = {
-      "oreilles-chat": ACCESSORY_PRODUCTS["oreilles-chat"]?.price ?? 5,
-      "stand-triangle": ACCESSORY_PRODUCTS["stand-triangle"]?.price ?? 3,
-    };
+    BASELINE_PRICING.ACCESSORY_PRODUCTS = snapshotAccessoryPrices();
     BASELINE_PRICING.SHIPPING_EUR = SHIPPING_EUR;
     return { ok: true };
   } catch (err) {

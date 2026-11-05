@@ -15,27 +15,17 @@ function formatEuroPlain(amount) {
 }
 
 function syncDisplayedPrices() {
-  const prixPetit = document.getElementById("price-petit");
-  const prixGrand = document.getElementById("price-grand");
-  const prixChat = document.getElementById("price-chat");
-  if (prixPetit) {
-    prixPetit.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.petit.kit)}`;
-  }
-  if (prixGrand) {
-    prixGrand.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.grand.kit)}`;
-  }
-  if (prixChat) { 
-    prixChat.textContent = `À partir de : ${formatEuro(PRODUCT_BASE_EUR.chat.kit)}`;
-  }
+  document.querySelectorAll("[data-price-product]").forEach((el) => {
+    const prices = PRODUCT_BASE_EUR[el.getAttribute("data-price-product")];
+    if (!prices) return;
+    const from = Math.min(...Object.values(prices).map(Number).filter(Number.isFinite));
+    if (Number.isFinite(from)) el.textContent = `À partir de : ${formatEuro(from)}`;
+  });
 
-  const ear = document.getElementById("accessory-price-oreilles");
-  const stand = document.getElementById("accessory-price-stand");
-  if (ear && ACCESSORY_PRODUCTS["oreilles-chat"]) {
-    ear.textContent = `${formatEuro(ACCESSORY_PRODUCTS["oreilles-chat"].price)} · PLA biosourcé`;
-  }
-  if (stand && ACCESSORY_PRODUCTS["stand-triangle"]) {
-    stand.textContent = `${formatEuro(ACCESSORY_PRODUCTS["stand-triangle"].price)} · PLA biosourcé`;
-  }
+  document.querySelectorAll("[data-price-accessory]").forEach((el) => {
+    const accessory = ACCESSORY_PRODUCTS[el.getAttribute("data-price-accessory")];
+    if (accessory) el.textContent = `${formatEuro(accessory.price)} · PLA biosourcé`;
+  });
 
   const pm = document.getElementById("box-price-monthly");
   if (pm) {
@@ -614,6 +604,7 @@ function setupAccessoryAddToCartButtons() {
 
       const card = btn.closest(".card");
       const color = card?.querySelector(`input[name="accessory-color-${key}"]:checked`)?.value || "Noir";
+      const size = card?.querySelector(`input[name="accessory-size-${key}"]:checked`)?.value || "";
       const qtyRaw = card?.querySelector(".accessory-qty")?.value || "1";
       const quantity = Math.max(1, Number.parseInt(qtyRaw, 10) || 1);
 
@@ -621,6 +612,7 @@ function setupAccessoryAddToCartButtons() {
         product: key,
         quantity,
         color,
+        ...(size ? { size } : {}),
         subtotal: Math.round(accessory.price * quantity * 100) / 100,
       });
       renderOrderCart();

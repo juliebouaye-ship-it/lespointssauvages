@@ -96,19 +96,26 @@ function setupSubscriptionRequests() {
 
 function setupCustomRequestModal() {
   const modal = document.getElementById("custom-request-modal");
-  const openBtn = document.getElementById("open-custom-request-modal");
+  const openBtns = document.querySelectorAll("#open-custom-request-modal, [data-open-custom-request]");
   const closeBtn = document.getElementById("close-custom-request-modal");
   const form = document.getElementById("custom-request-form");
-  if (!modal || !openBtn || !closeBtn || !form) return;
+  if (!modal || !openBtns.length || !closeBtn || !form) return;
 
   const closeModal = () => {
     setModalState(modal, false);
     document.body.style.overflow = "";
   };
 
-  openBtn.addEventListener("click", () => {
-    setModalState(modal, true);
-    document.body.style.overflow = "hidden";
+  openBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const prefill = btn.getAttribute("data-custom-request-prefill") || "";
+      const titleEl = document.getElementById("custom-request-modal-title");
+      if (titleEl) titleEl.textContent = btn.getAttribute("data-custom-request-title") || "Demander un motif personnalisé";
+      const messageEl = document.getElementById("custom-request-message");
+      if (prefill && messageEl && !messageEl.value.trim()) messageEl.value = prefill;
+      setModalState(modal, true);
+      document.body.style.overflow = "hidden";
+    });
   });
   closeBtn.addEventListener("click", closeModal);
   modal.addEventListener("click", (event) => {
