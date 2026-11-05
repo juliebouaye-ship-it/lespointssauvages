@@ -144,15 +144,11 @@
   }
 
   const plaNote = `<div class="accessory-note">
-      <h3>Imprimés localement en PLA biosourcé</h3>
+      <h3>Imprimés à l'atelier en PLA biosourcé</h3>
       <p>
-        Le PLA est un plastique d'origine végétale (souvent à base d'amidon de maïs), plus léger côté impact.
-        Chaque accessoire est imprimé en local pour garder une production artisanale.
-      </p>
-      <p>
-        <strong>Durabilité :</strong> usage normal, solide pour l'exposition.
-        <strong>Chaleur :</strong> éviter les fortes températures prolongées (voiture en plein soleil).
-        <strong>Entretien :</strong> chiffon doux sec ou légèrement humide, sans solvants.
+        Le PLA est un plastique fabriqué à partir de sucres végétaux. Chaque accessoire est imprimé à l'atelier, à la demande.
+        Il craint la chaleur : pas de voiture en plein soleil.
+        <a href="./pla.html">Tout savoir sur le PLA (sources à l'appui) →</a>
       </p>
     </div>`;
 

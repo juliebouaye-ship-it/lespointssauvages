@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Le PLA, c'est quoi ? | Les Points Rebelles</title>
+    <meta
+      name="description"
+      content="Les accessoires des Points Rebelles sont imprimés en PLA : d'où vient cette matière, ce qu'elle peut et ne peut pas faire, comment l'entretenir. Sources à l'appui."
+    />
+    <link rel="canonical" href="https://lespointsrebelles.netlify.app/pla.html" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/logolps.png?v=5" />
+    <link rel="apple-touch-icon" href="./images/logolps.png?v=5" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .pla-page {
+        width: min(760px, 100% - 2rem);
+        margin: 0 auto;
+        padding: 1.5rem 0 3rem;
+      }
+      .pla-back {
+        display: inline-flex;
+        gap: 0.35rem;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: var(--text-sm);
+        text-decoration: none;
+      }
+      .pla-back:hover {
+        color: var(--ink);
+        text-decoration: underline;
+      }
+      .pla-page h1 {
+        font-size: clamp(2rem, 5vw, 2.8rem);
+        margin: 0.8rem 0 0.4rem;
+      }
+      .pla-lead {
+        color: var(--muted);
+        font-size: 1.08rem;
+        margin: 0 0 1.6rem;
+      }
+      .pla-tldr {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 1rem 1.2rem;
+        margin-bottom: 2rem;
+      }
+      .pla-tldr h2 {
+        font-size: 1.1rem;
+        margin: 0 0 0.5rem;
+      }
+      .pla-tldr ul {
+        margin: 0;
+        padding-left: 1.2rem;
+        display: grid;
+        gap: 0.35rem;
+      }
+      .pla-section {
+        margin-bottom: 1.8rem;
+      }
+      .pla-section h2 {
+        font-size: 1.35rem;
+        margin: 0 0 0.5rem;
+      }
+      .pla-section p {
+        margin: 0 0 0.7rem;
+        line-height: 1.65;
+      }
+      .pla-tldr ul,
+      .pla-section ul {
+        list-style: disc;
+      }
+      .pla-section ul {
+        margin: 0 0 0.7rem;
+        padding-left: 1.2rem;
+        line-height: 1.65;
+      }
+      .pla-ref {
+        font-size: 0.75em;
+        vertical-align: super;
+        line-height: 0;
+        text-decoration: none;
+        color: var(--rose);
+        font-weight: 600;
+        margin-left: 0.1em;
+      }
+      .pla-sources {
+        border-top: 1px solid var(--line);
+        padding-top: 1.2rem;
+        margin-top: 2.4rem;
+        font-size: var(--text-sm);
+        color: var(--muted);
+      }
+      .pla-sources h2 {
+        font-size: 1.1rem;
+        color: var(--ink);
+      }
+      .pla-sources ol {
+        padding-left: 1.3rem;
+        display: grid;
+        gap: 0.45rem;
+      }
+      .pla-sources a {
+        color: inherit;
+        overflow-wrap: anywhere;
+      }
+      .pla-sources li:target {
+        background: var(--rose-soft);
+        border-radius: 0.3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="pla-page" id="main-content">
+      <a class="pla-back" href="./#accessoires"><span aria-hidden="true">←</span> Retour aux accessoires</a>
+
+      <h1>Le PLA, c'est quoi&nbsp;?</h1>
+      <p class="pla-lead">
+        Mes cercles à broder et mes supports sont imprimés en 3D à l'atelier, en PLA. Voici ce qu'est cette matière,
+        ce qu'elle sait faire… et ce qu'elle ne sait pas faire. Chaque affirmation renvoie à sa source en bas de page.
+      </p>
+
+      <aside class="pla-tldr" aria-labelledby="pla-tldr-title">
+        <h2 id="pla-tldr-title">En bref</h2>
+        <ul>
+          <li>Un plastique fabriqué à partir de sucres végétaux (maïs, betterave, canne à sucre).</li>
+          <li>D'origine végétale ne veut pas dire qu'il disparaît tout seul dans la nature.</li>
+          <li>Il ramollit vers 55–60&nbsp;°C : pas de plein soleil derrière une vitre ni de voiture en été.</li>
+          <li>Le geste le plus simple pour la planète : le garder et l'utiliser longtemps.</li>
+        </ul>
+      </aside>
+
+      <section class="pla-section" aria-labelledby="pla-origine">
+        <h2 id="pla-origine">Une matière d'origine végétale</h2>
+        <p>
+          PLA signifie <em>acide polylactique</em>. On le fabrique à partir d'acide lactique, lui-même obtenu en faisant
+          fermenter des sucres issus de plantes comme le maïs, la betterave ou la canne à sucre<a class="pla-ref" href="#source-1">[1]</a>.
+          C'est ce qu'on appelle un plastique <strong>biosourcé</strong> : sa matière première vient du végétal, et non du pétrole.
+        </p>
+      </section>
+
+      <section class="pla-section" aria-labelledby="pla-biodegradable">
+        <h2 id="pla-biodegradable">Biosourcé ne veut pas dire biodégradable</h2>
+        <p>
+          Les deux mots se ressemblent mais ne parlent pas de la même chose : <em>biosourcé</em> décrit l'origine de la matière,
+          <em>biodégradable</em> décrit sa fin de vie. Un produit biosourcé n'est pas forcément biodégradable<a class="pla-ref" href="#source-2">[2]</a>.
+        </p>
+        <p>
+          Le PLA peut être composté, mais uniquement en <strong>compostage industriel</strong>, dont les conditions sont bien
+          plus chaudes qu'un compost de jardin<a class="pla-ref" href="#source-2">[2]</a><a class="pla-ref" href="#source-4">[4]</a>.
+          La norme européenne EN&nbsp;13432 demande par exemple qu'un emballage compostable se désagrège en 12&nbsp;semaines
+          et se biodégrade à 90&nbsp;% en 6&nbsp;mois, dans ces conditions industrielles<a class="pla-ref" href="#source-4">[4]</a>.
+        </p>
+        <p>
+          À l'inverse, abandonné dans la nature, un plastique dit « compostable » n'offre aucune garantie de se dégrader
+          assez vite<a class="pla-ref" href="#source-3">[3]</a>. Et l'ADEME conseille de ne mettre aucun plastique,
+          même compostable, dans un composteur domestique<a class="pla-ref" href="#source-2">[2]</a>.
+        </p>
+      </section>
+
+      <section class="pla-section" aria-labelledby="pla-chaleur">
+        <h2 id="pla-chaleur">Il n'aime pas la chaleur</h2>
+        <p>
+          Le PLA commence à ramollir à une température assez basse pour un plastique : sa « transition vitreuse » se situe
+          autour de 45 à 65&nbsp;°C selon les qualités, souvent vers 55–60&nbsp;°C<a class="pla-ref" href="#source-5">[5]</a>.
+          C'est une température qu'on peut atteindre dans une voiture en plein soleil ou derrière une vitre l'été.
+        </p>
+        <p>En pratique :</p>
+        <ul>
+          <li>pas de voiture au soleil, pas de rebord de fenêtre en plein été ;</li>
+          <li>pas de lave-vaisselle ni d'eau très chaude ;</li>
+          <li>à température ambiante, aucun souci : c'est solide pour broder et pour exposer.</li>
+        </ul>
+      </section>
+
+      <section class="pla-section" aria-labelledby="pla-pourquoi">
+        <h2 id="pla-pourquoi">Pourquoi je l'utilise</h2>
+        <p>
+          J'imprime chaque accessoire moi-même, à l'atelier et à la demande. Ça me permet de vous proposer plusieurs couleurs
+          et les tailles de mes kits sans fabriquer de stock à l'avance. J'aime le PLA parce qu'il s'imprime bien, qu'il est rigide
+          et agréable au toucher.
+        </p>
+      </section>
+
+      <section class="pla-section" aria-labelledby="pla-entretien">
+        <h2 id="pla-entretien">Entretien et fin de vie</h2>
+        <ul>
+          <li><strong>Entretien :</strong> un chiffon doux, sec ou légèrement humide, sans solvant.</li>
+          <li><strong>Le plus durable :</strong> garder vos cercles et vos supports longtemps, et les réutiliser d'une broderie à l'autre.</li>
+          <li>
+            <strong>Le jour où il faut s'en séparer :</strong> les consignes de tri varient selon les communes. L'outil
+            « Que faire de mes déchets ? » de l'ADEME indique la bonne consigne près de chez vous<a class="pla-ref" href="#source-6">[6]</a>.
+          </li>
+        </ul>
+      </section>
+
+      <section class="pla-sources" aria-labelledby="pla-sources-title">
+        <h2 id="pla-sources-title">Sources</h2>
+        <ol>
+          <li id="source-1">
+            INRS, fiche « Polymère PLA » (acide polylactique) :
+            <a href="https://inrs.fr/dam/jcr:ea09029a-c96a-472c-b6a1-65a69a133742/POLYMERE_PLA.pdf" target="_blank" rel="noopener">inrs.fr</a>
+          </li>
+          <li id="source-2">
+            ADEME, Agir pour la transition, « Produit biologique, biosourcé ou biodégradable&nbsp;? » :
+            <a href="https://agirpourlatransition.ademe.fr/particuliers/conso/conso-responsable/produit-biologique-biosource-biodegradable-difference" target="_blank" rel="noopener">agirpourlatransition.ademe.fr</a>
+          </li>
+          <li id="source-3">
+            ADEME, communiqué « Avis de l'ADEME : les limites des emballages en plastique compostables » :
+            <a href="https://www.ademe.fr/presse/communique-national/avis-de-lademe-les-limites-des-emballages-en-plastique-compostables" target="_blank" rel="noopener">ademe.fr</a>
+          </li>
+          <li id="source-4">
+            European Bioplastics, « What are the required circumstances for a compostable product to compost? » et fiche
+            sur les normes (EN&nbsp;13432) :
+            <a href="https://www.european-bioplastics.org/faq-items/what-are-the-required-circumstances-for-a-compostable-product-to-compost/" target="_blank" rel="noopener">european-bioplastics.org</a>
+            ·
+            <a href="https://docs.european-bioplastics.org/publications/fs/EUBP_FS_Standards.pdf" target="_blank" rel="noopener">fiche normes (PDF)</a>
+          </li>
+          <li id="source-5">
+            NETZSCH Analyzing &amp; Testing, « PLA: Polylactide (Polylactic Acid) », propriétés thermiques :
+            <a href="https://analyzing-testing.netzsch.com/en/polymers-netzsch-com/commodity-thermoplastics/pla-polylactide-polylactic-acid" target="_blank" rel="noopener">netzsch.com</a>
+          </li>
+          <li id="source-6">
+            ADEME, « Que faire de mes déchets ? » :
+            <a href="https://quefairedemesdechets.ademe.fr/" target="_blank" rel="noopener">quefairedemesdechets.ademe.fr</a>
+          </li>
+        </ol>
+        <p>Sources consultées en novembre 2026.</p>
+      </section>
+    </main>
+  </body>
+</html>
