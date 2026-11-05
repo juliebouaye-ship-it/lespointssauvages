@@ -14,6 +14,8 @@
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
    • cover : photos de la vignette de collection (1 à 4, la 1re en grand).
+     Utiliser les miniatures de images/covers/ (réduites proprement : évite
+     l'effet « rayé » sur le tissu et charge plus vite).
      `position` règle le cadrage si le produit n'est pas au centre
      (ex. "center 80%" = vers le bas). Sans cover : photos des produits.
    ═══════════════════════════════════════════════ */
@@ -36,9 +38,9 @@ const LPS_CATALOG = {
     {
       id: "mots-piquants",
       cover: [
-        { src: "./images/grand-mot-fleur-01.jpg" },
-        { src: "./images/embroidery-petit-mot.jpg" },
-        { src: "./images/embroidery-grand-mot.jpg" },
+        { src: "./images/covers/grand-mot-fleur-01.jpg" },
+        { src: "./images/covers/embroidery-petit-mot.jpg" },
+        { src: "./images/covers/embroidery-grand-mot.jpg" },
       ],
       title: "Les mots piquants",
       icon: "✂️",
@@ -50,9 +52,9 @@ const LPS_CATALOG = {
     {
       id: "motifs-atelier",
       cover: [
-        { src: "./images/accessoire-oreilles-chat.jpg" },
-        { src: "./images/embroidery-petit-chat.jpg" },
-        { src: "./images/accessoire-stand-triangle.jpg", position: "center 40%" },
+        { src: "./images/covers/accessoire-oreilles-chat.jpg" },
+        { src: "./images/covers/embroidery-petit-chat.jpg" },
+        { src: "./images/covers/accessoire-stand-triangle.jpg", position: "center 40%" },
       ],
       title: "Les motifs de l'atelier",
       icon: "🎨",
@@ -73,9 +75,9 @@ const LPS_CATALOG = {
     {
       id: "accessoires",
       cover: [
-        { src: "./images/accessoire-oreilles-detail.jpg" },
-        { src: "./images/stand-derriere.jpg", position: "0% 100%" },
-        { src: "./images/chat-cercle-noir.jpg" },
+        { src: "./images/covers/accessoire-oreilles-detail.jpg" },
+        { src: "./images/covers/stand-derriere.jpg", position: "0% 100%" },
+        { src: "./images/covers/chat-cercle-noir.jpg" },
       ],
       title: "Accessoires PLA",
       icon: "🧵",
