@@ -49,11 +49,11 @@ function syncDisplayedPrices() {
   if (pm) {
     pm.innerHTML = isPrice(BOX_MONTHLY_EUR)
       ? `${formatEuroPlain(BOX_MONTHLY_EUR)} <sup>€</sup><span class="price-period"> / box</span>`
-      : PRICE_MISSING;
+      : `<span class="price-missing">${PRICE_MISSING}</span>`;
   }
   const once = BOX_ONE_SHOT_EUR.abo3Mois;
   const p3 = document.getElementById("box-price-3mois");
-  if (p3) p3.innerHTML = isPrice(once) ? `${formatEuroPlain(once)} <sup>€</sup>` : PRICE_MISSING;
+  if (p3) p3.innerHTML = isPrice(once) ? `${formatEuroPlain(once)} <sup>€</sup>` : `<span class="price-missing">${PRICE_MISSING}</span>`;
   const p3Detail = document.getElementById("box-price-3mois-detail");
   if (p3Detail) {
     p3Detail.textContent = isPrice(once) ? `${formatEuroPlain(once / 3)} € / box (livraison incluse)` : "Livraison incluse";
