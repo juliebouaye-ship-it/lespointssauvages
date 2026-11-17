@@ -127,7 +127,115 @@ function setFormFeedback(msg, isError = false) {
   el.style.color = isError ? "#a2362b" : "";
 }
 
+/* ── Raccourci « Coffret box 3 mois » ──────────────── */
+let coffretMode = false;
+const MONTHS_FR = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
+function isoDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/* Règle du site : commande jusqu'au 15 → envoi dans la semaine ; après le 15 → début du mois suivant.
+   Les mois suivants sont proposés pour un cadeau (ex. ne pas livrer avant Noël). */
+function buildCoffretStartOptions(today = new Date()) {
+  const options = [];
+  const firstOf = (offset) => new Date(today.getFullYear(), today.getMonth() + offset, 1);
+  if (today.getDate() <= 15) {
+    const soon = new Date(today);
+    soon.setDate(soon.getDate() + 7);
+    options.push({ value: isoDate(soon), label: "Dès maintenant (envoi dans la semaine)" });
+  }
+  for (let offset = 1; offset <= 3; offset += 1) {
+    const d = firstOf(offset);
+    options.push({ value: isoDate(d), label: `Début ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()} (envoi du 1er au 5)` });
+  }
+  return options;
+}
+
+function coffretStartLabel() {
+  const select = document.getElementById("coffret-start");
+  const text = select?.selectedOptions?.[0]?.textContent || "";
+  return text.replace(/\s*\(.*\)\s*$/, "").replace(/^Dès maintenant$/, "dès maintenant (envoi dans la semaine)");
+}
+
+function syncCoffretDetails() {
+  if (!coffretMode) return;
+  const recipient = document.getElementById("coffret-recipient")?.value.trim() || "…";
+  const start = document.getElementById("coffret-start")?.value || "";
+  document.getElementById("order-details").value = `Coffret box 3 mois (cadeau) pour ${recipient} — 1re box : ${coffretStartLabel()}`;
+  document.getElementById("deadline-date").value = start;
+  document.getElementById("deadline-note").value = "Première box du coffret 3 mois";
+}
+
+async function enterCoffretMode() {
+  coffretMode = true;
+  document.getElementById("coffret-fields").hidden = false;
+  document.getElementById("customer-name-label").textContent = "Nom de l'acheteur";
+  const select = document.getElementById("coffret-start");
+  select.innerHTML = buildCoffretStartOptions()
+    .map((o) => `<option value="${escapeHtml(o.value)}">${escapeHtml(o.label)}</option>`)
+    .join("");
+  document.getElementById("delivery-method").value = "ship";
+  syncDeliveryUI();
+  syncCoffretDetails();
+  document.getElementById("coffret-recipient")?.focus();
+
+  /* Prix du coffret : celui du site (Supabase) */
+  setFormFeedback("Chargement du prix du coffret…");
+  const res = typeof loadPricingFromSupabase === "function" ? await loadPricingFromSupabase() : { ok: false };
+  const price = typeof BOX_ONE_SHOT_EUR !== "undefined" ? BOX_ONE_SHOT_EUR.abo3Mois : null;
+  if (res.ok && typeof price === "number" && Number.isFinite(price)) {
+    document.getElementById("amount-products").value = price.toFixed(2);
+    document.getElementById("amount-paid").value = price.toFixed(2);
+    setFormFeedback("");
+  } else {
+    setFormFeedback("Prix du coffret non chargé : saisis le montant à la main.", true);
+  }
+  refreshTotals();
+}
+
+function exitCoffretMode() {
+  coffretMode = false;
+  const fields = document.getElementById("coffret-fields");
+  if (fields) fields.hidden = true;
+  const label = document.getElementById("customer-name-label");
+  if (label) label.textContent = "Nom client";
+  ["coffret-recipient", "coffret-message"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+  const send = document.getElementById("coffret-send-email");
+  if (send) send.checked = true;
+}
+
+async function sendCoffretVoucher({ buyerName, buyerEmail }) {
+  const token = getStandDashboardToken();
+  if (!token) return { ok: false, reason: "Mot de passe tableau non saisi" };
+  try {
+    const res = await fetch("/.netlify/functions/stand-gift-email", {
+      method: "POST",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        buyerName,
+        buyerEmail,
+        recipientName: document.getElementById("coffret-recipient")?.value.trim() || "",
+        firstBoxLabel: coffretStartLabel(),
+        message: document.getElementById("coffret-message")?.value.trim() || "",
+      }),
+    });
+    if (res.status === 401) {
+      sessionStorage.removeItem(STAND_TOKEN_KEY);
+      return { ok: false, reason: "mot de passe refusé" };
+    }
+    if (!res.ok) return { ok: false, reason: `erreur ${res.status}` };
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, reason: err?.message || "réseau" };
+  }
+}
+
 function getShippingFee() {
+  if (coffretMode) return 0; /* livraison comprise dans le coffret */
   return document.getElementById("delivery-method")?.value === "ship" ? STAND_SHIPPING_EUR : 0;
 }
 
@@ -185,6 +293,7 @@ function resetForm() {
   document.getElementById("amount-products").value = "0";
   document.getElementById("amount-paid").value = "0";
   document.getElementById("delivery-method").value = "pickup";
+  exitCoffretMode();
   syncDeliveryUI();
   setFormFeedback("");
 }
@@ -199,6 +308,10 @@ async function saveStandOrder(event) {
 
   if (!name || !email || !details) {
     setFormFeedback("Nom, email et détails de commande sont obligatoires.", true);
+    return;
+  }
+  if (coffretMode && !document.getElementById("coffret-recipient")?.value.trim()) {
+    setFormFeedback("Indique le prénom du destinataire du coffret.", true);
     return;
   }
 
@@ -252,9 +365,23 @@ async function saveStandOrder(event) {
     return;
   }
 
+  /* Bon cadeau par email (avant la remise à zéro du formulaire) */
+  let voucherMsg = "";
+  if (coffretMode && document.getElementById("coffret-send-email")?.checked) {
+    setFormFeedback("Fiche enregistrée, envoi du bon cadeau…");
+    const sent = await sendCoffretVoucher({ buyerName: name, buyerEmail: email });
+    voucherMsg = sent.ok
+      ? `Bon cadeau envoyé à ${email}.`
+      : `⚠️ Fiche enregistrée mais bon cadeau NON envoyé (${sent.reason}) : à renvoyer à la main.`;
+  }
+
   resetForm();
   closeStandModal();
   await loadOrders();
+  if (voucherMsg) {
+    const feedback = document.getElementById("stand-dashboard-feedback");
+    if (feedback) feedback.textContent = voucherMsg;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -271,6 +398,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("stand-form")?.addEventListener("submit", saveStandOrder);
   document.getElementById("reset-stand-form")?.addEventListener("click", resetForm);
+  document.getElementById("preset-coffret")?.addEventListener("click", enterCoffretMode);
+  document.getElementById("coffret-cancel")?.addEventListener("click", () => {
+    exitCoffretMode();
+    refreshTotals();
+  });
+  ["coffret-recipient", "coffret-start"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("input", syncCoffretDetails);
+    document.getElementById(id)?.addEventListener("change", syncCoffretDetails);
+  });
   syncDeliveryUI();
   refreshTotals();
   loadOrders();

@@ -205,11 +205,16 @@ async function persistOrderToSupabase(capture, lines, total, shipping) {
     shipping_address_2: pickup ? null : shipping.address2 || null,
     shipping_postal_code: pickup ? "RETRAIT" : shipping.postalCode,
     shipping_city: pickup ? PICKUP_CITY : shipping.city,
-    shipping_notes: pickup
-      ? [shipping.notes, "Mode de remise: retrait atelier"]
-          .filter(Boolean)
-          .join(" · ")
-      : shipping.notes || null,
+    shipping_notes:
+      [
+        shipping.notes,
+        pickup ? "Mode de remise: retrait atelier" : "",
+        typeof window.getActivePromoCode === "function" && window.getActivePromoCode()
+          ? `Code promo : ${window.getActivePromoCode()}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" · ") || null,
     cart_lines: lines,
   };
   const result = await insertSupabase("orders", payload);

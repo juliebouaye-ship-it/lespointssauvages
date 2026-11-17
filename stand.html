@@ -146,6 +146,31 @@
         font-size: 1.2rem;
         cursor: pointer;
       }
+      .stand-presets {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.8rem;
+      }
+      .stand-coffret {
+        border: 1px solid var(--rose);
+        background: var(--rose-soft);
+        border-radius: 0.7rem;
+        padding: 0.8rem;
+        margin-bottom: 0.9rem;
+      }
+      .stand-coffret-title {
+        margin: 0 0 0.6rem;
+        font-size: 0.92rem;
+      }
+      .stand-check {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin: 0.4rem 0 0.6rem;
+        font-size: 0.92rem;
+      }
       @media (max-width: 700px) {
         .stand-grid-2,
         .stand-grid-3 {
@@ -198,9 +223,35 @@
           <button class="stand-modal-close" id="close-stand-modal" type="button" aria-label="Fermer">×</button>
         </div>
         <form id="stand-form" class="order-form" novalidate>
+          <div class="stand-presets">
+            <span class="stand-kicker">Raccourci</span>
+            <button type="button" class="btn btn-outline" id="preset-coffret">🎁 Coffret box 3 mois</button>
+          </div>
+          <div id="coffret-fields" class="stand-coffret" hidden>
+            <p class="stand-coffret-title"><strong>Coffret box 3 mois</strong> · livraison comprise · encaissé à la SumUp</p>
+            <div class="stand-grid-2">
+              <div class="form-row">
+                <label for="coffret-recipient">Pour (destinataire) <span class="required" aria-hidden="true">*</span></label>
+                <input id="coffret-recipient" placeholder="Prénom du destinataire" />
+              </div>
+              <div class="form-row">
+                <label for="coffret-start">Première box</label>
+                <select id="coffret-start"></select>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="coffret-message">Petit mot sur le bon (optionnel)</label>
+              <input id="coffret-message" maxlength="300" placeholder="Ex. Joyeux Noël !" />
+            </div>
+            <label class="stand-check">
+              <input type="checkbox" id="coffret-send-email" checked />
+              Envoyer le bon cadeau par email à l'acheteur
+            </label>
+            <button type="button" class="btn btn-ghost" id="coffret-cancel">Annuler le raccourci</button>
+          </div>
           <div class="stand-grid-2">
             <div class="form-row">
-              <label for="customer-name">Nom client <span class="required" aria-hidden="true">*</span></label>
+              <label for="customer-name"><span id="customer-name-label">Nom client</span> <span class="required" aria-hidden="true">*</span></label>
               <input id="customer-name" required autocomplete="name" />
             </div>
             <div class="form-row">
