@@ -8,3 +8,6 @@ images/box-photos
 # Déploiement
 .netlify
 .git
+
+# Planches à imprimer (cartes du stand) : pas besoin en ligne
+print

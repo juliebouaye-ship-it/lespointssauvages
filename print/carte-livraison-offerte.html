@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" /><title>Carte livraison offerte (10 par A4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; color: #2a1e18; }
+  body { font-family: "Inter", Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sheet { width: 210mm; height: 297mm; display: grid; align-content: center; justify-content: center; }
+  .serif { font-family: "Playfair Display", Georgia, serif; }
+  .cut { outline: 0.2mm dashed #c9b8ad; outline-offset: 0; }
+  .sheet { grid-template-columns: repeat(2, 85mm); grid-auto-rows: 55mm; gap: 0; }
+  .card { width: 85mm; height: 55mm; padding: 4mm 4.5mm; display: grid; grid-template-columns: 1fr 27mm; gap: 3mm; align-items: center; background: #fffdfb; }
+  .brand { display: flex; align-items: center; gap: 1.6mm; font-size: 2.6mm; color: #6b5448; }
+  .brand img { width: 5mm; height: 5mm; }
+  .title { font-size: 5.6mm; font-weight: 700; margin: 1.6mm 0 0.6mm; line-height: 1.05; }
+  .sub { font-size: 2.55mm; margin: 0; color: #6b5448; }
+  .code { display: inline-block; margin: 1.6mm 0 1.2mm; padding: 0.8mm 2.6mm; border: 0.35mm solid #b8706b; border-radius: 1.5mm; font-weight: 600; letter-spacing: 0.5mm; font-size: 3.6mm; color: #2a1e18; background: #f3e4e3; }
+  .until { font-size: 2.3mm; color: #6b5448; margin: 0; }
+  .qr { text-align: center; }
+  .qr svg { width: 23mm; height: 23mm; display: block; margin: 0 auto; }
+  .url { font-size: 1.75mm; color: #6b5448; margin-top: 1.2mm; white-space: nowrap; }
+</style></head><body>
+<!-- Planche A4 à imprimer à 100 % (taille réelle), puis découper sur les pointillés. -->
+<div class="sheet"><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div><div class="card cut">
+  <div>
+    <div class="brand"><img src="../images/logolps.png" alt="" /> Les Points Rebelles</div>
+    <p class="title serif">Livraison offerte</p>
+    <p class="sub">sur tout le site avec le code</p>
+    <span class="code">MARCHE</span>
+    <p class="until">jusqu'au 31 décembre 2026</p>
+  </div>
+  <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#2a1e18" d="M0 0.5h7m4 0h2m1 0h1m1 0h5m1 0h7M0 1.5h1m5 0h1m2 0h2m1 0h1m2 0h1m6 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h3m4 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m2 0h1m1 0h3m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h3m2 0h4m3 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h4m2 0h2m4 0h1M0 8.5h1m1 0h5m2 0h2m4 0h1m1 0h1m4 0h5M1 9.5h2m5 0h6m2 0h1m2 0h6m3 0h1M0 10.5h1m5 0h1m3 0h1m1 0h4m1 0h2m3 0h1m1 0h1M0 11.5h3m4 0h2m3 0h2m2 0h1m2 0h1m2 0h1m1 0h2m1 0h1M1 12.5h1m1 0h1m2 0h1m1 0h4m2 0h1m2 0h2m4 0h1m1 0h2M0 13.5h1m2 0h1m1 0h1m1 0h1m2 0h3m4 0h8m3 0h1M0 14.5h3m1 0h3m2 0h1m2 0h1m2 0h3m2 0h4m1 0h2M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h1m3 0h2m2 0h1m1 0h1m3 0h1m2 0h1M1 16.5h3m2 0h2m2 0h1m5 0h2m5 0h1m1 0h2M0 17.5h1m1 0h1m4 0h5m1 0h2m1 0h9m1 0h1m1 0h1M0 18.5h1m3 0h4m2 0h1m2 0h3m1 0h1m4 0h3m1 0h1M0 19.5h1m4 0h1m1 0h4m2 0h1m2 0h1m1 0h2m1 0h4m2 0h1M0 20.5h1m2 0h1m2 0h2m3 0h1m2 0h2m1 0h1m2 0h5m1 0h3M8 21.5h2m2 0h1m3 0h1m1 0h3m3 0h5M0 22.5h7m4 0h1m3 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h2m1 0h2m1 0h2m3 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h2m5 0h1m2 0h5m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m4 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h3m6 0h6M0 27.5h1m5 0h1m2 0h1m2 0h5m1 0h3m3 0h2m1 0h1M0 28.5h7m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m2 0h1"/></svg><div class="url">lespointsrebelles.netlify.app</div></div>
+</div></div>
+</body></html>
