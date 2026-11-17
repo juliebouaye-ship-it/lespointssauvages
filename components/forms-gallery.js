@@ -282,3 +282,128 @@ function setupProductGalleryModal() {
     });
   });
 }
+
+/* ── Rétractation : « Renoncer au contrat ici » ──
+   Parcours en 2 étapes (déclaration, puis « Confirmer la rétractation »).
+   L'accusé de réception est envoyé par la fonction Netlify withdrawal-request. */
+const WITHDRAWAL_HASH = "#renoncer-au-contrat";
+
+function setupWithdrawalModal() {
+  const modal = document.getElementById("withdrawal-modal");
+  const form = document.getElementById("withdrawal-form");
+  const confirmStep = document.getElementById("withdrawal-confirm");
+  const doneStep = document.getElementById("withdrawal-done");
+  const closeBtn = document.getElementById("close-withdrawal-modal");
+  const confirmBtn = document.getElementById("withdrawal-confirm-btn");
+  const backBtn = document.getElementById("withdrawal-back-btn");
+  const feedback = document.getElementById("withdrawal-feedback");
+  if (!modal || !form || !confirmStep || !doneStep) return;
+
+  const field = (id) => document.getElementById(id);
+  const read = () => ({
+    email: field("withdrawal-email")?.value.trim() || "",
+    orderRef: field("withdrawal-order")?.value.trim() || "",
+    details: field("withdrawal-details")?.value.trim() || "",
+    website: field("withdrawal-website")?.value || "",
+  });
+  const showStep = (step) => {
+    form.hidden = step !== "form";
+    confirmStep.hidden = step !== "confirm";
+    doneStep.hidden = step !== "done";
+  };
+
+  const open = () => {
+    showStep("form");
+    if (feedback) feedback.textContent = "";
+    setModalState(modal, true);
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => field("withdrawal-email")?.focus(), 50);
+  };
+  const close = () => {
+    setModalState(modal, false);
+    document.body.style.overflow = "";
+    if (window.location.hash === WITHDRAWAL_HASH) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  };
+
+  document.querySelectorAll(".js-open-withdrawal").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      document.getElementById("close-legal-modal")?.click();
+      open();
+    });
+  });
+  closeBtn?.addEventListener("click", close);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) close();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = read();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) || !data.orderRef) {
+      showToast("Merci d'indiquer votre email et votre numéro de commande.");
+      return;
+    }
+    field("withdrawal-recap-order").textContent = data.orderRef;
+    field("withdrawal-recap-details").textContent = data.details || "Toute la commande";
+    field("withdrawal-recap-email").textContent = data.email;
+    if (feedback) feedback.textContent = "";
+    showStep("confirm");
+    confirmBtn?.focus();
+  });
+
+  backBtn?.addEventListener("click", () => showStep("form"));
+
+  confirmBtn?.addEventListener("click", async () => {
+    const data = read();
+    confirmBtn.disabled = true;
+    if (feedback) feedback.textContent = "Envoi en cours…";
+    try {
+      const res = await fetch("/.netlify/functions/withdrawal-request", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.ok) throw new Error(result.error || `http_${res.status}`);
+      field("withdrawal-done-text").textContent =
+        `Votre demande a été reçue le ${result.receivedAtText}. Un accusé de réception vient d'être envoyé à ${data.email} : gardez-le, il fait foi. Je reviens vers vous très vite.`;
+      form.reset();
+      showStep("done");
+    } catch {
+      if (feedback) {
+        feedback.textContent = "";
+        const msg = document.createElement("span");
+        msg.textContent = "L'envoi n'a pas abouti. Réessayez, ou écrivez-moi à ";
+        const link = document.createElement("a");
+        link.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Rétractation — commande " + data.orderRef)}&body=${encodeURIComponent(`Je renonce à ma commande ${data.orderRef}.\nArticles : ${data.details || "toute la commande"}\nEmail : ${data.email}`)}`;
+        link.textContent = CONTACT_EMAIL;
+        feedback.append(msg, link, document.createTextNode(" : votre email fera foi."));
+      }
+    } finally {
+      confirmBtn.disabled = false;
+    }
+  });
+
+  /* Lien direct (ex. depuis la page PLA) : /#renoncer-au-contrat */
+  const openFromHash = () => {
+    if (window.location.hash === WITHDRAWAL_HASH) open();
+  };
+  window.addEventListener("hashchange", openFromHash);
+  openFromHash();
+}
+
+/* Liens « conditions générales de vente » ouverts depuis le paiement ou la box */
+function setupLegalLinks() {
+  document.getElementById("checkout-cgv")?.addEventListener("change", () => {
+    if (typeof schedulePayPalRender === "function") schedulePayPalRender();
+  });
+  document.querySelectorAll(".js-open-legal").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();
+      document.getElementById("open-legal-modal")?.click();
+    });
+  });
+}

@@ -589,6 +589,14 @@ async function renderOrderPayPalIfPossible() {
     if (hint) hint.textContent = PRICES_UNAVAILABLE_MSG;
     return;
   }
+  /* Acceptation des CGV (dont le droit de rétractation) avant d'afficher le paiement */
+  const cgv = document.getElementById("checkout-cgv");
+  if (cgv && !cgv.checked) {
+    if (wrap) wrap.hidden = true;
+    if (hint) hint.textContent = "Cochez la case des conditions générales de vente pour afficher le paiement.";
+    return;
+  }
+  if (wrap) wrap.hidden = false;
 
   if (!PAYPAL_CLIENT_ID && typeof window.getPayPalClientId === "function") {
     PAYPAL_CLIENT_ID = window.getPayPalClientId();

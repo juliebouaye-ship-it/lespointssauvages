@@ -230,6 +230,10 @@ const LPS_MODALS_HTML = `
             </div>
             <p class="form-note" id="promo-feedback"></p>
           </div>
+          <label class="cgv-consent">
+            <input type="checkbox" id="checkout-cgv" />
+            <span>J'ai lu et j'accepte les <button type="button" class="legal-inline-link js-open-legal">conditions générales de vente</button>, dont le droit de rétractation.</span>
+          </label>
           <div id="order-paypal-wrap" class="order-paypal-wrap" hidden>
             <p class="helper order-paypal-label">Payer avec PayPal</p>
             <div id="order-paypal-container" class="order-paypal-container"></div>
@@ -240,6 +244,56 @@ const LPS_MODALS_HTML = `
               Un souci avec PayPal ? Envoyer la commande par email
             </button>
           </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop" id="withdrawal-modal" aria-hidden="true">
+      <section class="legal-modal withdrawal-modal" role="dialog" aria-modal="true" aria-labelledby="withdrawal-modal-title">
+        <button type="button" class="modal-close" id="close-withdrawal-modal" aria-label="Fermer">×</button>
+        <h2 id="withdrawal-modal-title">Renoncer au contrat</h2>
+
+        <form id="withdrawal-form" class="order-form" novalidate>
+          <p class="helper">Vous avez 14 jours après réception pour changer d’avis (hors produits personnalisés). Deux infos suffisent :</p>
+          <div class="form-row">
+            <label for="withdrawal-email">Email utilisé pour la commande <span class="required" aria-hidden="true">*</span></label>
+            <input id="withdrawal-email" type="email" required autocomplete="email" placeholder="vous@email.com" />
+          </div>
+          <div class="form-row">
+            <label for="withdrawal-order">Numéro de commande <span class="required" aria-hidden="true">*</span></label>
+            <input id="withdrawal-order" type="text" required placeholder="Sur votre reçu PayPal, ou date de la commande" />
+          </div>
+          <details class="withdrawal-more">
+            <summary>Seulement certains articles ?</summary>
+            <div class="form-row">
+              <label for="withdrawal-details" class="sr-only">Articles concernés</label>
+              <textarea id="withdrawal-details" rows="2" placeholder="Ex. : seulement le cercle rouge"></textarea>
+            </div>
+          </details>
+          <div class="hp-field" aria-hidden="true">
+            <label for="withdrawal-website">Ne pas remplir</label>
+            <input id="withdrawal-website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <button type="submit" class="btn btn-primary">Continuer</button>
+        </form>
+
+        <div id="withdrawal-confirm" hidden>
+          <p>Vous renoncez à :</p>
+          <div class="order-summary">
+            <p><strong>Commande :</strong> <span id="withdrawal-recap-order"></span></p>
+            <p><strong>Articles :</strong> <span id="withdrawal-recap-details"></span></p>
+            <p><strong>Accusé de réception envoyé à :</strong> <span id="withdrawal-recap-email"></span></p>
+          </div>
+          <div class="order-cart-actions">
+            <button type="button" class="btn btn-primary" id="withdrawal-confirm-btn">Confirmer la rétractation</button>
+            <button type="button" class="btn btn-ghost" id="withdrawal-back-btn">Modifier</button>
+          </div>
+          <p class="form-note" id="withdrawal-feedback" role="status"></p>
+        </div>
+
+        <div id="withdrawal-done" hidden>
+          <p><strong>C’est enregistré.</strong></p>
+          <p id="withdrawal-done-text" class="muted"></p>
         </div>
       </section>
     </div>
@@ -286,7 +340,18 @@ const LPS_MODALS_HTML = `
 
           <h3>Droit de rétractation</h3>
           <p>
-            Conformément au Code de la consommation, les produits personnalisés ne bénéficient pas du droit de rétractation. Pour les produits non personnalisés, un droit de rétractation de 14 jours peut s’appliquer à compter de la réception.
+            Pour les produits non personnalisés, vous disposez d’un délai de 14 jours à compter du lendemain de la réception pour exercer votre droit de rétractation, sans avoir à vous justifier.
+            Conformément au Code de la consommation, les produits personnalisés (prénom, motif ou couleurs sur mesure, photo de votre animal…) ne bénéficient pas du droit de rétractation.
+          </p>
+          <p>
+            <strong>Comment faire :</strong> utilisez le lien <button type="button" class="legal-inline-link js-open-withdrawal">« Renoncer au contrat ici »</button>, présent en bas de chaque page, en indiquant votre email et votre numéro de commande. Un accusé de réception vous est envoyé par email.
+          </p>
+          <p>
+            <strong>Retour et remboursement :</strong> les articles doivent être renvoyés dans les 14 jours suivant votre demande ; les frais de retour sont à votre charge.
+            Le remboursement, frais de livraison initiaux compris, est effectué par le même moyen de paiement au plus tard 14 jours après réception de votre demande. Il peut être différé jusqu’à la récupération des articles ou la preuve de leur expédition.
+          </p>
+          <p>
+            <strong>Abonnement box :</strong> l’abonnement est résiliable à tout moment via « Gérer mon abonnement » ; aucun nouveau prélèvement n’est effectué après la résiliation et une box déjà payée reste envoyée.
           </p>
 
           <h3>Propriété intellectuelle</h3>
@@ -440,6 +505,10 @@ const LPS_MODALS_HTML = `
           <p id="box-paypal-step-intro" class="muted">Redirection vers PayPal pour confirmer l'abonnement — une minute, et c’est bouclé.</p>
           <p id="box-paypal-step-recap" class="muted"></p>
           <p class="muted">Après validation, la confirmation habituelle arrive par email.</p>
+          <label class="cgv-consent">
+            <input type="checkbox" id="box-cgv" />
+            <span>J'ai lu et j'accepte les <button type="button" class="legal-inline-link js-open-legal">conditions générales de vente</button>, dont le droit de rétractation.</span>
+          </label>
           <div class="order-cart-actions">
             <button type="button" class="btn btn-primary" id="box-paypal-continue-btn">Continuer vers PayPal</button>
             <button type="button" class="btn btn-ghost" id="box-paypal-back-btn">Modifier les infos</button>

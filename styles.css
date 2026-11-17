@@ -2809,3 +2809,43 @@ input[type="number"]::-webkit-inner-spin-button {
   color: var(--muted);
   padding: 1rem 0;
 }
+
+/* Case « J'accepte les CGV » (paiement et box) */
+.cgv-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.cgv-consent input {
+  margin-top: 0.2rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+  accent-color: var(--ink);
+}
+
+/* Rétractation */
+.withdrawal-more {
+  margin: 0.2rem 0 0.8rem;
+}
+
+.withdrawal-more > summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

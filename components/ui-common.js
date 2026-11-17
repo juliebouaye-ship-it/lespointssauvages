@@ -120,6 +120,19 @@ function setupPrivacyModal() {
 function setupGlobalEscape() {
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+    /* Fenêtres qui peuvent s'ouvrir par-dessus le paiement : on les ferme d'abord */
+    const legalOnTop = document.getElementById("legal-modal");
+    if (legalOnTop?.classList.contains("is-open")) {
+      document.getElementById("close-legal-modal")?.click();
+      event.preventDefault();
+      return;
+    }
+    const withdrawal = document.getElementById("withdrawal-modal");
+    if (withdrawal?.classList.contains("is-open")) {
+      document.getElementById("close-withdrawal-modal")?.click();
+      event.preventDefault();
+      return;
+    }
     const checkout = document.getElementById("checkout-modal");
     if (checkout?.classList.contains("is-open")) {
       setModalState(checkout, false);

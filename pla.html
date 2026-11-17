@@ -112,6 +112,18 @@
         color: inherit;
         overflow-wrap: anywhere;
       }
+      .pla-footer {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 1.2rem 1rem 2rem;
+        border-top: 1px solid var(--line);
+        font-size: var(--text-sm);
+        color: var(--muted);
+      }
+      .pla-footer a {
+        color: inherit;
+      }
       .pla-sources li:target {
         background: var(--rose-soft);
         border-radius: 0.3rem;
@@ -242,5 +254,10 @@
         <p>Sources consultées en novembre 2026.</p>
       </section>
     </main>
+    <footer class="pla-footer">
+      <a href="./">Les Points Rebelles</a>
+      <span aria-hidden="true">·</span>
+      <a href="./#renoncer-au-contrat">Renoncer au contrat ici</a>
+    </footer>
   </body>
 </html>

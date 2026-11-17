@@ -139,6 +139,20 @@ Les clés manquantes sont listées dans la console du navigateur.
 Nouveau produit → ajouter sa ligne de prix (voir
 `supabase/migrations/2026-11-prix-catalogue.sql`).
 
+## Rétractation (« Renoncer au contrat ici »)
+
+Obligation en vigueur depuis le 19 juin 2026 pour la vente en ligne : lien
+« Renoncer au contrat ici » en pied de page (et dans les CGV), fenêtre en
+2 étapes (email + n° de commande, puis « Confirmer la rétractation »).
+
+La fonction `netlify/functions/withdrawal-request.js` envoie l'accusé de
+réception au client (email), alerte l'admin et enregistre la demande dans
+Supabase. À faire une fois : exécuter `supabase/migrations/withdrawal-requests.sql`.
+Lien direct possible : `/#renoncer-au-contrat`.
+
+Au paiement (panier et abonnement box), la case « J'accepte les CGV » doit
+être cochée pour afficher PayPal.
+
 ## Organisation des fichiers
 
 - Migrations Supabase: `supabase/migrations/`

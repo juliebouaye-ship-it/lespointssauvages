@@ -600,6 +600,11 @@ function setupBoxModal() {
   });
 
   paypalContinueBtn?.addEventListener("click", () => {
+    if (!document.getElementById("box-cgv")?.checked) {
+      showToast("Merci d'accepter les conditions générales de vente.");
+      document.getElementById("box-cgv")?.focus();
+      return;
+    }
     if (!pendingMonthlyPayPalUrl) {
       showToast("Lien PayPal indisponible pour le moment.");
       return;
@@ -803,4 +808,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupSubscriptionRequests();
   setupCustomRequestModal();
   setupProductGalleryModal();
+  setupWithdrawalModal();
+  setupLegalLinks();
 });
