@@ -69,11 +69,12 @@ const LPS_CATALOG = {
       icon: "🎄",
       intro: "Des minis pour le sapin et des moyens à glisser dessous.",
       cover: [
+        { src: "./images/covers/noel-couronne.jpg" },
         { src: "./images/covers/noel-mini-sapin.jpg" },
         { src: "./images/covers/noel-mini-flocon.jpg" },
         { src: "./images/covers/noel-chocolat-chaud.jpg" },
       ],
-      products: ["noel-sapin", "noel-flocon", "noel-chocolat"],
+      products: ["noel-sapin", "noel-flocon", "noel-couronne", "noel-chocolat"],
     },
     {
       id: "accessoires",
@@ -169,6 +170,17 @@ const LPS_CATALOG = {
         { src: "./images/noel-minis-duo.jpg", alt: "Les minis sapin et flocon suspendus", rotation: 0 },
       ],
       description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge pailleté, prêt à suspendre au sapin.",
+      formats: ["kit", "fini"],
+    },
+    "noel-couronne": {
+      type: "broderie",
+      label: "Couronne de Noël",
+      tag: { icon: "🎀", text: "Coup de cœur" },
+      image: "./images/noel-couronne.jpg",
+      thumb: "./images/thumbs/noel-couronne.jpg",
+      imageAlt: "Couronne de sapin brodée avec baies rouges, pommes de pin et grand nœud rouge, dans un cercle rouge pailleté",
+      gallery: [{ src: "./images/noel-couronne.jpg", alt: "Couronne de Noël brodée", rotation: 0 }],
+      description: "Branches de sapin, baies rouges, pommes de pin et un grand nœud : la couronne de Noël à accrocher au mur ou à la porte.",
       formats: ["kit", "fini"],
     },
     "noel-chocolat": {
