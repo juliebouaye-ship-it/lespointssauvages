@@ -66,11 +66,12 @@ const LPS_CATALOG = {
       title: "Noël",
       icon: "🎄",
       intro: "Des minis pour le sapin et des moyens à glisser dessous.",
-      status: "soon",
-      products: [],
-      soonText: "La collection arrive très bientôt.",
-      soonCta: "Être prévenu·e",
-      soonPrefill: "Bonjour, j'aimerais être prévenu·e quand la collection Noël sera disponible.",
+      cover: [
+        { src: "./images/covers/noel-mini-sapin.jpg" },
+        { src: "./images/covers/noel-mini-flocon.jpg" },
+        { src: "./images/covers/noel-chocolat-chaud.jpg" },
+      ],
+      products: ["noel-sapin", "noel-flocon", "noel-chocolat"],
     },
     {
       id: "accessoires",
@@ -136,6 +137,44 @@ const LPS_CATALOG = {
       description: "Votre chat, votre style : prénom et couleurs de fourrure personnalisables.",
       diameterCm: 14,
       delays: "kit 3 à 5 jours · broderie finie 7 à 12 jours",
+      formats: ["kit", "fini"],
+    },
+
+    /* ── Noël ── */
+    "noel-sapin": {
+      type: "broderie",
+      label: "Mini sapin doré",
+      tag: { icon: "🎄", text: "Mini" },
+      image: "./images/noel-mini-sapin.jpg",
+      imageAlt: "Mini sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge pailleté",
+      gallery: [
+        { src: "./images/noel-mini-sapin.jpg", alt: "Mini sapin doré", rotation: 0 },
+        { src: "./images/noel-minis-duo.jpg", alt: "Les minis sapin et flocon suspendus", rotation: 0 },
+      ],
+      description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle rouge pailleté, prêt à suspendre au sapin.",
+      formats: ["kit", "fini"],
+    },
+    "noel-flocon": {
+      type: "broderie",
+      label: "Mini flocon",
+      tag: { icon: "❄️", text: "Mini" },
+      image: "./images/noel-mini-flocon.jpg",
+      imageAlt: "Mini flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge pailleté",
+      gallery: [
+        { src: "./images/noel-mini-flocon.jpg", alt: "Mini flocon", rotation: 0 },
+        { src: "./images/noel-minis-duo.jpg", alt: "Les minis sapin et flocon suspendus", rotation: 0 },
+      ],
+      description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge pailleté, prêt à suspendre au sapin.",
+      formats: ["kit", "fini"],
+    },
+    "noel-chocolat": {
+      type: "broderie",
+      label: "Chocolat chaud",
+      tag: { icon: "🌱", text: "Idéal pour débuter", special: true },
+      image: "./images/noel-chocolat-chaud.jpg",
+      imageAlt: "Tasse de chocolat chaud et chantilly brodée, flocon bleu, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-chocolat-chaud.jpg", alt: "Chocolat chaud brodé", rotation: 0 }],
+      description: "Un motif tout doux et facile à broder : parfait pour une première broderie, ou à offrir à quelqu'un qui veut se lancer.",
       formats: ["kit", "fini"],
     },
 
