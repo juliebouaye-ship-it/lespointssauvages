@@ -13,6 +13,8 @@
    • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
+   • thumb (optionnel) : miniature 800×600 de la carte produit, dans
+     images/thumbs/ (réduite proprement : nette, sans effet « rayé »).
    • cover : photos de la vignette de collection (1 à 4, la 1re en grand).
      Utiliser les miniatures de images/covers/ (réduites proprement : évite
      l'effet « rayé » sur le tissu et charge plus vite).
@@ -146,6 +148,7 @@ const LPS_CATALOG = {
       label: "Mini sapin doré",
       tag: { icon: "🎄", text: "Mini" },
       image: "./images/noel-mini-sapin.jpg",
+      thumb: "./images/thumbs/noel-mini-sapin.jpg",
       imageAlt: "Mini sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge pailleté",
       gallery: [
         { src: "./images/noel-mini-sapin.jpg", alt: "Mini sapin doré", rotation: 0 },
@@ -159,6 +162,7 @@ const LPS_CATALOG = {
       label: "Mini flocon",
       tag: { icon: "❄️", text: "Mini" },
       image: "./images/noel-mini-flocon.jpg",
+      thumb: "./images/thumbs/noel-mini-flocon.jpg",
       imageAlt: "Mini flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge pailleté",
       gallery: [
         { src: "./images/noel-mini-flocon.jpg", alt: "Mini flocon", rotation: 0 },
@@ -172,6 +176,7 @@ const LPS_CATALOG = {
       label: "Chocolat chaud",
       tag: { icon: "🌱", text: "Idéal pour débuter", special: true },
       image: "./images/noel-chocolat-chaud.jpg",
+      thumb: "./images/thumbs/noel-chocolat-chaud.jpg",
       imageAlt: "Tasse de chocolat chaud et chantilly brodée, flocon bleu, dans un cercle rouge",
       gallery: [{ src: "./images/noel-chocolat-chaud.jpg", alt: "Chocolat chaud brodé", rotation: 0 }],
       description: "Un motif tout doux et facile à broder : parfait pour une première broderie, ou à offrir à quelqu'un qui veut se lancer.",

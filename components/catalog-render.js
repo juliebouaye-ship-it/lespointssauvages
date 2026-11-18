@@ -55,7 +55,7 @@
       : "";
     const thumb = p.image
       ? `<div class="card-thumb-wrap">
-          <img class="card-thumb" src="${esc(p.image)}" alt="${esc(p.imageAlt || p.label)}" loading="lazy" decoding="async" />
+          <img class="card-thumb" src="${esc(p.thumb || p.image)}" alt="${esc(p.imageAlt || p.label)}" loading="lazy" decoding="async" />
           ${galleryButton(p, "card-photo-btn", "🖼️ Voir les photos")}
         </div>`
       : `<div class="card-thumb-wrap card-thumb-wrap--empty" aria-hidden="true"><span>📷 Photo à venir</span></div>`;
