@@ -2982,3 +2982,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .card--accessory .card-thumb {
   margin: 0;
 }
+
+/* Photos produits au format carré, remplies par la photo (pas de bandes) */
+.card-thumb {
+  aspect-ratio: 1 / 1;
+}
