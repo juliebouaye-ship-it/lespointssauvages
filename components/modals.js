@@ -49,8 +49,9 @@ const LPS_MODALS_HTML = `
           </div>
 
           <div class="form-row order-modal-section" id="order-row-hoop" hidden>
-            <label for="order-hoop">Couleur du cercle</label>
-            <select id="order-hoop" name="order-hoop"></select>
+            <span class="order-pill-label">Couleur du cercle : <strong id="order-hoop-current"></strong></span>
+            <div class="swatch-group" id="order-hoop-swatches" role="radiogroup" aria-label="Couleur du cercle"></div>
+            <select id="order-hoop" name="order-hoop" class="sr-only" aria-hidden="true" tabindex="-1"></select>
           </div>
 
           <div id="order-fields-mot" class="order-modal-section order-fields-group" hidden>

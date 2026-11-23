@@ -236,7 +236,32 @@ function syncCatalogOrderOptions(product) {
       hoopSelect.innerHTML = colors.map((c) => `<option value="${c}">${c}</option>`).join("");
       hoopSelect.dataset.signature = signature;
       if (colors.includes(previous)) hoopSelect.value = previous;
+      /* Même sélecteur que les accessoires : pastilles de couleur */
+      const swatchBox = document.getElementById("order-hoop-swatches");
+      if (swatchBox) {
+        const tints = typeof LPS_COLOR_SWATCHES !== "undefined" ? LPS_COLOR_SWATCHES : {};
+        swatchBox.innerHTML = colors
+          .map(
+            (c, i) => `<input class="swatch-input" type="radio" name="order-hoop-swatch" id="order-hoop-${i}" value="${c}" />
+            <label class="swatch-label" for="order-hoop-${i}" title="${c}"><span class="swatch-dot" style="--swatch:${tints[c] || "#ccc"}" aria-hidden="true"></span><span class="sr-only">${c}</span></label>`
+          )
+          .join("");
+        swatchBox.querySelectorAll("input").forEach((input) => {
+          input.addEventListener("change", () => {
+            hoopSelect.value = input.value;
+            hoopSelect.dispatchEvent(new Event("change", { bubbles: true }));
+          });
+        });
+      }
     }
+  }
+  if (hoopSelect) {
+    const current = hoopSelect.value;
+    document.querySelectorAll('input[name="order-hoop-swatch"]').forEach((input) => {
+      input.checked = input.value === current;
+    });
+    const label = document.getElementById("order-hoop-current");
+    if (label) label.textContent = current;
   }
 }
 

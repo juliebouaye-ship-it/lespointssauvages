@@ -54,7 +54,7 @@
       ? `<div class="card-tag${p.tag.special ? " card-tag--special" : ""}"><span aria-hidden="true">${esc(p.tag.icon)}</span> ${esc(p.tag.text)}</div>`
       : "";
     const thumb = p.image
-      ? `<div class="card-thumb-wrap">
+      ? `<div class="card-thumb-wrap${p.thumbFit === "photo" ? " card-thumb-wrap--photo" : ""}">
           <img class="card-thumb" src="${esc(p.thumb || p.image)}" alt="${esc(p.imageAlt || p.label)}" loading="lazy" decoding="async" />
           ${galleryButton(p, "card-photo-btn", "🖼️ Voir les photos")}
         </div>`

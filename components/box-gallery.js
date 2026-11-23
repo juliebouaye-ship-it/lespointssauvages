@@ -1,6 +1,11 @@
 /* Galerie aperçu box — photos depuis Supabase (table + Storage). */
 
 const BOX_MOTIF_GALLERY_BUCKET = "box-motifs";
+/* Exemples ajoutés depuis le site (motifs passés de la box, photos du site).
+   Les légendes Supabase ne sont plus affichées : pas de mois visibles. */
+const BOX_LOCAL_EXAMPLES = [
+  { src: "./images/atelier-fille-cheveux.jpg", alt: "Exemple de box : la fille aux cheveux" },
+];
 
 async function loadBoxMotifGallery() {
   const root = document.getElementById("box-motifs-preview");
@@ -27,7 +32,7 @@ async function loadBoxMotifGallery() {
     }
 
     const rows = (data || []).filter((row) => String(row?.storage_path || "").trim());
-    if (!rows.length) {
+    if (!rows.length && !BOX_LOCAL_EXAMPLES.length) {
       root.hidden = true;
       trigger.setAttribute("data-gallery-images", "");
       trigger.setAttribute("data-gallery-alts", "");
@@ -35,16 +40,16 @@ async function loadBoxMotifGallery() {
       return { ok: true, count: 0 };
     }
 
-    const galleryItems = rows
+    const galleryItems = [...BOX_LOCAL_EXAMPLES, ...rows
       .map((row) => {
         const path = String(row.storage_path).trim();
         const { data: urlData } = client.storage.from(BOX_MOTIF_GALLERY_BUCKET).getPublicUrl(path);
         const src = String(urlData?.publicUrl || "").trim();
-        const alt = String(row.caption || "").trim() || "Aperçu d’une box broderie Les Points Rebelles";
+        const alt = "Exemple de box broderie Les Points Rebelles";
         if (!src) return null;
         return { src, alt };
       })
-      .filter(Boolean);
+      .filter(Boolean)];
     if (!galleryItems.length) {
       root.hidden = true;
       return { ok: true, count: 0 };

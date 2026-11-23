@@ -12,6 +12,8 @@
      et ne peut pas être commandé.
    • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
+   • thumbFit "photo" (optionnel) : la miniature est affichée à sa forme
+     réelle (portrait), sans cadre 4:3 (ex. boules de Noël).
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
    • hoopColors (optionnel) : couleurs de cercle proposées à la commande
      (ex. ["Rouge", "Doré"], ou "all" pour toutes les couleurs de bobines).
@@ -47,10 +49,10 @@ const LPS_CATALOG = {
   bundles: {
     minis: {
       size: 3,
-      label: "Offre 3 minis",
-      hint: "3 minis au choix",
-      cardTitle: "3 minis au choix",
-      cardText: "Sapin, flocon, houx : mélangez comme vous voulez, en cercle rouge ou doré. La remise s'applique toute seule dans le panier.",
+      label: "Offre 3 boules",
+      hint: "3 boules au choix",
+      cardTitle: "3 boules au choix",
+      cardText: "Sapin, flocon, houx : mélangez comme vous voulez. Remise automatique au panier.",
     },
   },
 
@@ -59,7 +61,7 @@ const LPS_CATALOG = {
       id: "noel",
       title: "Noël",
       icon: "🎄",
-      intro: "Des minis pour le sapin et des moyens à glisser dessous.",
+      intro: "Des boules brodées pour le sapin, et des broderies à glisser dessous.",
       cover: [
         { src: "./images/covers/noel-couronne.jpg" },
         { src: "./images/covers/noel-mini-sapin.jpg" },
@@ -73,8 +75,8 @@ const LPS_CATALOG = {
     {
       id: "personnages-et-animaux",
       cover: [
-        { src: "./images/covers/atelier-fille-cheveux.jpg" },
         { src: "./images/covers/atelier-freddie.jpg" },
+        { src: "./images/covers/atelier-fille-cheveux.jpg" },
         { src: "./images/covers/embroidery-petit-chat.jpg" },
       ],
       title: "Personnages et animaux",
@@ -103,9 +105,9 @@ const LPS_CATALOG = {
         { src: "./images/covers/stand-derriere.jpg", position: "0% 100%" },
         { src: "./images/covers/chat-cercle-noir.jpg" },
       ],
-      title: "Accessoires PLA",
+      title: "Cercles & accessoires",
       icon: "🧵",
-      intro: "Cercles à broder et supports imprimés à l'atelier en PLA, plusieurs couleurs disponibles.",
+      intro: "Cercles à broder et supports pour exposer vos broderies, imprimés à l'atelier en plusieurs couleurs.",
       products: ["cercle-couleur", "oreilles-chat", "stand-triangle"],
       showPlaNote: true,
     },
@@ -191,12 +193,13 @@ const LPS_CATALOG = {
     /* ── Noël ── */
     "noel-sapin": {
       type: "broderie",
-      label: "Mini sapin doré",
-      tag: { icon: "🎄", text: "Boule à suspendre" },
+      label: "Boule sapin doré",
+      tag: { icon: "🎄", text: "Pour le sapin" },
+      thumbFit: "photo",
       image: "./images/noel-mini-sapin.jpg",
       thumb: "./images/thumbs/noel-mini-sapin.jpg",
-      imageAlt: "Mini sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-sapin.jpg", alt: "Mini sapin doré", rotation: 0 }],
+      imageAlt: "Boule de Noël : sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-sapin.jpg", alt: "Boule sapin doré", rotation: 0 }],
       description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
@@ -205,12 +208,13 @@ const LPS_CATALOG = {
     },
     "noel-flocon": {
       type: "broderie",
-      label: "Mini flocon",
-      tag: { icon: "❄️", text: "Boule à suspendre" },
+      label: "Boule flocon",
+      tag: { icon: "❄️", text: "Pour le sapin" },
+      thumbFit: "photo",
       image: "./images/noel-mini-flocon.jpg",
       thumb: "./images/thumbs/noel-mini-flocon.jpg",
-      imageAlt: "Mini flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-flocon.jpg", alt: "Mini flocon", rotation: 0 }],
+      imageAlt: "Boule de Noël : flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-flocon.jpg", alt: "Boule flocon", rotation: 0 }],
       description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
@@ -219,12 +223,13 @@ const LPS_CATALOG = {
     },
     "noel-houx": {
       type: "broderie",
-      label: "Mini houx",
-      tag: { icon: "🍃", text: "Boule à suspendre" },
+      label: "Boule houx",
+      tag: { icon: "🍃", text: "Pour le sapin" },
+      thumbFit: "photo",
       image: "./images/noel-mini-houx.jpg",
       thumb: "./images/thumbs/noel-mini-houx.jpg",
-      imageAlt: "Mini brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-houx.jpg", alt: "Mini houx", rotation: 0 }],
+      imageAlt: "Boule de Noël : brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-houx.jpg", alt: "Boule houx", rotation: 0 }],
       description: "Un brin de houx et ses trois baies rouges sur toile écrue, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
