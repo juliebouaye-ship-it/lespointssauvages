@@ -89,7 +89,7 @@ const LPS_CATALOG = {
     {
       id: "passif-agressif",
       cover: [
-        { src: "./images/covers/grand-mot-fleur-01.jpg" },
+        { src: "./images/covers/grand-mot-scene.jpg" },
         { src: "./images/covers/embroidery-petit-mot.jpg" },
         { src: "./images/covers/embroidery-grand-mot.jpg" },
       ],
@@ -140,9 +140,11 @@ const LPS_CATALOG = {
       hoopColors: "all",
       label: "Grand mot",
       tag: { icon: "🙃", text: "Passif-brodé-agressif" },
-      image: "./images/embroidery-grand-mot.jpg",
+      image: "./images/grand-mot-scene.jpg",
+      thumb: "./images/thumbs/grand-mot-scene.jpg",
       imageAlt: "Broderie grand mot",
       gallery: [
+        { src: "./images/grand-mot-scene.jpg", alt: "Grand mot « Sauf erreur de ma part », mise en scène", rotation: 0 },
         { src: "./images/embroidery-grand-mot.jpg", alt: "Grand mot", rotation: 0 },
         { src: "./images/grand-mot-fleur-01.jpg", alt: "Grand mot fleuri", rotation: 0 },
       ],
