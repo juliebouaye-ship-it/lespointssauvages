@@ -13,8 +13,9 @@
    • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • thumbFit "photo" (optionnel) : la miniature est affichée à sa forme
-     réelle (portrait), sans cadre 4:3 (ex. boules de Noël).
+     réelle (portrait), sans cadre 4:3 (ex. suspensions de Noël).
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
+   • featured (collection, optionnel) : vignette mise en avant (badge).
    • hoopColors (optionnel) : couleurs de cercle proposées à la commande
      (ex. ["Rouge", "Doré"], ou "all" pour toutes les couleurs de bobines).
    • offerBundle (collection, optionnel) : met l'offre groupée en avant
@@ -49,9 +50,9 @@ const LPS_CATALOG = {
   bundles: {
     minis: {
       size: 3,
-      label: "Offre 3 boules",
-      hint: "3 boules au choix",
-      cardTitle: "3 boules au choix",
+      label: "Offre 3 suspensions",
+      hint: "3 suspensions au choix",
+      cardTitle: "3 suspensions au choix",
       cardText: "Sapin, flocon, houx : mélangez comme vous voulez. Remise automatique au panier.",
     },
   },
@@ -61,7 +62,7 @@ const LPS_CATALOG = {
       id: "noel",
       title: "Noël",
       icon: "🎄",
-      intro: "Des boules brodées pour le sapin, et des broderies à glisser dessous.",
+      intro: "Des suspensions pour le sapin et des broderies à offrir.",
       cover: [
         { src: "./images/covers/noel-couronne.jpg" },
         { src: "./images/covers/noel-mini-sapin.jpg" },
@@ -69,7 +70,8 @@ const LPS_CATALOG = {
         { src: "./images/covers/noel-chocolat-chaud.jpg" },
       ],
       /* "@offer:<bundle>" = carte de l'offre groupée à cet endroit de la grille */
-      products: ["noel-couronne", "noel-chocolat", "@offer:minis", "noel-sapin", "noel-flocon", "noel-houx"],
+      products: ["noel-couronne", "noel-chocolat", "noel-flocon", "noel-sapin", "@offer:minis", "noel-houx"],
+      featured: { badge: "C'est la saison" },
       offerBundle: "minis",
     },
     {
@@ -101,9 +103,9 @@ const LPS_CATALOG = {
     {
       id: "accessoires",
       cover: [
-        { src: "./images/covers/accessoire-oreilles-detail.jpg" },
-        { src: "./images/covers/stand-derriere.jpg", position: "0% 100%" },
-        { src: "./images/covers/chat-cercle-noir.jpg" },
+        { src: "./images/covers/cercle-oreilles-blanc.jpg" },
+        { src: "./images/covers/stand-noir-cercle-dore.jpg" },
+        { src: "./images/covers/cercle-oreilles-noir.jpg" },
       ],
       title: "Cercles & accessoires",
       icon: "🧵",
@@ -117,6 +119,7 @@ const LPS_CATALOG = {
     /* ── Broderies (commande via la fenêtre « Commander ») ── */
     petit: {
       type: "broderie",
+      hoopColors: "all",
       label: "Petit mot",
       tag: { icon: "⭐", text: "Bestseller" },
       image: "./images/embroidery-petit-mot.jpg",
@@ -134,6 +137,7 @@ const LPS_CATALOG = {
     },
     grand: {
       type: "broderie",
+      hoopColors: "all",
       label: "Grand mot",
       tag: { icon: "🙃", text: "Passif-brodé-agressif" },
       image: "./images/embroidery-grand-mot.jpg",
@@ -150,6 +154,7 @@ const LPS_CATALOG = {
     },
     chat: {
       type: "broderie",
+      hoopColors: "all",
       label: "Petit chat qui dort",
       tag: { icon: "🎨", text: "Personnalisable", special: true },
       image: "./images/embroidery-petit-chat.jpg",
@@ -167,6 +172,7 @@ const LPS_CATALOG = {
 
     "fille-cheveux": {
       type: "broderie",
+      hoopColors: "all",
       label: "La fille aux cheveux",
       tag: { icon: "✨", text: "Cheveux en relief" },
       image: "./images/atelier-fille-cheveux.jpg",
@@ -179,6 +185,7 @@ const LPS_CATALOG = {
     },
     freddie: {
       type: "broderie",
+      hoopColors: "all",
       label: "Freddie",
       tag: { icon: "🎤", text: "Grand format ovale" },
       image: "./images/atelier-freddie.jpg",
@@ -193,51 +200,52 @@ const LPS_CATALOG = {
     /* ── Noël ── */
     "noel-sapin": {
       type: "broderie",
-      label: "Boule sapin doré",
+      hoopColors: "all",
+      label: "Suspension sapin doré",
       tag: { icon: "🎄", text: "Pour le sapin" },
       thumbFit: "photo",
       image: "./images/noel-mini-sapin.jpg",
       thumb: "./images/thumbs/noel-mini-sapin.jpg",
-      imageAlt: "Boule de Noël : sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-sapin.jpg", alt: "Boule sapin doré", rotation: 0 }],
-      description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      imageAlt: "Suspension de Noël : sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-sapin.jpg", alt: "Suspension sapin doré", rotation: 0 }],
+      description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle de la couleur de votre choix, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
       bundle: "minis",
-      hoopColors: ["Rouge", "Doré"],
     },
     "noel-flocon": {
       type: "broderie",
-      label: "Boule flocon",
+      hoopColors: "all",
+      label: "Suspension flocon",
       tag: { icon: "❄️", text: "Pour le sapin" },
       thumbFit: "photo",
       image: "./images/noel-mini-flocon.jpg",
       thumb: "./images/thumbs/noel-mini-flocon.jpg",
-      imageAlt: "Boule de Noël : flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-flocon.jpg", alt: "Boule flocon", rotation: 0 }],
-      description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      imageAlt: "Suspension de Noël : flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-flocon.jpg", alt: "Suspension flocon", rotation: 0 }],
+      description: "Un flocon brodé sur tissu bleu nuit, dans son cercle de la couleur de votre choix, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
       bundle: "minis",
-      hoopColors: ["Rouge", "Doré"],
     },
     "noel-houx": {
       type: "broderie",
-      label: "Boule houx",
+      hoopColors: "all",
+      label: "Suspension houx",
       tag: { icon: "🍃", text: "Pour le sapin" },
       thumbFit: "photo",
       image: "./images/noel-mini-houx.jpg",
       thumb: "./images/thumbs/noel-mini-houx.jpg",
-      imageAlt: "Boule de Noël : brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
-      gallery: [{ src: "./images/noel-mini-houx.jpg", alt: "Boule houx", rotation: 0 }],
-      description: "Un brin de houx et ses trois baies rouges sur toile écrue, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      imageAlt: "Suspension de Noël : brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
+      gallery: [{ src: "./images/noel-mini-houx.jpg", alt: "Suspension houx", rotation: 0 }],
+      description: "Un brin de houx et ses trois baies rouges sur toile écrue, dans son cercle de la couleur de votre choix, prêt à suspendre au sapin.",
       formats: ["fini"],
       diameterCm: 8,
       bundle: "minis",
-      hoopColors: ["Rouge", "Doré"],
     },
     "noel-couronne": {
       type: "broderie",
+      hoopColors: "all",
       label: "Couronne de Noël",
       tag: { icon: "🎀", text: "Coup de cœur" },
       image: "./images/noel-couronne.jpg",
@@ -250,6 +258,7 @@ const LPS_CATALOG = {
     },
     "noel-chocolat": {
       type: "broderie",
+      hoopColors: "all",
       label: "Chocolat chaud",
       tag: { icon: "🌱", text: "Idéal pour débuter", special: true },
       image: "./images/noel-chocolat-chaud.jpg",
@@ -269,6 +278,12 @@ const LPS_CATALOG = {
       icon: "⭕",
       sizes: ["10 cm", "14 cm", "16 cm"],
       description: "Le cercle à broder dans la couleur de votre choix, aux tailles des kits.",
+      thumb: "./images/thumbs/cercle-dore.jpg",
+      imageAlt: "Cercle à broder doré, posé sur un stand triangle blanc",
+      gallery: [
+        { src: "./images/stand-blanc-cercle-dore.jpg", alt: "Cercle doré sur un stand blanc", rotation: 0 },
+        { src: "./images/stand-noir-cercle-dore.jpg", alt: "Cercle doré sur un stand noir", rotation: 0 },
+      ],
       customSizeHint: true,
       delays: "48 h ouvrées",
     },
@@ -278,9 +293,13 @@ const LPS_CATALOG = {
       cartLabel: "Cercle oreilles de chat (PLA)",
       icon: "🐾",
       description: "Un cercle à broder avec deux petites oreilles de chat.",
+      thumb: "./images/thumbs/cercle-oreilles-blanc.jpg",
+      thumbFit: "photo",
+      imageAlt: "Cercle à broder blanc en forme de tête de chat avec deux oreilles",
       gallery: [
-        { src: "./images/accessoire-oreilles-detail.jpg", alt: "Cercle oreilles de chat, détail", rotation: 0 },
-        { src: "./images/chat-cercle-noir.jpg", alt: "Cercle oreilles de chat noir", rotation: 0 },
+        { src: "./images/cercle-oreilles-blanc.jpg", alt: "Cercle oreilles de chat blanc", rotation: 0 },
+        { src: "./images/cercle-oreilles-noir.jpg", alt: "Cercle oreilles de chat noir", rotation: 0 },
+        { src: "./images/accessoire-oreilles-detail.jpg", alt: "Cercle oreilles de chat avec une broderie", rotation: 0 },
       ],
       delays: "48 h ouvrées",
     },
@@ -290,8 +309,13 @@ const LPS_CATALOG = {
       cartLabel: "Stand triangle (PLA)",
       icon: "🔺",
       description: "Support discret pour exposer vos broderies debout.",
+      thumb: "./images/thumbs/stand-triangle.jpg",
+      imageAlt: "Stand triangle noir tenant un cercle à broder doré",
       gallery: [
-        { src: "./images/stand-derriere.jpg", alt: "Stand triangle, vue de dos", rotation: 0 },
+        { src: "./images/stand-noir-cercle-dore.jpg", alt: "Stand noir tenant un cercle doré", rotation: 0 },
+        { src: "./images/stand-blanc.jpg", alt: "Stand triangle blanc", rotation: 0 },
+        { src: "./images/stand-noir.jpg", alt: "Stand triangle noir", rotation: 0 },
+        { src: "./images/stand-noir-dos.jpg", alt: "Stand noir, vue de dos avec un cercle", rotation: 0 },
       ],
       delays: "48 h ouvrées",
     },

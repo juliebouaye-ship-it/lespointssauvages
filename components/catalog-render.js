@@ -100,11 +100,17 @@
     const customSize = p.customSizeHint
       ? `<p class="micro-info accessory-size-hint">Autre taille ? <button type="button" class="btn-text-link-inline" data-open-custom-request data-custom-request-title="Demander une autre taille" data-custom-request-prefill="${esc(`Bonjour, je souhaiterais un ${p.label.toLowerCase()} de … cm, couleur …`)}">Demandez-moi</button></p>`
       : "";
+    const accThumb = p.thumb
+      ? `<div class="card-thumb-wrap${p.thumbFit === "photo" ? " card-thumb-wrap--photo" : ""}">
+          <img class="card-thumb" src="${esc(p.thumb)}" alt="${esc(p.imageAlt || p.label)}" loading="lazy" decoding="async" />
+          ${galleryButton(p, "card-photo-btn", "🖼️ Voir les photos")}
+        </div>`
+      : `<div class="card-thumb-wrap card-thumb-wrap--empty" aria-hidden="true"><span>📷 Photo à venir</span></div>`;
     return `<article class="card card--accessory" role="listitem">
+      ${accThumb}
       <h3><span aria-hidden="true">${esc(p.icon || "")}</span> ${esc(p.label)}</h3>
       <div class="accessory-meta-row">
         <p class="meta" data-price-accessory="${esc(id)}">…</p>
-        ${galleryButton(p, "accessory-photo-link", "🖼️ Voir les photos")}
       </div>
       <p class="accessory-desc">${esc(p.description)}</p>
       <p class="micro-info accessory-delay">${p.delays ? `Expédition estimée : ${esc(p.delays)}.` : ""}</p>
@@ -201,7 +207,8 @@
           )
           .join("")}</div>`
       : `<div class="collection-mosaic collection-mosaic--empty"><span aria-hidden="true">${esc(c.icon)}</span></div>`;
-    return `<a class="collection-tile" href="#${esc(c.id)}" role="listitem">
+    return `<a class="collection-tile${c.featured ? " collection-tile--featured" : ""}" href="#${esc(c.id)}" role="listitem">
+      ${c.featured?.badge ? `<span class="collection-tile-ribbon">✨ ${esc(c.featured.badge)}</span>` : ""}
       ${mosaic}
       <div class="collection-tile-body">
         <h3 class="collection-tile-title"><span aria-hidden="true">${esc(c.icon)}</span> ${esc(c.title)}</h3>
