@@ -278,12 +278,6 @@ const LPS_CATALOG = {
       icon: "⭕",
       sizes: ["10 cm", "14 cm", "16 cm"],
       description: "Le cercle à broder dans la couleur de votre choix, aux tailles des kits.",
-      thumb: "./images/thumbs/cercle-dore.jpg",
-      imageAlt: "Cercle à broder doré, posé sur un stand triangle blanc",
-      gallery: [
-        { src: "./images/stand-blanc-cercle-dore.jpg", alt: "Cercle doré sur un stand blanc", rotation: 0 },
-        { src: "./images/stand-noir-cercle-dore.jpg", alt: "Cercle doré sur un stand noir", rotation: 0 },
-      ],
       customSizeHint: true,
       delays: "48 h ouvrées",
     },
@@ -313,6 +307,7 @@ const LPS_CATALOG = {
       imageAlt: "Stand triangle noir tenant un cercle à broder doré",
       gallery: [
         { src: "./images/stand-noir-cercle-dore.jpg", alt: "Stand noir tenant un cercle doré", rotation: 0 },
+        { src: "./images/stand-blanc-cercle-dore.jpg", alt: "Stand blanc tenant un cercle doré", rotation: 0 },
         { src: "./images/stand-blanc.jpg", alt: "Stand triangle blanc", rotation: 0 },
         { src: "./images/stand-noir.jpg", alt: "Stand triangle noir", rotation: 0 },
         { src: "./images/stand-noir-dos.jpg", alt: "Stand noir, vue de dos avec un cercle", rotation: 0 },
