@@ -2883,3 +2883,44 @@ input[type="number"]::-webkit-inner-spin-button {
   font-weight: 600;
   color: var(--rose);
 }
+
+/* Vignettes de collection : même hauteur (texte limité à 2 lignes) */
+.collection-tile-intro {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Carte « offre groupée » dans la grille */
+.card--offer {
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--rose-soft);
+  border-color: var(--rose);
+}
+
+.card--offer[hidden] {
+  display: none;
+}
+
+.offer-title {
+  margin: 0.4rem 0 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.offer-price {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--rose);
+}
+
+.offer-was {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+}

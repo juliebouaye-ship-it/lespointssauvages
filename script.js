@@ -54,8 +54,24 @@ function syncDisplayedPrices() {
     if (el.hidden) return;
     el.textContent =
       el.getAttribute("data-bundle-style") === "offer"
-        ? `🎁 Offre : ${bundle.hint || bundle.label} pour ${formatEuro(price)}`
+        ? `🎁 ${bundle.hint || bundle.label} : ${formatEuro(price)}`
         : `🎁 ${bundle.hint || bundle.label} : ${formatEuro(price)}`;
+  });
+
+  /* Carte offre : prix de l'offre et prix normal barré (somme des moins chers) */
+  document.querySelectorAll("[data-offer-card]").forEach((card) => {
+    const id = card.getAttribute("data-offer-card");
+    const bundle = typeof BUNDLES !== "undefined" ? BUNDLES[id] : null;
+    const price = typeof BUNDLE_PRICES !== "undefined" ? BUNDLE_PRICES[id] : null;
+    card.hidden = !(bundle && isPrice(price));
+    if (card.hidden) return;
+    const unitPrices = Object.entries(CATALOG_PRODUCTS)
+      .filter(([, p]) => p.bundle === id)
+      .flatMap(([pid]) => Object.values(PRODUCT_BASE_EUR[pid] || {}).filter(isPrice));
+    const normal = unitPrices.length ? Math.min(...unitPrices) * bundle.size : null;
+    card.querySelector("[data-offer-price]").textContent = formatEuro(price);
+    const was = card.querySelector("[data-offer-was]");
+    was.textContent = normal && normal > price ? `au lieu de ${formatEuro(normal)}` : "";
   });
 
   document.querySelectorAll("[data-price-shipping]").forEach((el) => {

@@ -59,7 +59,7 @@
           ${galleryButton(p, "card-photo-btn", "🖼️ Voir les photos")}
         </div>`
       : `<div class="card-thumb-wrap card-thumb-wrap--empty" aria-hidden="true"><span>📷 Photo à venir</span></div>`;
-    const info = [p.diameterCm ? `Diamètre : ${String(p.diameterCm).replace(".", ",")} cm` : "", p.delays ? `Expédition estimée : ${p.delays}` : ""]
+    const info = [p.sizeText || (p.diameterCm ? `Diamètre : ${String(p.diameterCm).replace(".", ",")} cm` : ""), p.delays ? `Expédition estimée : ${p.delays}` : ""]
       .filter(Boolean)
       .join(" · ");
     const formats = p.formats || ["kit", "fini"];
@@ -127,6 +127,18 @@
         </div>
         <button class="btn btn-outline" type="button" data-add-accessory-card="${esc(id)}">Ajouter au panier</button>
       </div>
+    </article>`;
+  }
+
+  /* Carte « offre groupée » placée dans la grille (catalog.js : "@offer:<id>") */
+  function offerCard(bundleId) {
+    const bundle = (LPS_CATALOG.bundles || {})[bundleId];
+    if (!bundle) return "";
+    return `<article class="card card--offer" role="listitem" data-offer-card="${esc(bundleId)}" hidden>
+      <div class="card-tag card-tag--special"><span aria-hidden="true">🎁</span> Offre</div>
+      <p class="offer-title">${esc(bundle.cardTitle || bundle.hint || bundle.label)}</p>
+      <p class="offer-price"><span data-offer-price></span> <s class="offer-was" data-offer-was></s></p>
+      <p class="product-desc">${esc(bundle.cardText || "")}</p>
     </article>`;
   }
 
@@ -205,18 +217,18 @@
   function collectionView(c) {
     const cards = (c.products || [])
       .map((id) => {
+        if (String(id).startsWith("@offer:")) return offerCard(String(id).slice(7));
         const p = products[id];
         if (!p) return "";
         return p.type === "accessoire" ? accessoryCard(id, p) : broderieCard(id, p);
       })
       .filter(Boolean);
-    if (!cards.length || c.status === "soon") cards.push(soonCard(c));
+    if (!cards.some((html) => !html.includes("data-offer-card")) || c.status === "soon") cards.push(soonCard(c));
     return `<section class="collection" id="collection-${esc(c.id)}" data-collection-view="${esc(c.id)}" aria-labelledby="collection-title-${esc(c.id)}" hidden>
       <a class="collection-back" href="#produits"><span aria-hidden="true">←</span> Toutes les collections</a>
       <div class="collection-head">
         <h3 class="collection-title" id="collection-title-${esc(c.id)}" tabindex="-1"><span aria-hidden="true">${esc(c.icon)}</span> ${esc(c.title)}</h3>
         ${c.intro ? `<p class="collection-intro">${esc(c.intro)}</p>` : ""}
-        ${c.offerBundle ? `<p class="collection-offer" data-bundle-hint="${esc(c.offerBundle)}" data-bundle-style="offer" hidden></p>` : ""}
       </div>
       <div class="cards cards-3" role="list">${cards.join("")}</div>
       ${c.footnote ? `<p class="accessory-note">${esc(c.footnote)}</p>` : ""}

@@ -45,37 +45,16 @@ const LPS_CATALOG = {
   /* Offres groupées : X articles du même groupe, au choix, pour un prix fixe
      (prix dans Supabase : bundle.<id>). */
   bundles: {
-    minis: { size: 3, label: "Offre 3 minis", hint: "3 minis au choix" },
+    minis: {
+      size: 3,
+      label: "Offre 3 minis",
+      hint: "3 minis au choix",
+      cardTitle: "3 minis au choix",
+      cardText: "Sapin, flocon, houx : mélangez comme vous voulez, en cercle rouge ou doré. La remise s'applique toute seule dans le panier.",
+    },
   },
 
   collections: [
-    {
-      id: "mots-piquants",
-      cover: [
-        { src: "./images/covers/grand-mot-fleur-01.jpg" },
-        { src: "./images/covers/embroidery-petit-mot.jpg" },
-        { src: "./images/covers/embroidery-grand-mot.jpg" },
-      ],
-      title: "Les mots piquants",
-      icon: "✂️",
-      intro: "Petit coup de gueule élégant.",
-      products: ["petit", "grand"],
-      footnote:
-        "Les kits DIY incluent une fiche tuto, le tissu imprimé avec le motif, le cercle à broder, assez de fil et une aiguille.",
-    },
-    {
-      id: "motifs-atelier",
-      cover: [
-        { src: "./images/covers/atelier-freddie.jpg" },
-        { src: "./images/covers/atelier-fille-cheveux.jpg" },
-        { src: "./images/covers/accessoire-oreilles-chat.jpg" },
-        { src: "./images/covers/embroidery-petit-chat.jpg" },
-      ],
-      title: "Les motifs de l'atelier",
-      icon: "🎨",
-      intro: "Des motifs originaux, introuvables ailleurs. De nouveaux arrivent régulièrement.",
-      products: ["fille-cheveux", "freddie", "chat"],
-    },
     {
       id: "noel",
       title: "Noël",
@@ -87,8 +66,35 @@ const LPS_CATALOG = {
         { src: "./images/covers/noel-mini-houx.jpg" },
         { src: "./images/covers/noel-chocolat-chaud.jpg" },
       ],
-      products: ["noel-couronne", "noel-chocolat", "noel-sapin", "noel-flocon", "noel-houx"],
+      /* "@offer:<bundle>" = carte de l'offre groupée à cet endroit de la grille */
+      products: ["noel-couronne", "noel-chocolat", "@offer:minis", "noel-sapin", "noel-flocon", "noel-houx"],
       offerBundle: "minis",
+    },
+    {
+      id: "personnages-et-animaux",
+      cover: [
+        { src: "./images/covers/atelier-fille-cheveux.jpg" },
+        { src: "./images/covers/atelier-freddie.jpg" },
+        { src: "./images/covers/embroidery-petit-chat.jpg" },
+      ],
+      title: "Personnages et animaux",
+      icon: "🎨",
+      intro: "Des motifs originaux, introuvables ailleurs.",
+      products: ["fille-cheveux", "freddie", "chat"],
+    },
+    {
+      id: "passif-agressif",
+      cover: [
+        { src: "./images/covers/grand-mot-fleur-01.jpg" },
+        { src: "./images/covers/embroidery-petit-mot.jpg" },
+        { src: "./images/covers/embroidery-grand-mot.jpg" },
+      ],
+      title: "Passif-agressif",
+      icon: "✂️",
+      intro: "Petit coup de gueule élégant.",
+      products: ["petit", "grand"],
+      footnote:
+        "Les kits DIY incluent une fiche tuto, le tissu imprimé avec le motif, le cercle à broder, assez de fil et une aiguille.",
     },
     {
       id: "accessoires",
@@ -160,13 +166,14 @@ const LPS_CATALOG = {
     "fille-cheveux": {
       type: "broderie",
       label: "La fille aux cheveux",
-      tag: { icon: "📦", text: "Motif d'une ancienne box" },
+      tag: { icon: "✨", text: "Cheveux en relief" },
       image: "./images/atelier-fille-cheveux.jpg",
       thumb: "./images/thumbs/atelier-fille-cheveux.jpg",
       imageAlt: "Broderie sur cercle ovale : silhouette en robe bleue au vent, grand chapeau roux et longs cheveux dorés en fils libres",
       gallery: [{ src: "./images/atelier-fille-cheveux.jpg", alt: "La fille aux cheveux, broderie sur cercle ovale", rotation: 0 }],
-      description: "Robe au vent, grand chapeau et cheveux dorés en fils libres : une silhouette pleine de mouvement.",
+      description: "Brodez des cheveux en fils libres qui s'envolent au vent : une technique toute simple pour donner du relief et du mouvement à votre broderie.",
       formats: ["kit", "fini"],
+      sizeText: "Ovale 13,5 × 20 cm",
     },
     freddie: {
       type: "broderie",
@@ -176,15 +183,16 @@ const LPS_CATALOG = {
       thumb: "./images/thumbs/atelier-freddie.jpg",
       imageAlt: "Broderie sur cercle ovale : chanteur poing levé en veste jaune, avec une liste de souhaits brodée « I want… »",
       gallery: [{ src: "./images/atelier-freddie.jpg", alt: "Freddie, broderie sur cercle ovale", rotation: 0 }],
-      description: "Poing levé, veste jaune et une liste de souhaits bien cochée : pour celles et ceux qui veulent tout. Grand format, sur cercle ovale.",
+      description: "Poing levé, veste jaune et ses paroles cultes à cocher : un hommage brodé au plus grand des showmen.",
       formats: ["kit", "fini"],
+      sizeText: "Ovale 13,5 × 20 cm",
     },
 
     /* ── Noël ── */
     "noel-sapin": {
       type: "broderie",
       label: "Mini sapin doré",
-      tag: { icon: "🎄", text: "Mini" },
+      tag: { icon: "🎄", text: "Boule à suspendre" },
       image: "./images/noel-mini-sapin.jpg",
       thumb: "./images/thumbs/noel-mini-sapin.jpg",
       imageAlt: "Mini sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
@@ -198,7 +206,7 @@ const LPS_CATALOG = {
     "noel-flocon": {
       type: "broderie",
       label: "Mini flocon",
-      tag: { icon: "❄️", text: "Mini" },
+      tag: { icon: "❄️", text: "Boule à suspendre" },
       image: "./images/noel-mini-flocon.jpg",
       thumb: "./images/thumbs/noel-mini-flocon.jpg",
       imageAlt: "Mini flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
@@ -212,7 +220,7 @@ const LPS_CATALOG = {
     "noel-houx": {
       type: "broderie",
       label: "Mini houx",
-      tag: { icon: "🍃", text: "Mini" },
+      tag: { icon: "🍃", text: "Boule à suspendre" },
       image: "./images/noel-mini-houx.jpg",
       thumb: "./images/thumbs/noel-mini-houx.jpg",
       imageAlt: "Mini brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
