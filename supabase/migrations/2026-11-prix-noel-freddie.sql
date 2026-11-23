@@ -20,8 +20,10 @@ insert into public.price_rules (scope, scope_id, price_key, amount_eur) values
   -- Freddie (grand format ovale)
   ('site', 'default', 'product.freddie.kit', 25.00),
   ('site', 'default', 'product.freddie.fini', 40.00),
-  -- La fille aux cheveux : kit au même prix qu'en mercerie
+  -- La fille aux cheveux : kit au même prix qu'en mercerie (à passer à 25 si
+  -- le prix mercerie change), broderie finie comme Freddie
   ('site', 'default', 'product.fille-cheveux.kit', 18.00),
+  ('site', 'default', 'product.fille-cheveux.fini', 40.00),
   -- Petit chat qui dort : kit au même prix qu'en mercerie
   ('site', 'default', 'product.chat.kit', 18.00)
 on conflict (scope, scope_id, price_key) do update set amount_eur = excluded.amount_eur;
