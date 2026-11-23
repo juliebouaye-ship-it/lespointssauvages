@@ -48,6 +48,11 @@ const LPS_MODALS_HTML = `
             </div>
           </div>
 
+          <div class="form-row order-modal-section" id="order-row-hoop" hidden>
+            <label for="order-hoop">Couleur du cercle</label>
+            <select id="order-hoop" name="order-hoop"></select>
+          </div>
+
           <div id="order-fields-mot" class="order-modal-section order-fields-group" hidden>
             <p class="order-modal-kicker">Personnalisation</p>
             <p class="order-step-hint" id="order-mot-hint" hidden>Choisissez d’abord un format, puis indiquez votre phrase.</p>
@@ -143,6 +148,7 @@ const LPS_MODALS_HTML = `
         <p class="form-note" id="drawer-promo-feedback"></p>
       </div>
       <p class="order-cart-subtotal"><strong>Sous-total : <span id="order-cart-subtotal">0,00 €</span></strong></p>
+      <p class="order-cart-discount" id="order-cart-discount" hidden>🎁 <span></span></p>
       <div class="order-cart-delivery" id="order-cart-delivery">
         <p class="order-cart-delivery-label">Mode de remise</p>
         <div class="pill-toggle pill-toggle--compact pill-toggle--fit" role="radiogroup" aria-label="Mode de remise panier">
@@ -218,6 +224,7 @@ const LPS_MODALS_HTML = `
         <div class="order-pay-primary">
           <div class="order-summary" id="checkout-summary-box">
             <p><strong>Sous-total articles :</strong> <span id="checkout-summary-subtotal">0,00 €</span></p>
+            <p class="order-cart-discount" id="checkout-summary-discount" hidden>🎁 <span></span></p>
             <p><strong>Livraison :</strong> <span id="checkout-summary-shipping">0,00 €</span></p>
             <p><strong>Total :</strong> <span id="checkout-summary-total">0,00 €</span></p>
           </div>

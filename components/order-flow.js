@@ -33,9 +33,12 @@ function getOrderState() {
   const photoLink = document.getElementById("order-photo-link")?.value.trim() || "";
   const commentaire = document.getElementById("order-commentaire")?.value.trim() || "";
   const quantity = Math.max(1, Number.parseInt(document.getElementById("order-qty")?.value || "1", 10) || 1);
+  const hoopRow = document.getElementById("order-row-hoop");
+  const hoop = hoopRow && !hoopRow.hidden ? document.getElementById("order-hoop")?.value || "" : "";
   return {
     product,
     format,
+    hoop,
     phrase,
     fourrure,
     bicolore,
@@ -70,7 +73,43 @@ function computeSubtotalArticles(state) {
 function computeTotalEur(state, shippingFee = SHIPPING_EUR) {
   const sub = computeSubtotalArticles(state);
   if (sub == null) return null;
-  return Math.round((sub + shippingFee) * 100) / 100;
+  const line = stateToCartLine(state);
+  const discount = line ? computeBundleDiscount([line]).amount : 0;
+  return Math.round((sub - discount + shippingFee) * 100) / 100;
+}
+
+/* ── Offres groupées (ex. 3 minis au choix pour un prix fixe) ──
+   Les articles d'un même groupe (catalog.js : bundle) sont regroupés par
+   paquets de `size` ; chaque paquet complet est facturé au prix de l'offre
+   (Supabase : bundle.<id>). Renvoie la remise totale et son détail. */
+function computeBundleDiscount(lines = orderCart) {
+  let total = 0;
+  const details = [];
+  Object.entries(typeof BUNDLES !== "undefined" ? BUNDLES : {}).forEach(([id, bundle]) => {
+    const offerPrice = BUNDLE_PRICES[id];
+    if (!isPrice(offerPrice) || !bundle.size) return;
+    const units = [];
+    (lines || []).forEach((line) => {
+      if (CATALOG_PRODUCTS[line?.product]?.bundle !== id) return;
+      const qty = Math.max(1, Number.parseInt(line.quantity || "1", 10) || 1);
+      const sub = computeLineSubtotal(line);
+      if (!sub) return;
+      for (let i = 0; i < qty; i += 1) units.push(sub / qty);
+    });
+    units.sort((a, b) => b - a);
+    const groups = Math.floor(units.length / bundle.size);
+    let amount = 0;
+    for (let g = 0; g < groups; g += 1) {
+      const groupSum = units.slice(g * bundle.size, (g + 1) * bundle.size).reduce((acc, u) => acc + u, 0);
+      amount += Math.max(0, groupSum - offerPrice);
+    }
+    amount = Math.round(amount * 100) / 100;
+    if (amount > 0) {
+      total += amount;
+      details.push({ id, label: bundle.label || "Offre", groups, amount });
+    }
+  });
+  return { amount: Math.round(total * 100) / 100, details };
 }
 
 function computeLineSubtotal(line) {
@@ -165,7 +204,44 @@ function toggleChatFieldVisibility() {
   updatePillPriceHints();
 }
 
+/* Options venant du catalogue : formats proposés et couleurs de cercle */
+function syncCatalogOrderOptions(product) {
+  const catalogProduct = CATALOG_PRODUCTS[product];
+  const formats = catalogProduct?.formats || ["kit", "fini"];
+  document.querySelectorAll('input[name="order-format-pill"]').forEach((radio) => {
+    const allowed = formats.includes(radio.value);
+    radio.disabled = !allowed;
+    const label = document.querySelector(`label[for="${radio.id}"]`);
+    if (label) label.hidden = !allowed;
+    radio.hidden = !allowed;
+  });
+  const formatEl = document.getElementById("order-format");
+  if (formatEl && formats.length === 1 && formatEl.value !== formats[0]) {
+    formatEl.value = formats[0];
+    syncOrderFormatPills(formats[0]);
+  } else if (formatEl && formatEl.value && !formats.includes(formatEl.value)) {
+    formatEl.value = "";
+    syncOrderFormatPills("");
+  }
+
+  const hoopRow = document.getElementById("order-row-hoop");
+  const hoopSelect = document.getElementById("order-hoop");
+  let colors = catalogProduct?.hoopColors || null;
+  if (colors === "all") colors = typeof LPS_ACCESSORY_COLORS !== "undefined" ? LPS_ACCESSORY_COLORS : [];
+  if (hoopRow) hoopRow.hidden = !(Array.isArray(colors) && colors.length);
+  if (hoopSelect && Array.isArray(colors)) {
+    const signature = colors.join("|");
+    if (hoopSelect.dataset.signature !== signature) {
+      const previous = hoopSelect.value;
+      hoopSelect.innerHTML = colors.map((c) => `<option value="${c}">${c}</option>`).join("");
+      hoopSelect.dataset.signature = signature;
+      if (colors.includes(previous)) hoopSelect.value = previous;
+    }
+  }
+}
+
 function syncOrderModalLayout() {
+  syncCatalogOrderOptions(document.getElementById("order-product")?.value || "");
   const product = document.getElementById("order-product")?.value || "";
   const format = document.getElementById("order-format")?.value || "";
   const hasProduct = Boolean(product);
@@ -214,6 +290,7 @@ function buildMailtoBody(state, total) {
     `Montant TTC (articles + port ${SHIPPING_EUR} €) : ${total != null ? `${total} €` : "(à confirmer)"}`,
     "",
   ];
+  if (state.hoop) lines.push(`Couleur du cercle : ${state.hoop}`);
   if (state.product === "petit" || state.product === "grand") {
     lines.push(`Phrase : ${state.phrase || "-"}`);
   }
@@ -237,6 +314,7 @@ function stateToCartLine(state) {
   return {
     product: state.product,
     format: state.format,
+    ...(state.hoop ? { hoop: state.hoop } : {}),
     phrase: state.phrase,
     fourrure: state.fourrure,
     bicolore: state.bicolore,
@@ -276,6 +354,7 @@ function lineDetail(line) {
   }
   if (line.color) details.push(`Couleur: ${line.color}`);
   if (line.size) details.push(`Taille: ${line.size}`);
+  if (line.hoop) details.push(`Cercle: ${line.hoop}`);
   if (line.product === "petit" || line.product === "grand") {
     if (line.phrase) details.push(`Phrase: ${line.phrase}`);
   }
@@ -401,7 +480,8 @@ async function saveSubscriptionRequestsFromPaidLines(lines) {
 function computeCartTotal(shippingFee = SHIPPING_EUR) {
   const subtotal = orderCart.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
   if (!orderCart.length) return null;
-  return Math.round((subtotal + shippingFee) * 100) / 100;
+  const discount = computeBundleDiscount(orderCart).amount;
+  return Math.round((subtotal - discount + shippingFee) * 100) / 100;
 }
 
 function computeCartSubtotal() {
@@ -495,7 +575,20 @@ function renderOrderCart() {
   });
 }
 
+function renderBundleDiscountLines() {
+  const { amount, details } = computeBundleDiscount(orderCart);
+  const text = details.map((d) => `${d.label}${d.groups > 1 ? ` ×${d.groups}` : ""} : −${formatEuro(d.amount)}`).join(" · ");
+  ["order-cart-discount", "checkout-summary-discount"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.hidden = !(amount > 0);
+    const span = el.querySelector("span");
+    if (span) span.textContent = text;
+  });
+}
+
 function updateCheckoutSummary(subtotal, shippingFee, total) {
+  renderBundleDiscountLines();
   const subEl = document.getElementById("checkout-summary-subtotal");
   const shipEl = document.getElementById("checkout-summary-shipping");
   const totalEl = document.getElementById("checkout-summary-total");
@@ -623,6 +716,7 @@ async function renderOrderPayPalIfPossible() {
     const lines = hasCart ? orderCart : [stateToCartLine(state)].filter(Boolean);
     const subArticles = lines.reduce((sum, line) => sum + Math.round(computeLineSubtotal(line) * 100), 0) / 100;
     const subStr = subArticles.toFixed(2);
+    const bundleDiscount = computeBundleDiscount(lines).amount;
     const nameLine = hasCart ? "LPS — Panier multi-produits" : buildPayPalDescription(state);
     const paypalItems = lines.map((line) => ({
       name: lineLabel(line).slice(0, 127),
@@ -655,10 +749,11 @@ async function renderOrderPayPalIfPossible() {
             {
               amount: {
                 currency_code: "EUR",
-                value: freshTotal.toFixed(2),
+                value: (Math.round((subArticles - bundleDiscount + freshShippingFee) * 100) / 100).toFixed(2),
                 breakdown: {
                   item_total: { currency_code: "EUR", value: subStr },
                   shipping: { currency_code: "EUR", value: freshShippingFee.toFixed(2) },
+                  ...(bundleDiscount > 0 ? { discount: { currency_code: "EUR", value: bundleDiscount.toFixed(2) } } : {}),
                 },
               },
               items: [...paypalItems],
@@ -837,6 +932,8 @@ function openOrderModal(presetProduct, presetFormat) {
   });
   const fur = document.getElementById("order-fourrure");
   if (fur) fur.value = "";
+  const hoopSelect = document.getElementById("order-hoop");
+  if (hoopSelect) hoopSelect.selectedIndex = 0;
   const qty = document.getElementById("order-qty");
   if (qty) qty.value = "1";
   document.getElementById("order-prenom-addon-no")?.click();
@@ -864,7 +961,7 @@ function closeOrderModal() {
 }
 
 function bindOrderInputsForSummary() {
-  ["order-product", "order-format", "order-phrase", "order-fourrure", "order-bicolore-detail", "order-prenom", "order-photo-link", "order-commentaire", "order-qty"].forEach((id) => {
+  ["order-product", "order-format", "order-hoop", "order-phrase", "order-fourrure", "order-bicolore-detail", "order-prenom", "order-photo-link", "order-commentaire", "order-qty"].forEach((id) => {
     document.getElementById(id)?.addEventListener("input", updateOrderSummary);
     document.getElementById(id)?.addEventListener("change", updateOrderSummary);
   });

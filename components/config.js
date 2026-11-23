@@ -90,7 +90,13 @@ const FOURRURE_LABELS = {
 
 let activePromoCode = null;
 
+/* Offres groupées (ex. 3 minis au choix) : définition dans catalog.js,
+   prix de l'offre dans Supabase (bundle.<id>) */
+const BUNDLES = (typeof LPS_CATALOG !== "undefined" && LPS_CATALOG.bundles) || {};
+const BUNDLE_PRICES = Object.fromEntries(Object.keys(BUNDLES).map((id) => [id, null]));
+
 const BASELINE_PRICING = {
+  BUNDLE_PRICES: { ...BUNDLE_PRICES },
   PRODUCT_BASE_EUR: JSON.parse(JSON.stringify(PRODUCT_BASE_EUR)),
   OPTION_FEES: JSON.parse(JSON.stringify(OPTION_FEES)),
   BOX_MONTHLY_EUR,
@@ -110,11 +116,21 @@ function resetPricingToBaseline() {
     if (ACCESSORY_PRODUCTS[id]) ACCESSORY_PRODUCTS[id].price = price;
   });
   SHIPPING_EUR = BASELINE_PRICING.SHIPPING_EUR;
+  Object.assign(BUNDLE_PRICES, BASELINE_PRICING.BUNDLE_PRICES);
 }
 
 function applyPriceRule(priceKey, amount) {
   const n = Number(amount);
   if (!Number.isFinite(n)) return;
+  /* Sécurité : un article à 0 € (ou négatif) est ignoré, il reste « Prix bientôt
+     disponible ». Seules la livraison et les options peuvent valoir 0. */
+  const key = String(priceKey || "");
+  if (n <= 0 && /^(product|accessory|bundle|box)\./.test(key)) return;
+  if (key.startsWith("bundle.")) {
+    const id = key.slice("bundle.".length);
+    if (Object.prototype.hasOwnProperty.call(BUNDLE_PRICES, id)) BUNDLE_PRICES[id] = n;
+    return;
+  }
   if (priceKey === "shipping") {
     SHIPPING_EUR = n;
     return;
@@ -204,6 +220,7 @@ async function loadPricingFromSupabase() {
     BASELINE_PRICING.BOX_ONE_SHOT_EUR = JSON.parse(JSON.stringify(BOX_ONE_SHOT_EUR));
     BASELINE_PRICING.ACCESSORY_PRODUCTS = snapshotAccessoryPrices();
     BASELINE_PRICING.SHIPPING_EUR = SHIPPING_EUR;
+    BASELINE_PRICING.BUNDLE_PRICES = { ...BUNDLE_PRICES };
     PRICING_LOADED = true;
     const missing = listMissingPriceKeys();
     if (missing.length) console.warn("Prix absents de Supabase (price_rules) :", missing.join(", "));

@@ -25,7 +25,12 @@ function syncDisplayedPrices() {
   document.querySelectorAll("[data-price-product]").forEach((el) => {
     const id = el.getAttribute("data-price-product");
     const values = Object.values(PRODUCT_BASE_EUR[id] || {}).filter(isPrice);
-    el.textContent = values.length ? `À partir de : ${formatEuro(Math.min(...values))}` : PRICE_MISSING;
+    const distinct = [...new Set(values)];
+    el.textContent = !values.length
+      ? PRICE_MISSING
+      : distinct.length === 1
+        ? formatEuro(distinct[0])
+        : `À partir de : ${formatEuro(Math.min(...values))}`;
     el.closest(".card")?.querySelectorAll("[data-open-order]").forEach((btn) => {
       const price = PRODUCT_BASE_EUR[id]?.[btn.getAttribute("data-order-format")];
       btn.disabled = !isPrice(price);
@@ -39,6 +44,18 @@ function syncDisplayedPrices() {
     el.closest(".card")?.querySelectorAll("[data-add-accessory-card]").forEach((btn) => {
       btn.disabled = !priced;
     });
+  });
+
+  document.querySelectorAll("[data-bundle-hint]").forEach((el) => {
+    const id = el.getAttribute("data-bundle-hint");
+    const bundle = typeof BUNDLES !== "undefined" ? BUNDLES[id] : null;
+    const price = typeof BUNDLE_PRICES !== "undefined" ? BUNDLE_PRICES[id] : null;
+    el.hidden = !(bundle && isPrice(price));
+    if (el.hidden) return;
+    el.textContent =
+      el.getAttribute("data-bundle-style") === "offer"
+        ? `🎁 Offre : ${bundle.hint || bundle.label} pour ${formatEuro(price)}`
+        : `🎁 ${bundle.hint || bundle.label} : ${formatEuro(price)}`;
   });
 
   document.querySelectorAll("[data-price-shipping]").forEach((el) => {

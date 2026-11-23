@@ -59,7 +59,7 @@
           ${galleryButton(p, "card-photo-btn", "🖼️ Voir les photos")}
         </div>`
       : `<div class="card-thumb-wrap card-thumb-wrap--empty" aria-hidden="true"><span>📷 Photo à venir</span></div>`;
-    const info = [p.diameterCm ? `Diamètre : ${p.diameterCm} cm` : "", p.delays ? `Expédition estimée : ${p.delays}` : ""]
+    const info = [p.diameterCm ? `Diamètre : ${String(p.diameterCm).replace(".", ",")} cm` : "", p.delays ? `Expédition estimée : ${p.delays}` : ""]
       .filter(Boolean)
       .join(" · ");
     const formats = p.formats || ["kit", "fini"];
@@ -77,6 +77,7 @@
       <h3>${esc(p.label)}</h3>
       <p class="product-desc">${esc(p.description)}</p>
       <p class="meta" data-price-product="${esc(id)}">…</p>
+      ${p.bundle ? `<p class="bundle-hint" data-bundle-hint="${esc(p.bundle)}" hidden></p>` : ""}
       ${info ? `<p class="micro-info">${esc(info)}.</p>` : ""}
       <div class="format-toggle" role="group" aria-label="Choisir le format pour ${esc(p.label)}">${buttons}</div>
     </article>`;
@@ -193,6 +194,7 @@
       <div class="collection-tile-body">
         <h3 class="collection-tile-title"><span aria-hidden="true">${esc(c.icon)}</span> ${esc(c.title)}</h3>
         ${c.intro ? `<p class="collection-tile-intro">${esc(c.intro)}</p>` : ""}
+        ${c.offerBundle ? `<p class="collection-tile-offer" data-bundle-hint="${esc(c.offerBundle)}" data-bundle-style="offer" hidden></p>` : ""}
         <p class="collection-tile-foot">${status}<span class="collection-tile-cta">Voir <span aria-hidden="true">→</span></span></p>
       </div>
     </a>`;
@@ -214,6 +216,7 @@
       <div class="collection-head">
         <h3 class="collection-title" id="collection-title-${esc(c.id)}" tabindex="-1"><span aria-hidden="true">${esc(c.icon)}</span> ${esc(c.title)}</h3>
         ${c.intro ? `<p class="collection-intro">${esc(c.intro)}</p>` : ""}
+        ${c.offerBundle ? `<p class="collection-offer" data-bundle-hint="${esc(c.offerBundle)}" data-bundle-style="offer" hidden></p>` : ""}
       </div>
       <div class="cards cards-3" role="list">${cards.join("")}</div>
       ${c.footnote ? `<p class="accessory-note">${esc(c.footnote)}</p>` : ""}

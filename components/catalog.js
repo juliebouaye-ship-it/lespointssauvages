@@ -13,6 +13,12 @@
    • Couleurs des accessoires : la liste commune LPS_ACCESSORY_COLORS
      s'applique à tous, sauf si un accessoire précise sa propre liste `colors`.
    • status : "available" (en vente) ou "soon" (bientôt, pas encore en vente).
+   • hoopColors (optionnel) : couleurs de cercle proposées à la commande
+     (ex. ["Rouge", "Doré"], ou "all" pour toutes les couleurs de bobines).
+   • offerBundle (collection, optionnel) : met l'offre groupée en avant
+     dans la collection et sur sa vignette.
+   • bundle (optionnel) : offre groupée (voir LPS_CATALOG.bundles), prix de
+     l'offre dans Supabase : bundle.<id>.
    • thumb (optionnel) : miniature 800×600 de la carte produit, dans
      images/thumbs/ (réduite proprement : nette, sans effet « rayé »).
    • cover : photos de la vignette de collection (1 à 4, la 1re en grand).
@@ -36,6 +42,12 @@ const LPS_COLOR_SWATCHES = {
 const LPS_ACCESSORY_COLORS = Object.keys(LPS_COLOR_SWATCHES);
 
 const LPS_CATALOG = {
+  /* Offres groupées : X articles du même groupe, au choix, pour un prix fixe
+     (prix dans Supabase : bundle.<id>). */
+  bundles: {
+    minis: { size: 3, label: "Offre 3 minis", hint: "3 minis au choix" },
+  },
+
   collections: [
     {
       id: "mots-piquants",
@@ -54,14 +66,15 @@ const LPS_CATALOG = {
     {
       id: "motifs-atelier",
       cover: [
+        { src: "./images/covers/atelier-freddie.jpg" },
+        { src: "./images/covers/atelier-fille-cheveux.jpg" },
         { src: "./images/covers/accessoire-oreilles-chat.jpg" },
         { src: "./images/covers/embroidery-petit-chat.jpg" },
-        { src: "./images/covers/accessoire-stand-triangle.jpg", position: "center 40%" },
       ],
       title: "Les motifs de l'atelier",
       icon: "🎨",
       intro: "Des motifs originaux, introuvables ailleurs. De nouveaux arrivent régulièrement.",
-      products: ["chat"],
+      products: ["fille-cheveux", "freddie", "chat"],
     },
     {
       id: "noel",
@@ -74,7 +87,8 @@ const LPS_CATALOG = {
         { src: "./images/covers/noel-mini-houx.jpg" },
         { src: "./images/covers/noel-chocolat-chaud.jpg" },
       ],
-      products: ["noel-sapin", "noel-flocon", "noel-houx", "noel-couronne", "noel-chocolat"],
+      products: ["noel-couronne", "noel-chocolat", "noel-sapin", "noel-flocon", "noel-houx"],
+      offerBundle: "minis",
     },
     {
       id: "accessoires",
@@ -143,6 +157,29 @@ const LPS_CATALOG = {
       formats: ["kit", "fini"],
     },
 
+    "fille-cheveux": {
+      type: "broderie",
+      label: "La fille aux cheveux",
+      tag: { icon: "📦", text: "Motif d'une ancienne box" },
+      image: "./images/hero-photo.jpg",
+      thumb: "./images/thumbs/atelier-fille-cheveux.jpg",
+      imageAlt: "Broderie d'une silhouette en robe bleue au vent, grand chapeau roux et longs cheveux dorés en fils libres",
+      gallery: [{ src: "./images/hero-photo.jpg", alt: "La fille aux cheveux, broderie", rotation: 0 }],
+      description: "Robe au vent, grand chapeau et cheveux dorés en fils libres : une silhouette pleine de mouvement.",
+      formats: ["kit", "fini"],
+    },
+    freddie: {
+      type: "broderie",
+      label: "Freddie",
+      tag: { icon: "🎤", text: "Grand format ovale" },
+      image: "./images/atelier-freddie.jpg",
+      thumb: "./images/thumbs/atelier-freddie.jpg",
+      imageAlt: "Broderie sur cercle ovale : chanteur poing levé en veste jaune, avec une liste de souhaits brodée « I want… »",
+      gallery: [{ src: "./images/atelier-freddie.jpg", alt: "Freddie, broderie sur cercle ovale", rotation: 0 }],
+      description: "Poing levé, veste jaune et une liste de souhaits bien cochée : pour celles et ceux qui veulent tout. Grand format, sur cercle ovale.",
+      formats: ["kit", "fini"],
+    },
+
     /* ── Noël ── */
     "noel-sapin": {
       type: "broderie",
@@ -152,8 +189,11 @@ const LPS_CATALOG = {
       thumb: "./images/thumbs/noel-mini-sapin.jpg",
       imageAlt: "Mini sapin brodé au fil doré sur tissu bleu nuit, dans un cercle rouge",
       gallery: [{ src: "./images/noel-mini-sapin.jpg", alt: "Mini sapin doré", rotation: 0 }],
-      description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle rouge, prêt à suspendre au sapin.",
-      formats: ["kit", "fini"],
+      description: "Un sapin brodé au fil doré sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      formats: ["fini"],
+      diameterCm: 8,
+      bundle: "minis",
+      hoopColors: ["Rouge", "Doré"],
     },
     "noel-flocon": {
       type: "broderie",
@@ -163,8 +203,11 @@ const LPS_CATALOG = {
       thumb: "./images/thumbs/noel-mini-flocon.jpg",
       imageAlt: "Mini flocon brodé en blanc sur tissu bleu nuit, dans un cercle rouge",
       gallery: [{ src: "./images/noel-mini-flocon.jpg", alt: "Mini flocon", rotation: 0 }],
-      description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge, prêt à suspendre au sapin.",
-      formats: ["kit", "fini"],
+      description: "Un flocon brodé sur tissu bleu nuit, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      formats: ["fini"],
+      diameterCm: 8,
+      bundle: "minis",
+      hoopColors: ["Rouge", "Doré"],
     },
     "noel-houx": {
       type: "broderie",
@@ -174,8 +217,11 @@ const LPS_CATALOG = {
       thumb: "./images/thumbs/noel-mini-houx.jpg",
       imageAlt: "Mini brin de houx brodé en vert avec trois baies rouges, sur toile écrue, dans un cercle rouge",
       gallery: [{ src: "./images/noel-mini-houx.jpg", alt: "Mini houx", rotation: 0 }],
-      description: "Un brin de houx et ses trois baies rouges sur toile écrue, dans son cercle rouge, prêt à suspendre au sapin.",
-      formats: ["kit", "fini"],
+      description: "Un brin de houx et ses trois baies rouges sur toile écrue, dans son cercle rouge ou doré, prêt à suspendre au sapin.",
+      formats: ["fini"],
+      diameterCm: 8,
+      bundle: "minis",
+      hoopColors: ["Rouge", "Doré"],
     },
     "noel-couronne": {
       type: "broderie",
@@ -187,6 +233,7 @@ const LPS_CATALOG = {
       gallery: [{ src: "./images/noel-couronne.jpg", alt: "Couronne de Noël brodée", rotation: 0 }],
       description: "Branches de sapin, baies rouges, pommes de pin et un grand nœud : la couronne de Noël à accrocher au mur ou à la porte.",
       formats: ["kit", "fini"],
+      diameterCm: 15,
     },
     "noel-chocolat": {
       type: "broderie",
@@ -198,6 +245,7 @@ const LPS_CATALOG = {
       gallery: [{ src: "./images/noel-chocolat-chaud.jpg", alt: "Chocolat chaud brodé", rotation: 0 }],
       description: "Un motif tout doux et facile à broder : parfait pour une première broderie, ou à offrir à quelqu'un qui veut se lancer.",
       formats: ["kit", "fini"],
+      diameterCm: 12.5,
     },
 
     /* ── Accessoires (ajout direct au panier) ── */
