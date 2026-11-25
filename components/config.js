@@ -6,7 +6,7 @@ let PAYPAL_CLIENT_ID =
 const PRODUCT_BASE_EUR = {
   petit: { kit: 10, fini: 18 },
   grand: { kit: 20, fini: 32 },
-  chat: { kit: 14, fini: 25 },
+  chat: { kit: 15, fini: 25 },
 };
 
 const OPTION_FEES = {
